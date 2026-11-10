@@ -15,13 +15,14 @@
     "maxY": 4197.457092293538
   },
   "tileSizeMetres": 1000,
-  "generatedAt": "2026-11-10T14:59:42.741Z",
+  "generatedAt": "2026-11-10T15:16:00.431Z",
   "osmBaseTimestamp": "2026-11-10T14:50:51Z",
   "attribution": "© OpenStreetMap contributors, ODbL 1.0",
   "stats": {
     "buildings": 74813,
+    "heightFromWikidata": 1,
     "heightFromTag": 137,
-    "heightFromLevels": 1095,
+    "heightFromLevels": 1094,
     "heightEstimated": 73581,
     "roads": 13811,
     "rails": 716,
@@ -29,5 +30,6 @@
     "waterways": 27,
     "greenPolygons": 446
   },
+  "landmarks": "53 landmarks (see city.bin)",
   "roadNames": "1011 names (see city.bin)"
 }

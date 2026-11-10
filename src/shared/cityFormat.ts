@@ -18,6 +18,7 @@ export interface CityStats {
   heightFromTag: number;
   heightFromLevels: number;
   heightEstimated: number;
+  heightFromWikidata: number;
   roads: number;
   rails: number;
   waterPolygons: number;
@@ -37,12 +38,28 @@ export interface CityHeader {
   osmBaseTimestamp: string | null;
   attribution: string;
   stats: CityStats;
+  /** Named places that have a Wikidata item, for the label layer. Coordinates are local metres. */
+  landmarks: Landmark[];
   /** Street names; index 0 is "" (unnamed). Referenced by the r_name section. */
   roadNames: string[];
   sections: Record<string, SectionInfo>;
 }
 
-export const HEIGHT_SOURCE = { tag: 0, levels: 1, estimated: 2 } as const;
+export interface Landmark {
+  qid: string;
+  /** English name where one exists (OSM name:en, else Wikidata label), else the local name. */
+  name: string;
+  kind: 'building' | 'green' | 'water' | 'bridge' | 'other';
+  x: number;
+  y: number;
+  /** Height in metres at which to anchor the label (the rendered building height, 0 for flat features). */
+  height: number;
+  /** Footprint area in m2, used to rank labels. */
+  area: number;
+}
+
+export const HEIGHT_SOURCE = { tag: 0, levels: 1, estimated: 2, wikidata: 3 } as const;
+export const BUILDING_FLAG = { landmark: 1 } as const;
 export const ROAD_FLAG = { bridge: 1, tunnel: 2 } as const;
 export const RAIL_CLASS = { rail: 0, tram: 1, subway: 2, light: 3 } as const;
 

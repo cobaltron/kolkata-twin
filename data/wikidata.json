@@ -1,0 +1,390 @@
+{
+ "fetchedAt": "2026-11-10T15:14:33.849Z",
+ "licence": "CC0 (Wikidata)",
+ "entities": {
+  "Q107099434": {
+   "label": "Esplanade Mansions",
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-11-19T09:28:34Z"
+  },
+  "Q108598529": {
+   "label": "Vidhan Sabha Bhavan",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-05T12:01:13Z"
+  },
+  "Q111402421": {
+   "label": "ITC Sonar, a Luxury Collection Hotel, Kolkata",
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-05-01T22:57:11Z"
+  },
+  "Q11325387": {
+   "label": "Netaji Bhawan",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-26T18:18:02Z"
+  },
+  "Q12062296": {
+   "label": "Nakhoda Masjid",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-08-10T08:07:06Z"
+  },
+  "Q133141263": {
+   "label": "Panchdeep Tower",
+   "heightM": 121.92,
+   "floors": null,
+   "modified": "2026-01-24T12:52:52Z"
+  },
+  "Q1356352": {
+   "label": "Victoria Memorial",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-02-13T09:25:35Z"
+  },
+  "Q1364900": {
+   "label": "Indian Museum",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-29T07:12:14Z"
+  },
+  "Q15254588": {
+   "label": "Mohun Bagan Ground",
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-09-05T17:52:26Z"
+  },
+  "Q17069862": {
+   "label": "Quest Mall",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-02-11T01:00:34Z"
+  },
+  "Q18164352": {
+   "label": "Scottish Church Collegiate School",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T16:57:56Z"
+  },
+  "Q19893393": {
+   "label": "Lower Circular Road cemetery",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-26T21:26:15Z"
+  },
+  "Q2035004": {
+   "label": "Eden Gardens",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-03-26T19:05:08Z"
+  },
+  "Q22343101": {
+   "label": "St. Andrew's Church",
+   "heightM": null,
+   "floors": null,
+   "modified": "2022-02-28T13:42:17Z"
+  },
+  "Q2408126": {
+   "label": "East Bengal Ground",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T13:59:21Z"
+  },
+  "Q2972549": {
+   "label": "South Park Street Cemetery",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-02-18T14:19:47Z"
+  },
+  "Q2983685": {
+   "label": "St. Xavier's Collegiate School",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-03T10:04:21Z"
+  },
+  "Q30632550": {
+   "label": "Mahakaran metro station",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-23T15:06:26Z"
+  },
+  "Q30632591": {
+   "label": "Barun Sengupta metro station",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-19T12:52:19Z"
+  },
+  "Q30632592": {
+   "label": "Gour Kishore Ghosh metro station",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-19T12:52:20Z"
+  },
+  "Q3346440": {
+   "label": "Alipore Zoological Gardens",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-06-29T15:24:28Z"
+  },
+  "Q3349690": {
+   "label": "Lok Bhavan",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-04T17:27:23Z"
+  },
+  "Q3584578": {
+   "label": "St. Thomas Church",
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-08-07T20:03:17Z"
+  },
+  "Q4682601": {
+   "label": "Adi Ganga",
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-07-04T03:14:52Z"
+  },
+  "Q4728949": {
+   "label": "All India Institute of Hygiene and Public Health",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-04-06T00:27:51Z"
+  },
+  "Q4855639": {
+   "label": "Bangur Avenue",
+   "heightM": null,
+   "floors": null,
+   "modified": "2021-09-14T06:49:22Z"
+  },
+  "Q4904154": {
+   "label": "Bidhannagar Government High School",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T19:56:32Z"
+  },
+  "Q4916536": {
+   "label": "M. P. Birla Planetarium",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-12-23T03:00:52Z"
+  },
+  "Q5018955": {
+   "label": "Calcutta School of Tropical Medicine",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-04T06:57:08Z"
+  },
+  "Q5292284": {
+   "label": "Don Bosco School, Park Circus",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T13:47:43Z"
+  },
+  "Q5455830": {
+   "label": "Kolkata Race Course",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-09T08:50:08Z"
+  },
+  "Q5594620": {
+   "label": "The Oberoi Grand",
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-05-31T16:44:36Z"
+  },
+  "Q5620464": {
+   "label": "Gurudas College",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T13:28:29Z"
+  },
+  "Q56244717": {
+   "label": "Asiatic Society building",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-10-21T21:13:37Z"
+  },
+  "Q5656757": {
+   "label": "Hare School",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T19:57:32Z"
+  },
+  "Q6480048": {
+   "label": "Lal Dighi",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-02-12T08:59:39Z"
+  },
+  "Q67862554": {
+   "label": "Jain Swetamber Dadaji's Temple",
+   "heightM": null,
+   "floors": null,
+   "modified": "2022-02-10T07:11:27Z"
+  },
+  "Q67911726": {
+   "label": "Kali Krishna Tagore street",
+   "heightM": null,
+   "floors": null,
+   "modified": "2020-11-28T12:32:20Z"
+  },
+  "Q68074746": {
+   "label": "College Square",
+   "heightM": null,
+   "floors": null,
+   "modified": "2022-02-10T07:20:15Z"
+  },
+  "Q68189747": {
+   "label": "Esplanade Row West",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-04-30T17:37:45Z"
+  },
+  "Q68190653": {
+   "label": "Gostha Pal Sarani",
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-12-01T18:48:54Z"
+  },
+  "Q68315578": {
+   "label": "Ezra Street",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T13:23:42Z"
+  },
+  "Q68466698": {
+   "label": "Sido Kanhu Dahar",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-02-04T21:00:57Z"
+  },
+  "Q68476643": {
+   "label": "Surendranath Park",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-10T10:47:19Z"
+  },
+  "Q6858910": {
+   "label": "Millennium Park",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-11-04T06:43:14Z"
+  },
+  "Q68879603": {
+   "label": "Lord Sinha Road",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T11:03:05Z"
+  },
+  "Q6893503": {
+   "label": "Mohammedan Sporting Ground",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-17T09:41:32Z"
+  },
+  "Q68935124": {
+   "label": "National Congress Park",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-10T10:47:20Z"
+  },
+  "Q6998605": {
+   "label": "Netaji Indoor Stadium",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-01-26T00:32:23Z"
+  },
+  "Q7010004": {
+   "label": "New Market",
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-17T11:26:18Z"
+  },
+  "Q7278763": {
+   "label": "Rabindra Sadan",
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-06-15T03:40:28Z"
+  },
+  "Q739641": {
+   "label": "Howrah Bridge",
+   "heightM": 85,
+   "floors": null,
+   "modified": "2026-09-19T12:45:43Z"
+  },
+  "Q7437647": {
+   "label": "Scottish Cemetery",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-09T09:41:36Z"
+  },
+  "Q7462812": {
+   "label": "Shakespeare Sarani",
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-02-03T20:49:10Z"
+  },
+  "Q7687796": {
+   "label": "Tata Centre",
+   "heightM": 79,
+   "floors": 18,
+   "modified": "2026-05-22T00:19:59Z"
+  },
+  "Q7711913": {
+   "label": "The 42",
+   "heightM": 260,
+   "floors": 63,
+   "modified": "2026-03-30T01:07:26Z"
+  },
+  "Q787124": {
+   "label": "Salt Lake Stadium",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-30T12:47:44Z"
+  },
+  "Q7984451": {
+   "label": "West Bengal University of Health Sciences",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-24T22:30:06Z"
+  },
+  "Q85852420": {
+   "label": "Wellesley Gol Talab",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-01T03:22:49Z"
+  },
+  "Q89480959": {
+   "label": "Crooked lane",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-04-30T17:41:01Z"
+  },
+  "Q9384706": {
+   "label": "Jawaharlal Nehru Road",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T16:58:36Z"
+  },
+  "Q9610": {
+   "label": "Bangla",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-19T12:10:22Z"
+  },
+  "Q985758": {
+   "label": "Writers' Building",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-27T17:55:54Z"
+  },
+  "Q987578": {
+   "label": "Maidan",
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-27T18:12:51Z"
+  }
+ }
+}

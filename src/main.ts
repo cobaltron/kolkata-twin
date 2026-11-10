@@ -2,6 +2,7 @@ import './ui/ui.css';
 import { App } from './app/App';
 import { BuildingsLayer } from './layers/buildings/BuildingsLayer';
 import { createGreenLayer } from './layers/green/GreenLayer';
+import { LandmarksLayer } from './layers/landmarks/LandmarksLayer';
 import { GroundLayer } from './layers/ground/GroundLayer';
 import { createRailLayer } from './layers/rail/RailLayer';
 import { createRoadsLayer } from './layers/roads/RoadsLayer';
@@ -23,7 +24,7 @@ const byId = (id: string): HTMLElement => {
 const app = new App(byId('viewport'), await loadScenarios());
 // Registration order is the update order and the order of the toggles in the UI.
 // Weather runs first so the sky layer sees this frame's conditions.
-for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
+for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new LandmarksLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
   app.layers.register(layer);
 }
 

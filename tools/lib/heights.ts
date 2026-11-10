@@ -3,8 +3,10 @@
  *
  * Priority:
  *   1. `height` tag (metres; feet/inches and unit suffixes parsed)       -> source "tag"
- *   2. `building:levels` x LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M              -> source "levels"
- *   3. FALLBACK HEURISTIC (not real data): levels guessed from the
+ *   2. Wikidata height (P2048) of the item named by the `wikidata` tag    -> source "wikidata"
+ *   3. `building:levels` (else Wikidata floors above ground, P1101)
+ *      x LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M                                -> source "levels" / "wikidata"
+ *   4. FALLBACK HEURISTIC (not real data): levels guessed from the
  *      building type and footprint area, plus a deterministic 0/+1 level
  *      variation keyed on the OSM id so blocks are not perfectly uniform -> source "estimated"
  *
@@ -50,7 +52,12 @@ export function estimateLevels(buildingTag: string, footprintM2: number, osmId: 
   return levels + (hash % 3 === 0 ? 1 : 0);
 }
 
-export function resolveHeight(tags: Record<string, string>, footprintM2: number, osmId: number): ResolvedHeight {
+export interface WikidataHeight {
+  heightM: number | null;
+  floors: number | null;
+}
+
+export function resolveHeight(tags: Record<string, string>, footprintM2: number, osmId: number, wikidata?: WikidataHeight): ResolvedHeight {
   const minFromTag = parseMetres(tags['min_height']);
   const minLevel = Number(tags['building:min_level']);
   const minHeight = minFromTag ?? (Number.isFinite(minLevel) && minLevel > 0 ? minLevel * LEVEL_HEIGHT_M : 0);
@@ -58,10 +65,13 @@ export function resolveHeight(tags: Record<string, string>, footprintM2: number,
   const tagged = parseMetres(tags['height']);
   if (tagged !== null && tagged > minHeight) return { height: tagged, minHeight, source: HEIGHT_SOURCE.tag };
 
+  if (wikidata?.heightM && wikidata.heightM > minHeight) return { height: wikidata.heightM, minHeight, source: HEIGHT_SOURCE.wikidata };
+
   const levels = Number(tags['building:levels']);
   if (Number.isFinite(levels) && levels > 0 && levels < 200) {
     return { height: levels * LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M, minHeight, source: HEIGHT_SOURCE.levels };
   }
+  if (wikidata?.floors) return { height: wikidata.floors * LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M, minHeight, source: HEIGHT_SOURCE.wikidata };
   const guess = estimateLevels(tags['building'] ?? 'yes', footprintM2, osmId);
   return { height: Math.max(guess * LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M, minHeight + LEVEL_HEIGHT_M), minHeight: 0, source: HEIGHT_SOURCE.estimated };
 }

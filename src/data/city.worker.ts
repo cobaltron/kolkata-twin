@@ -3,7 +3,7 @@
  * Fetches and decodes city.bin, then triangulates/extrudes everything off the main thread.
  * Result arrays are transferred (zero-copy) back to the page.
  */
-import { decodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG } from '../shared/cityFormat';
+import { BUILDING_FLAG, decodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG } from '../shared/cityFormat';
 import { extrudeFootprint, flatPolygon, type RGB } from './geometry/extrude';
 import { MeshBuilder, transferables } from './geometry/MeshBuffers';
 import { iteratePolygons } from './geometry/polygons';
@@ -17,6 +17,9 @@ const ESTIMATE_TINT: RGB = [150, 158, 176];
 const ESTIMATE_MIX = 0.42;
 const ROOF_SOURCED: RGB = [150, 104, 84];
 const ROOF_ESTIMATED: RGB = [112, 118, 132];
+// Buildings that have a Wikidata item (named landmarks) get a pale stone tone so they stand out.
+// This is a highlight, not the building's real colour.
+const WALL_LANDMARK: RGB = [238, 232, 216];
 
 const ROAD_COLORS: RGB[] = [
   [92, 90, 96], [92, 90, 96], [86, 84, 90], [80, 79, 84], [76, 75, 80], // motorway..tertiary
@@ -47,6 +50,7 @@ function build(buffer: ArrayBuffer): CityGeometry {
   const heights = city.section<Float32Array>('b_height');
   const minHeights = city.section<Float32Array>('b_minHeight');
   const sources = city.section<Uint8Array>('b_src');
+  const flags = city.section<Uint8Array>('b_flags');
   const tiles = new Map<string, MeshBuilder>();
   let b = 0;
   for (const rings of iteratePolygons(city.section('b_ringCounts'), city.section('b_ringSizes'), city.section('b_xy'))) {
@@ -57,8 +61,9 @@ function build(buffer: ArrayBuffer): CityGeometry {
     const estimated = sources[b] === HEIGHT_SOURCE.estimated;
     const base = WALLS_SOURCED[Math.floor(hash(b) * WALLS_SOURCED.length)]!;
     const gain = 0.9 + hash(b * 7 + 3) * 0.2;
-    const wall = estimated ? mix(base, ESTIMATE_TINT, ESTIMATE_MIX, gain) : mix(base, base, 0, gain);
-    extrudeFootprint(tile, rings, minHeights[b]!, heights[b]!, wall, estimated ? ROOF_ESTIMATED : ROOF_SOURCED);
+    const landmark = (flags[b]! & BUILDING_FLAG.landmark) !== 0;
+    const wall = landmark ? WALL_LANDMARK : estimated ? mix(base, ESTIMATE_TINT, ESTIMATE_MIX, gain) : mix(base, base, 0, gain);
+    extrudeFootprint(tile, rings, minHeights[b]!, heights[b]!, wall, estimated ? ROOF_ESTIMATED : ROOF_SOURCED, hash(b * 13 + 5));
     b++;
   }
   const buildings: BuildingTile[] = [];

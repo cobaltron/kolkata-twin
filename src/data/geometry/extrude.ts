@@ -7,8 +7,9 @@ export type RGB = readonly [number, number, number];
  * Append an extruded footprint (walls + flat roof, no floor) to `out`.
  * Scene axes: X = east, Y = up, Z = -north. Wall bases are darkened for a cheap ground-contact cue.
  */
-export function extrudeFootprint(out: MeshBuilder, rings: Rings, base: number, top: number, wall: RGB, roof: RGB): void {
+export function extrudeFootprint(out: MeshBuilder, rings: Rings, base: number, top: number, wall: RGB, roof: RGB, seed: number): void {
   for (let r = 0; r < rings.length; r++) {
+    let along = 0; // metres travelled round this ring, the horizontal facade coordinate
     const ring = rings[r]!;
     const n = ring.length / 2;
     // Outer rings counter-clockwise, holes clockwise, so (dy, -dx) always points out of the solid.
@@ -24,6 +25,8 @@ export function extrudeFootprint(out: MeshBuilder, rings: Rings, base: number, t
       const nx = Math.round((dy / len) * 127), nz = Math.round((dx / len) * 127);
       const v = out.vertexCount;
       out.positions.push(ax, base, -ay, bx, base, -by, bx, top, -by, ax, top, -ay);
+      out.facade.push(along, 0, seed, along + len, 0, seed, along + len, top - base, seed, along, top - base, seed);
+      along += len;
       for (let k = 0; k < 4; k++) {
         out.normals.push(nx, 0, nz);
         const shade = k < 2 ? 0.72 : 1;
@@ -37,6 +40,7 @@ export function extrudeFootprint(out: MeshBuilder, rings: Rings, base: number, t
   for (let i = 0; i < flat.length; i += 2) {
     out.positions.push(flat[i]!, top, -flat[i + 1]!);
     out.normals.push(0, 127, 0);
+    out.facade.push(0, 0, seed);
     out.colors.push(roof[0], roof[1], roof[2]);
   }
   for (const idx of indices) out.indices.push(v0 + idx);

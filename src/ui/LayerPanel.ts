@@ -47,12 +47,17 @@ export class LayerPanel {
       el('div', { class: 'legend-row' }, el('span', { class: 'swatch', style: `background:${colour}` }), text, el('span', { class: 'n' }, n));
     this.legend.replaceChildren(
       el('h2', {}, 'Building height source'),
-      row('#d6b080', 'From OSM tags', pct(s.heightFromTag + s.heightFromLevels)),
+      row('#d6b080', 'From OSM tags or Wikidata', pct(s.heightFromTag + s.heightFromLevels + s.heightFromWikidata)),
       row('#b3ad9f', 'Estimated', pct(s.heightEstimated)),
       el(
         'p',
         { class: 'note' },
         'Greyer buildings have no height or level tag in OSM. Their height is a heuristic from footprint area and building type, not real data.',
+      ),
+      el(
+        'p',
+        { class: 'note' },
+        'Windows and storey lines are a procedural pattern (one storey per 3.2 m), not imagery of the real facades. Pale stone buildings are named landmarks; the colour is a highlight only.',
       ),
       el('p', { class: 'note' }, `OSM snapshot: ${header.osmBaseTimestamp?.slice(0, 10) ?? 'unknown'}. Ground is flat until terrain arrives in Phase 2.`),
     );

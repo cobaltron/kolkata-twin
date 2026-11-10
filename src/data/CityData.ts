@@ -31,6 +31,7 @@ export function toBufferGeometry(mesh: MeshData): BufferGeometry {
   g.setAttribute('position', new BufferAttribute(mesh.positions, 3));
   if (mesh.colors) g.setAttribute('color', new BufferAttribute(mesh.colors, 3, true));
   if (mesh.normals) g.setAttribute('normal', new BufferAttribute(mesh.normals, 3, true));
+  if (mesh.facade) g.setAttribute('facade', new BufferAttribute(mesh.facade, 3));
   g.setIndex(new BufferAttribute(mesh.indices, 1));
   return g;
 }

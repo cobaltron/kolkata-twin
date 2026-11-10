@@ -20,6 +20,7 @@ config/study-area.json      bbox, UTM zone, tile size (grow the study area here)
 config/scenarios.json       real events for event mode (id, label, IST window, references)
 tools/                      offline pipeline (Node, tsx); never runs in the browser
   fetch-osm.ts              Overpass (tiled, with retries) -> data/raw/osm.json
+  fetch-wikidata.ts         Wikidata labels/heights for OSM features with a wikidata tag -> data/wikidata.json
   fetch-scenarios.ts        Open-Meteo archive -> public/data/scenarios/*.json + index.json
   build-city.ts             project, clip, resolve heights -> public/data/city.bin
   lib/heights.ts, clip.ts
@@ -30,7 +31,7 @@ src/
   core/layers/              Layer interface, LayerRegistry
   core/environment/         shared weather/daylight state, series sampling, rain and haze mappings
   data/                     CityData (main thread), city.worker.ts, geometry builders
-  layers/<id>/              one folder per layer: weather, sky, buildings, roads, rail, water, green, ground
+  layers/<id>/              one folder per layer: weather, sky, buildings, landmarks, roads, rail, water, green, ground
   app/                      App (renderer, camera, loop), quality tiers
   ui/                       TimeBar, LayerPanel, WeatherPanel, StatsHud
 tests/
@@ -66,6 +67,9 @@ typed arrays transferred to the main thread -> merged meshes.
 
 ### Rendering
 - Buildings: one merged mesh per 1 km tile (48 tiles), frustum-culled, vertex colours.
+- Facades: a procedural window grid and storey lines in the building fragment shader (no textures, no
+  extra draw calls), with lit windows at night. Generic pattern, not imagery of real buildings.
+- Landmark labels: HTML labels for the 53 OSM features that carry a Wikidata item, de-cluttered per frame.
 - Roads, rail, water, green: one merged mesh each. They do not write depth and draw in a fixed order
   after the ground, which removes z-fighting on a flat city.
 - Shadows: one directional shadow map around the camera focus, texel-snapped, re-rendered only when

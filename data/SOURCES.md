@@ -16,13 +16,26 @@ derived from a listed source or an explicitly flagged synthetic placeholder.
 | Source | Count | Share | Rendering |
 |---|---|---|---|
 | `height` tag | 137 | 0.2% | warm wall tones, terracotta roof |
-| `building:levels` x 3.2 m + 1.0 m | 1,095 | 1.5% | warm wall tones, terracotta roof |
+| Wikidata height (P2048) or floors (P1101) | 1 | 0.0% | warm wall tones, terracotta roof |
+| `building:levels` x 3.2 m + 1.0 m | 1,094 | 1.5% | warm wall tones, terracotta roof |
 | **Estimated (heuristic, not real data)** | 73,581 | 98.4% | greyer walls, cool grey roof |
 
 Estimation heuristic (`tools/lib/heights.ts`): levels guessed from footprint area
 (<40 m2: 1, <150: 2, <600: 3, <2500: 4, else 5; sheds, huts, garages etc.: 1), plus one extra level for a
 deterministic third of buildings (hash of OSM id), times 3.2 m, plus 1.0 m. The 3.2 m storey height and
 1.0 m allowance are assumptions, not surveyed values.
+
+## Wikidata (landmark names and heights)
+- Source: `Special:EntityData` for each OSM way/relation with a `wikidata` tag, fetched offline by
+  `tools/fetch-wikidata.ts` into `data/wikidata.json` (64 items). Licence: CC0.
+- Used for: English labels of the 53 landmarks in the label layer, and building heights where the item
+  has a height (P2048) or floor count (P1101). Only 4 items carry a height and 2 a floor count, so this
+  barely changes the skyline; Victoria Memorial, for example, has neither.
+- OSM `height` tags take precedence over Wikidata.
+
+## Facades (not data)
+Window grids, storey lines and lit windows are a procedural shader pattern (3.2 m storeys, 3 m bays).
+They are not imagery of the real buildings. The pale stone colour of landmark buildings is a highlight.
 
 ## Road and rail widths
 Drawing widths per `highway`/`railway` class (`tools/build-city.ts`, `src/data/city.worker.ts`), overridden
