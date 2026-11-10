@@ -1,0 +1,18 @@
+{
+  "source": "Google Open Buildings 2.5D Temporal v1",
+  "licence": "CC BY 4.0 (also offered under ODbL 1.0)",
+  "epoch": "2023_06_30",
+  "tiles": [
+    "024_2023_06_30/tile_Rzy3kb7_Y2U.tif",
+    "024_2023_06_30/tile_qO3pu8BiVlU.tif"
+  ],
+  "crs": "EPSG:32645",
+  "cellMetres": 2.0,
+  "cols": 4923,
+  "rows": 4198,
+  "westUtm": 635668.0,
+  "northUtm": 2501040.0,
+  "valueUnitMetres": 0.5,
+  "presenceThreshold": 0.5,
+  "note": "0 = no building detected. Source heights are model estimates capped at 100 m."
+}

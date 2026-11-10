@@ -49,12 +49,13 @@ export class LayerPanel {
       el('div', { class: 'legend-row' }, el('span', { class: 'swatch', style: `background:${colour}` }), text, el('span', { class: 'n' }, n));
     this.legend.replaceChildren(
       el('h2', {}, 'Building height source'),
-      row('#d6b080', 'From OSM tags or Wikidata', pct(s.heightFromTag + s.heightFromLevels + s.heightFromWikidata)),
+      row('#d6b080', 'Tagged (OSM, Wikidata)', pct(s.heightFromTag + s.heightFromLevels + s.heightFromWikidata)),
+      row('#cdb9a0', 'Modelled from satellite', pct(s.heightFromOpenBuildings)),
       row('#b3ad9f', 'Estimated', pct(s.heightEstimated)),
       el(
         'p',
         { class: 'note' },
-        'Greyer buildings have no height or level tag in OSM. Their height is a heuristic from footprint area and building type, not real data.',
+        'Modelled heights come from Google Open Buildings 2.5D (2023, capped at 100 m). Greyer buildings have neither a tag nor a modelled height; theirs is a heuristic from footprint area, not real data.',
       ),
       el(
         'p',

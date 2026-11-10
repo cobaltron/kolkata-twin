@@ -19,6 +19,7 @@ export interface CityStats {
   heightFromLevels: number;
   heightEstimated: number;
   heightFromWikidata: number;
+  heightFromOpenBuildings: number;
   roads: number;
   rails: number;
   waterPolygons: number;
@@ -58,7 +59,7 @@ export interface Landmark {
   area: number;
 }
 
-export const HEIGHT_SOURCE = { tag: 0, levels: 1, estimated: 2, wikidata: 3 } as const;
+export const HEIGHT_SOURCE = { tag: 0, levels: 1, estimated: 2, wikidata: 3, openBuildings: 4 } as const;
 export const BUILDING_FLAG = { landmark: 1 } as const;
 export const ROAD_FLAG = { bridge: 1, tunnel: 2 } as const;
 export const RAIL_CLASS = { rail: 0, tram: 1, subway: 2, light: 3 } as const;

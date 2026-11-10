@@ -15,12 +15,27 @@ derived from a listed source or an explicitly flagged synthetic placeholder.
 ## Building heights
 | Source | Count | Share | Rendering |
 |---|---|---|---|
-| `height` tag | 137 | 0.2% | warm wall tones, terracotta roof |
-| Wikidata height (P2048) or floors (P1101) | 1 | 0.0% | warm wall tones, terracotta roof |
-| `building:levels` x 3.2 m + 1.0 m | 1,094 | 1.5% | warm wall tones, terracotta roof |
-| **Estimated (heuristic, not real data)** | 73,581 | 98.4% | greyer walls, cool grey roof |
+| OSM `height` tag | 137 | 0.2% | warm wall tones, terracotta roof |
+| Wikidata height (P2048) | 1 | 0.0% | warm wall tones, terracotta roof |
+| Google Open Buildings 2.5D Temporal (modelled) | 63,938 | 85.5% | warm wall tones, terracotta roof |
+| OSM `building:levels` x 3.2 m + 1.0 m | 128 | 0.2% | warm wall tones, terracotta roof |
+| **Estimated (heuristic, not real data)** | 10,609 | 14.2% | greyer walls, cool grey roof |
 
-Estimation heuristic (`tools/lib/heights.ts`): levels guessed from footprint area
+Priority is the table order (`tools/lib/heights.ts`), except that tagged levels implying more than 90 m
+beat the modelled height, because the Open Buildings raster saturates at 100 m.
+
+### Google Open Buildings 2.5D Temporal v1
+- Source: public bucket `gs://open-buildings-temporal-data/v1` (tiles `3a024_2023_06_30/tile_Rzy3kb7_Y2U.tif`
+  and `tile_qO3pu8BiVlU.tif`), read by `tools/open_buildings.py`. Epoch: 30 June 2023.
+- Licence: CC BY 4.0 (also offered under ODbL 1.0). Attribution is shown in the UI footer.
+- Processing: 0.5 m source pixels averaged to a 2 m grid (`data/open-buildings/height_2m.u8.gz`), keeping
+  cells where `building_presence` >= 0.5. A footprint takes the 75th percentile of its building cells,
+  and only if at least 40% of its cells are building (`tools/lib/openBuildings.ts`).
+- Accuracy: Google's blog reports 1.5 m mean absolute error; this is not validated for Kolkata and is a
+  model estimate from Sentinel-2 imagery, not a survey. Heights are capped at 100 m, and one value is
+  applied per footprint, so domes, spires and stepped massing are flattened.
+
+Estimation heuristic for the remainder (`tools/lib/heights.ts`): levels guessed from footprint area
 (<40 m2: 1, <150: 2, <600: 3, <2500: 4, else 5; sheds, huts, garages etc.: 1), plus one extra level for a
 deterministic third of buildings (hash of OSM id), times 3.2 m, plus 1.0 m. The 3.2 m storey height and
 1.0 m allowance are assumptions, not surveyed values.

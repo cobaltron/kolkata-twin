@@ -12,6 +12,7 @@ import { BUILDING_FLAG, encodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG, type C
 import { LocalFrame, type BBox } from '../src/shared/projection.ts';
 import { clipLine, clipRing, ringArea, type Pt } from './lib/clip.ts';
 import { parseMetres, resolveHeight } from './lib/heights.ts';
+import { OpenBuildingsGrid } from './lib/openBuildings.ts';
 
 const ROOT = new URL('..', import.meta.url);
 const area = JSON.parse(await readFile(new URL('config/study-area.json', ROOT), 'utf8')) as {
@@ -28,6 +29,13 @@ try {
   console.warn('data/wikidata.json not found: no landmark labels or Wikidata heights (run npm run data:wikidata)');
 }
 const frame = LocalFrame.fromBBox(area.utmZone, bbox);
+let openBuildings: OpenBuildingsGrid | null = null;
+try {
+  openBuildings = new OpenBuildingsGrid(new URL('data/open-buildings/', ROOT), frame.originUtm);
+} catch (err) {
+  if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+  console.warn('data/open-buildings not found: no modelled heights (run python tools/open_buildings.py)');
+}
 
 /** Rendering widths in metres by highway class. A drawing heuristic, not surveyed carriageway widths. */
 const ROAD_CLASSES: Array<[string, number]> = [
@@ -51,6 +59,8 @@ class PolygonSet {
   ringSizes: number[] = [];
   xy: number[] = [];
   get count(): number { return this.ringCounts.length; }
+  /** Projected rings of the most recently added polygon, local metres. */
+  last: Pt[][] = [];
   /** rings in lon/lat, closed-without-repeat. Returns outer-ring area in m2 (0 if rejected). */
   add(rings: Pt[][]): number {
     const projected = rings.map((r) => r.map(([lon, lat]) => { const p = frame.toLocal(lon, lat); return [p.x, p.y] as Pt; }));
@@ -59,6 +69,7 @@ class PolygonSet {
     const area2 = Math.abs(ringArea(outer));
     if (area2 < 1) return 0;
     const kept = projected.filter((r, i) => i === 0 || (r.length >= 3 && Math.abs(ringArea(r)) > 0.5));
+    this.last = kept;
     this.ringCounts.push(kept.length);
     for (const r of kept) {
       this.ringSizes.push(r.length);
@@ -124,7 +135,7 @@ const waterways = new LineSet();
 const cWidth: number[] = [];
 const roadNames: string[] = [''];
 const roadNameIndex = new Map<string, number>([['', 0]]);
-const srcCounts = [0, 0, 0, 0];
+const srcCounts = [0, 0, 0, 0, 0];
 
 const geojson = osmtogeojson(raw) as GeoJSON.FeatureCollection;
 for (const f of geojson.features) {
@@ -144,7 +155,7 @@ for (const f of geojson.features) {
         const areaM2 = buildings.add(rings);
         if (areaM2 === 0) continue;
         const record = tags['wikidata'] ? wikidata[tags['wikidata']] : undefined;
-        const h = resolveHeight(tags, areaM2, osmId, record);
+        const h = resolveHeight(tags, areaM2, osmId, record, openBuildings?.heightFor(buildings.last));
         bHeight.push(h.height); bMinHeight.push(h.minHeight); bSrc.push(h.source);
         bFlags.push(record ? BUILDING_FLAG.landmark : 0);
         addLandmark(tags, 'building', centroid(outer), h.height, areaM2);
@@ -187,6 +198,7 @@ const nw = frame.toLocal(bbox.west, bbox.north), se = frame.toLocal(bbox.east, b
 const stats: CityStats = {
   buildings: buildings.count,
   heightFromWikidata: srcCounts[HEIGHT_SOURCE.wikidata]!,
+  heightFromOpenBuildings: srcCounts[HEIGHT_SOURCE.openBuildings]!,
   heightFromTag: srcCounts[HEIGHT_SOURCE.tag]!, heightFromLevels: srcCounts[HEIGHT_SOURCE.levels]!, heightEstimated: srcCounts[HEIGHT_SOURCE.estimated]!,
   roads: roads.count, rails: rails.count, waterPolygons: water.count, waterways: waterways.count, greenPolygons: green.count,
 };
@@ -199,7 +211,7 @@ const header = {
   tileSizeMetres: area.tileSizeMetres,
   generatedAt: new Date().toISOString(),
   osmBaseTimestamp: meta.osmBaseTimestamp,
-  attribution: '© OpenStreetMap contributors, ODbL 1.0',
+  attribution: '© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0',
   stats,
   landmarks: [...landmarks.values()].map(({ rank: _rank, ...l }) => l).sort((a, b) => b.area - a.area),
   roadNames,

@@ -4,9 +4,11 @@
  * Priority:
  *   1. `height` tag (metres; feet/inches and unit suffixes parsed)       -> source "tag"
  *   2. Wikidata height (P2048) of the item named by the `wikidata` tag    -> source "wikidata"
- *   3. `building:levels` (else Wikidata floors above ground, P1101)
+ *   3. Open Buildings 2.5D modelled height under the footprint (satellite-derived, capped at 100 m;
+ *      skipped when tagged levels imply a taller building than the cap)  -> source "openBuildings"
+ *   4. `building:levels` (else Wikidata floors above ground, P1101)
  *      x LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M                                -> source "levels" / "wikidata"
- *   4. FALLBACK HEURISTIC (not real data): levels guessed from the
+ *   5. FALLBACK HEURISTIC (not real data): levels guessed from the
  *      building type and footprint area, plus a deterministic 0/+1 level
  *      variation keyed on the OSM id so blocks are not perfectly uniform -> source "estimated"
  *
@@ -57,7 +59,7 @@ export interface WikidataHeight {
   floors: number | null;
 }
 
-export function resolveHeight(tags: Record<string, string>, footprintM2: number, osmId: number, wikidata?: WikidataHeight): ResolvedHeight {
+export function resolveHeight(tags: Record<string, string>, footprintM2: number, osmId: number, wikidata?: WikidataHeight, modelledM?: number | null): ResolvedHeight {
   const minFromTag = parseMetres(tags['min_height']);
   const minLevel = Number(tags['building:min_level']);
   const minHeight = minFromTag ?? (Number.isFinite(minLevel) && minLevel > 0 ? minLevel * LEVEL_HEIGHT_M : 0);
@@ -68,8 +70,14 @@ export function resolveHeight(tags: Record<string, string>, footprintM2: number,
   if (wikidata?.heightM && wikidata.heightM > minHeight) return { height: wikidata.heightM, minHeight, source: HEIGHT_SOURCE.wikidata };
 
   const levels = Number(tags['building:levels']);
-  if (Number.isFinite(levels) && levels > 0 && levels < 200) {
-    return { height: levels * LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M, minHeight, source: HEIGHT_SOURCE.levels };
+  const validLevels = Number.isFinite(levels) && levels > 0 && levels < 200;
+  const levelsHeight = levels * LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M;
+  // The modelled raster saturates at 100 m, so tall tagged towers keep their tagged levels.
+  if (modelledM && modelledM >= 2.5 && modelledM > minHeight && !(validLevels && levelsHeight > 90)) {
+    return { height: modelledM, minHeight, source: HEIGHT_SOURCE.openBuildings };
+  }
+  if (validLevels) {
+    return { height: levelsHeight, minHeight, source: HEIGHT_SOURCE.levels };
   }
   if (wikidata?.floors) return { height: wikidata.floors * LEVEL_HEIGHT_M + ROOF_ALLOWANCE_M, minHeight, source: HEIGHT_SOURCE.wikidata };
   const guess = estimateLevels(tags['building'] ?? 'yes', footprintM2, osmId);

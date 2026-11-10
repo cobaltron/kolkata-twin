@@ -20,6 +20,7 @@ config/study-area.json      bbox, UTM zone, tile size (grow the study area here)
 config/scenarios.json       real events for event mode (id, label, IST window, references)
 tools/                      offline pipeline (Node, tsx); never runs in the browser
   fetch-osm.ts              Overpass (tiled, with retries) -> data/raw/osm.json
+  open_buildings.py         Google Open Buildings 2.5D height tiles -> data/open-buildings/ (Python, rasterio)
   fetch-wikidata.ts         Wikidata labels/heights for OSM features with a wikidata tag -> data/wikidata.json
   fetch-scenarios.ts        Open-Meteo archive -> public/data/scenarios/*.json + index.json
   build-city.ts             project, clip, resolve heights -> public/data/city.bin
