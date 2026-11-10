@@ -116,12 +116,12 @@ export class SunSkyLayer implements Layer {
       this.sun.castShadow = castShadow;
       ctx.requestShadowUpdate();
     }
-    this.ambient.intensity = MathUtils.lerp(2.2, 1.9, day) * (1 - 0.3 * c * day) * (1 - 0.25 * r); // night fill stands in for moon and city glow
+    this.ambient.intensity = MathUtils.lerp(2.2, 1.9, day) * (1 - 0.2 * c * day) * (1 - 0.15 * r); // night fill stands in for moon and city glow
     this.ambient.color.lerpColors(SKY_DAY, SKY_OVERCAST, c).lerp(SKY_NIGHT, 1 - day);
     this.ambient.groundColor.lerpColors(GROUND_NIGHT, GROUND_DAY, day);
 
     // Overcast and rain also darken the sky dome itself, which only responds to exposure.
-    ctx.renderer.toneMappingExposure = BASE_EXPOSURE * (1 - 0.22 * c - 0.2 * r);
+    ctx.renderer.toneMappingExposure = BASE_EXPOSURE * (1 - 0.15 * c - 0.12 * r);
 
     // The dome is hidden in the isometric view: its camera looks down from outside the dome.
     this.sky.visible = this.skyLit && !ctx.view.isometric;

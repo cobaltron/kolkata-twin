@@ -1,4 +1,4 @@
-import { Color, FogExp2 } from 'three';
+import { Color, FogExp2, Vector3 } from 'three';
 import type { Layer, LayerContext } from '../../core/layers/Layer';
 import type { TimeState } from '../../core/time/types';
 import { clearState, hazeDensity, rainParticleFraction, type WeatherState } from '../../core/environment/weather';
@@ -31,6 +31,7 @@ export class WeatherLayer implements Layer {
   private rainRate = 0;
   private density = 0;
   private lastEpoch = -1;
+  private readonly rainCentre = new Vector3();
 
   async load(ctx: LayerContext): Promise<void> {
     this.ctx = ctx;
@@ -72,8 +73,12 @@ export class WeatherLayer implements Layer {
     const speed = Math.min(weather.windSpeedMs, 15);
     // Rain animates in real time regardless of playback speed (9 m/s at 3600x would be noise); it freezes when paused.
     const rainDt = time.paused ? 0 : dt;
-    // Rain streaks live in a small box around the camera; they are not drawn in the isometric view.
-    this.rain.update(rainDt, ctx.view.isometric ? 0 : rainParticleFraction(this.rainRate), ctx.camera.position, { x: Math.sin(to) * speed, z: -Math.cos(to) * speed }, daylight);
+    // 3D: streaks fill a small box around the camera. Isometric: a box the size of the visible ground,
+    // centred above the point the camera is looking at.
+    const overview = ctx.view.isometric ? Math.min(Math.max(ctx.view.span * 1.6, 200), 6000) : null;
+    if (overview) this.rainCentre.set(ctx.focus.x, overview * 0.25, ctx.focus.z);
+    else this.rainCentre.copy(ctx.camera.position);
+    this.rain.update(rainDt * (overview ? overview / 90 : 1), rainParticleFraction(this.rainRate), this.rainCentre, { x: Math.sin(to) * speed, z: -Math.cos(to) * speed }, daylight, overview);
   }
 
   setVisible(visible: boolean): void {

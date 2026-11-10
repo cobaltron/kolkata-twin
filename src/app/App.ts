@@ -1,4 +1,4 @@
-import { ACESFilmicToneMapping, Color, OrthographicCamera, PCFShadowMap, PerspectiveCamera, Scene, SRGBColorSpace, WebGLRenderer } from 'three';
+import { ACESFilmicToneMapping, Color, DoubleSide, Mesh, MeshBasicMaterial, OrthographicCamera, RingGeometry, Vector3, PCFShadowMap, PerspectiveCamera, Scene, SRGBColorSpace, WebGLRenderer } from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
@@ -58,6 +58,9 @@ export class App {
   private readonly composer: EffectComposer;
   private readonly pixelPass: RenderPixelatedPass;
   private readonly viewListeners = new Set<(mode: ViewMode) => void>();
+  private flight: { t: number; from: Vector3; to: Vector3; fromOffset: Vector3; toOffset: Vector3; fromZoom: number; toZoom: number } | null = null;
+  private readonly marker = new Mesh(new RingGeometry(0.82, 1, 48), new MeshBasicMaterial({ color: 0xe8b04a, transparent: true, depthTest: false, side: DoubleSide }));
+  private markerAge = Infinity;
 
   constructor(private readonly container: HTMLElement, scenarios: Scenario[]) {
     this.quality = detectQuality();
@@ -101,6 +104,11 @@ export class App {
     this.pixelPass = new RenderPixelatedPass(this.isoPixelSize(), this.scene, this.isoCamera, { normalEdgeStrength: 0.35, depthEdgeStrength: 0.45 });
     this.composer.addPass(this.pixelPass);
     this.composer.addPass(new OutputPass());
+
+    this.marker.rotation.x = -Math.PI / 2;
+    this.marker.renderOrder = 200;
+    this.marker.visible = false;
+    this.scene.add(this.marker);
 
     this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR, scenarios });
     this.cityData = new CityData('data/city.bin');
@@ -148,12 +156,59 @@ export class App {
       this.controls.target.set(from.target.x, 0, from.target.z);
       this.perspectiveCamera.position.copy(this.controls.target).add(offset);
     }
+    this.flight = null;
     this.view.isometric = isometric;
     this.controls.enabled = !isometric;
     this.isoControls.enabled = isometric;
     this.container.classList.toggle('isometric', isometric);
     this.shadowDirty = true;
     for (const listener of this.viewListeners) listener(mode);
+  }
+
+  /**
+   * Fly the camera to a place (local metres, x east / y north) and pulse a ring there.
+   * @param distance how far the 3D camera ends up from the place, metres
+   */
+  flyTo(x: number, y: number, distance = 650): void {
+    const controls = this.view.isometric ? this.isoControls : this.controls;
+    const camera = this.camera;
+    const fromOffset = camera.position.clone().sub(controls.target);
+    this.flight = {
+      t: 0,
+      from: controls.target.clone(),
+      to: new Vector3(x, 0, -y),
+      fromOffset,
+      // 3D: keep the viewing direction, change the distance. Isometric: the offset is fixed, the zoom changes.
+      toOffset: this.view.isometric ? fromOffset.clone() : fromOffset.clone().setLength(distance),
+      fromZoom: this.isoCamera.zoom,
+      toZoom: Math.max(this.isoCamera.zoom, 5),
+    };
+    this.marker.position.set(x, 2, -y);
+    this.markerAge = 0;
+  }
+
+  private stepFlight(dt: number): void {
+    const f = this.flight;
+    if (f) {
+      f.t = Math.min(1, f.t + dt / 1.4);
+      const k = f.t * f.t * (3 - 2 * f.t); // smoothstep ease
+      const controls = this.view.isometric ? this.isoControls : this.controls;
+      controls.target.lerpVectors(f.from, f.to, k);
+      this.camera.position.copy(controls.target).add(f.fromOffset.clone().lerp(f.toOffset, k));
+      if (this.view.isometric) {
+        this.isoCamera.zoom = f.fromZoom + (f.toZoom - f.fromZoom) * k;
+        this.isoCamera.updateProjectionMatrix();
+      }
+      if (f.t >= 1) this.flight = null;
+    }
+    // Destination ring: expands and fades over three seconds.
+    this.markerAge += dt;
+    const life = this.markerAge / 3;
+    this.marker.visible = life < 1;
+    if (life < 1) {
+      this.marker.scale.setScalar(20 + 90 * ((this.markerAge * 0.8) % 1));
+      this.marker.material.opacity = (1 - life) * (1 - ((this.markerAge * 0.8) % 1));
+    }
   }
 
   onViewModeChange(listener: (mode: ViewMode) => void): () => void {
@@ -185,6 +240,7 @@ export class App {
     this.lastFrame = now;
 
     const state = this.time.advance(dt);
+    this.stepFlight(dt);
     const controls = this.view.isometric ? this.isoControls : this.controls;
     controls.update();
     this.focus.x = controls.target.x;

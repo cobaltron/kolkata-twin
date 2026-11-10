@@ -1,4 +1,4 @@
-import { InstancedBufferAttribute, InstancedBufferGeometry, Mesh, NormalBlending, PlaneGeometry, ShaderMaterial, Vector3 } from 'three';
+import { InstancedBufferAttribute, InstancedBufferGeometry, Mesh, NormalBlending, PlaneGeometry, ShaderMaterial, Vector3, Vector4 } from 'three';
 
 const BOX = 90; // metres; drops live in a cube of this size that follows the camera
 const FALL_SPEED = 9; // m/s, typical terminal velocity of a large raindrop
@@ -11,6 +11,7 @@ const VERTEX = /* glsl */ `
   uniform float uBox;
   uniform float uLength;
   uniform float uWidth;
+  uniform vec4 uFade; // near fade-in start/end, far fade-out start/end (metres from the camera)
   varying float vAlpha;
   void main() {
     // Stateless wrap: every drop is its seed plus a shared offset, folded into the box around the camera.
@@ -22,7 +23,7 @@ const VERTEX = /* glsl */ `
     mv.xy += side * position.x * uWidth;
     gl_Position = projectionMatrix * mv;
     float dist = -mv.z;
-    vAlpha = smoothstep(1.5, 6.0, dist) * (1.0 - smoothstep(uBox * 0.3, uBox * 0.5, dist)) * (1.0 - uv.y * 0.7);
+    vAlpha = smoothstep(uFade.x, uFade.y, dist) * (1.0 - smoothstep(uFade.z, uFade.w, dist)) * (1.0 - uv.y * 0.7);
     if (world.y < 0.0) vAlpha = 0.0; // nothing falls below the ground plane
   }
 `;
@@ -71,6 +72,7 @@ export class RainParticles {
         uWidth: { value: 0.012 },
         uColor: { value: new Vector3(0.78, 0.83, 0.9) },
         uOpacity: { value: 0.5 },
+        uFade: { value: new Vector4(1.5, 6, BOX * 0.3, BOX * 0.5) },
       },
       transparent: true,
       depthWrite: false,
@@ -86,8 +88,10 @@ export class RainParticles {
    * @param fraction 0..1 share of the particle budget to draw
    * @param wind horizontal wind velocity in scene axes, m/s
    * @param daylight 0..1, dims the streaks at night
+   * @param overview when set (isometric view), rain fills a box of this size centred on `centre`
+   *                 instead of the small box around a perspective camera, with streaks scaled to match
    */
-  update(dt: number, fraction: number, cameraPosition: Vector3, wind: { x: number; z: number }, daylight: number): void {
+  update(dt: number, fraction: number, centre: Vector3, wind: { x: number; z: number }, daylight: number, overview: number | null): void {
     const count = Math.round(this.maxDrops * fraction);
     this.mesh.geometry.instanceCount = count;
     this.mesh.visible = count > 0;
@@ -95,11 +99,17 @@ export class RainParticles {
     this.velocity.set(wind.x, -FALL_SPEED, wind.z);
     this.offset.addScaledVector(this.velocity, dt);
     // Keep the offset bounded so 32-bit shader floats stay precise over long sessions.
-    this.offset.set(this.offset.x % BOX, this.offset.y % BOX, this.offset.z % BOX);
+    const box = overview ?? BOX;
+    const scale = box / BOX;
+    this.offset.set(this.offset.x % box, this.offset.y % box, this.offset.z % box);
     const u = this.mesh.material.uniforms;
-    (u['uCentre']!.value as Vector3).copy(cameraPosition);
+    (u['uCentre']!.value as Vector3).copy(centre);
+    u['uBox']!.value = box;
+    u['uWidth']!.value = overview ? box / 900 : 0.012;
+    if (overview) (u['uFade']!.value as Vector4).set(-2, -1, 1e8, 1e9); // no distance fade under an orthographic camera
+    else (u['uFade']!.value as Vector4).set(1.5, 6, BOX * 0.3, BOX * 0.5);
     (u['uDirection']!.value as Vector3).copy(this.velocity).normalize();
-    u['uLength']!.value = 0.7 + 1.1 * fraction;
+    u['uLength']!.value = (0.7 + 1.1 * fraction) * (overview ? scale * 0.35 : 1);
     u['uOpacity']!.value = (0.25 + 0.4 * fraction) * (0.35 + 0.65 * daylight);
   }
 

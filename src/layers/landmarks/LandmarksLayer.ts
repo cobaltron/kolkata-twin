@@ -27,6 +27,8 @@ export class LandmarksLayer implements Layer {
   private labels: Label[] = [];
   private readonly projected = new Vector3();
   private frame = 0;
+  /** Called when a label is clicked. Set by the app shell. */
+  onSelect: ((landmark: Landmark) => void) | null = null;
 
   async load(ctx: LayerContext): Promise<void> {
     this.ctx = ctx;
@@ -39,6 +41,7 @@ export class LandmarksLayer implements Layer {
       node.textContent = landmark.name;
       node.title = `Wikidata ${landmark.qid}`;
       node.hidden = true;
+      node.addEventListener('click', () => this.onSelect?.(landmark));
       this.root.append(node);
       // Anchor a little above the roof; flat features (parks, water) sit just above the ground.
       return { landmark, node, anchor: new Vector3(landmark.x, landmark.height + 12, -landmark.y), shown: false };

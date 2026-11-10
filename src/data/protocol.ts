@@ -19,6 +19,8 @@ export interface CityGeometry {
   header: CityHeader;
   /** Centre lines used by the simulated-movement layers. */
   paths: { roads: PathSet; trams: PathSet; river: PathSet };
+  /** Named streets with a representative point, for search. */
+  streets: Array<{ name: string; x: number; y: number }>;
   buildings: BuildingTile[];
   green: MeshData;
   water: MeshData;

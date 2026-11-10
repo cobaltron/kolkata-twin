@@ -18,10 +18,13 @@ npm run data:scenarios   # download hourly weather for the events in config/scen
 ```
 config/study-area.json      bbox, UTM zone, tile size (grow the study area here)
 config/scenarios.json       real events for event mode (id, label, IST window, references)
+config/landmark-models.json sourced dimensions for the procedural landmark models
 tools/                      offline pipeline (Node, tsx); never runs in the browser
   fetch-osm.ts              Overpass (tiled, with retries) -> data/raw/osm.json
   open_buildings.py         Google Open Buildings 2.5D height tiles -> data/open-buildings/ (Python, rasterio)
-  fetch-wikidata.ts         Wikidata labels/heights for OSM features with a wikidata tag -> data/wikidata.json
+  fetch-poi.ts              Overpass: Wikidata-tagged places, monuments, museums -> data/raw/poi.json
+  fetch-wikidata.ts         Wikidata labels, heights, article titles, images -> data/wikidata.json
+  fetch-landmark-content.ts Wikipedia intros + Commons photo credits -> public/data/landmark-content.json
   fetch-scenarios.ts        Open-Meteo archive -> public/data/scenarios/*.json + index.json
   build-city.ts             project, clip, resolve heights -> public/data/city.bin
   lib/heights.ts, clip.ts
@@ -32,9 +35,9 @@ src/
   core/layers/              Layer interface, LayerRegistry
   core/environment/         shared weather/daylight state, series sampling, rain and haze mappings
   data/                     CityData (main thread), city.worker.ts, geometry builders
-  layers/<id>/              one folder per layer: weather, sky, buildings, landmarks, roads, rail, water, green, ground
+  layers/<id>/              one folder per layer: weather, sky, buildings, models, landmarks, traffic, boats, festival, roads, rail, water, green, ground
   app/                      App (renderer, camera, loop), quality tiers
-  ui/                       TimeBar, LayerPanel, ViewSwitch, WeatherPanel, StatsHud
+  ui/                       TimeBar, LayerPanel, SearchBox, LandmarkPopup, ViewSwitch, WeatherPanel, StatsHud
 tests/
 ```
 
@@ -107,6 +110,30 @@ it is registered first so later layers see the current frame's conditions.
   rate reproduces the source totals. Phase 2 reads the same value as its rainfall input.
 - These mappings are rendering heuristics, not radiometry (`src/core/environment/weather.ts`).
 
+### Landmarks, search and pop-ups
+- `LandmarksLayer`: clickable labels for 149 places that have a Wikidata item in OSM.
+- `LandmarkPopup`: opening paragraph of the English Wikipedia article and the Wikidata main image from
+  Wikimedia Commons, each shown with licence, author and a link (`tools/fetch-landmark-content.ts`).
+- `SearchBox`: type-ahead over landmark and street names (no address geocoding); `App.flyTo` moves the
+  camera and pulses a ring at the destination.
+- `LandmarkModelsLayer`: procedural models for Howrah Bridge, Victoria Memorial, Shaheed Minar and
+  St Paul's Cathedral. Overall dimensions are sourced per model in `config/landmark-models.json`; the
+  `schematic` field there lists what is not sourced.
+
+### Simulated decoration (not data)
+- `TrafficLayer`: instanced box vehicles on OSM main-road centre lines (keeping left) and trams on OSM
+  tram track, joined into a network at shared end points. No traffic, timetable or signal data.
+- `BoatsLayer`: boats on lanes derived from OSM river centre lines, kept to mapped water.
+- `FestivalLightsLayer` (off by default): lamp strings along main streets. Not pandal locations.
+All three are labelled simulated or synthetic in the layer list and run in real time, pausing with the clock.
+
+### Time modes in the UI
+Live, Custom time (any date and time of day; sun only), and event replay. There is no year slider:
+the project has no dated city content, so a "historical" view would have shown today's city.
+`TimeController` still supports years, for when sourced historical layers exist. With no stored real
+event, the event mode is labelled "Storm demo (synthetic)".
+
+## Planned phases (not built)
 ## Planned phases (not built)
 - **P2 Waterlogging** `layers/flood`: terrain grid (DEM prior + calibration file of hotspots/depressions),
   ping-pong render-target height-field solver stepped by `simDeltaSeconds`, reset on `epoch` change;

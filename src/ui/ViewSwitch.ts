@@ -17,7 +17,7 @@ export class ViewSwitch {
       buttons.set(mode, b);
       seg.append(b);
     }
-    const note = el('p', { class: 'note', hidden: true }, 'A stylised render of the same OSM model from one fixed camera. Drag to pan, scroll or pinch to zoom. Rain streaks are not drawn in this view.');
+    const note = el('p', { class: 'note', hidden: true }, 'A stylised render of the same OSM model from one fixed camera. Drag to pan, scroll or pinch to zoom.');
     const paint = (mode: ViewMode): void => {
       for (const [m, b] of buttons) b.setAttribute('aria-pressed', String(m === mode));
       note.hidden = mode !== 'isometric';

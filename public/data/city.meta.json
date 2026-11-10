@@ -15,7 +15,7 @@
     "maxY": 4197.457092293538
   },
   "tileSizeMetres": 1000,
-  "generatedAt": "2026-11-10T19:21:35.664Z",
+  "generatedAt": "2026-11-10T19:40:14.683Z",
   "osmBaseTimestamp": "2026-11-10T14:50:51Z",
   "attribution": "© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0",
   "stats": {
@@ -31,7 +31,7 @@
     "waterways": 27,
     "greenPolygons": 446
   },
-  "landmarks": "53 landmarks (see city.bin)",
+  "landmarks": "149 landmarks (see city.bin)",
   "models": [
     {
       "id": "victoria-memorial",

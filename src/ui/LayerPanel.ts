@@ -8,6 +8,8 @@ const STATUS_TEXT: Record<LayerEntry['status'], string> = { registered: '', load
 export class LayerPanel {
   private readonly rows = new Map<string, { input: HTMLInputElement; status: HTMLElement }>();
   private readonly legend = el('section');
+  /** Filled by SearchBox. */
+  readonly searchSection = el('section', { id: 'search' });
   /** Filled by ViewSwitch. */
   readonly viewSection = el('section');
   /** Filled by WeatherPanel. */
@@ -30,7 +32,7 @@ export class LayerPanel {
       this.paint(entry);
     }
     registry.on('change', (entry) => this.paint(entry));
-    root.append(toggle, this.viewSection, list, this.weatherSection, this.legend);
+    root.append(toggle, this.searchSection, this.viewSection, list, this.weatherSection, this.legend);
   }
 
   private paint(entry: LayerEntry): void {
@@ -61,6 +63,11 @@ export class LayerPanel {
         'p',
         { class: 'note' },
         'Windows and storey lines are a procedural pattern (one storey per 3.2 m), not imagery of the real facades. Pale stone buildings are named landmarks; the colour is a highlight only.',
+      ),
+      el(
+        'p',
+        { class: 'note' },
+        'Landmark models use overall dimensions from Wikipedia; their finer detail is schematic. Layers marked simulated or synthetic are decoration, not data.',
       ),
       el('p', { class: 'note' }, `OSM snapshot: ${header.osmBaseTimestamp?.slice(0, 10) ?? 'unknown'}. Ground is flat until terrain arrives in Phase 2.`),
     );

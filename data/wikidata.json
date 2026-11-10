@@ -1,390 +1,1766 @@
 {
- "fetchedAt": "2026-11-10T15:14:33.849Z",
+ "fetchedAt": "2026-11-10T19:35:14.246Z",
  "licence": "CC0 (Wikidata)",
  "entities": {
+  "Q105044529": {
+   "label": "Dr. B C Roy Post Graduate Institute of Paediatric Sciences",
+   "description": null,
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-03T15:29:44Z"
+  },
   "Q107099434": {
    "label": "Esplanade Mansions",
+   "description": "Jewish mansion in Kolkata, India",
+   "enwiki": "Esplanade Mansions, Kolkata",
+   "image": "Esplanade-Mansion-Front-View-Kolkata.jpg",
+   "inceptionYear": 1910,
    "heightM": null,
    "floors": null,
    "modified": "2024-11-19T09:28:34Z"
   },
+  "Q108541466": {
+   "label": "Peerless Inn",
+   "description": "hotel in Kolkata, India",
+   "enwiki": null,
+   "image": "Peerless Inn - Esplanade - Kolkata 2012-09-19 0016.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-05-01T22:41:21Z"
+  },
   "Q108598529": {
    "label": "Vidhan Sabha Bhavan",
+   "description": "building in Ward No. 45, Kolkata Municipal Corporation, India",
+   "enwiki": "Vidhan Sabha Bhavan",
+   "image": "West Bengal State Legislative Assembly House, Kolkata.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-09-05T12:01:13Z"
   },
+  "Q108659618": {
+   "label": "Sector I, Salt Lake",
+   "description": null,
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-09T13:56:03Z"
+  },
+  "Q108659741": {
+   "label": "Sector III, Salt Lake",
+   "description": null,
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T16:57:47Z"
+  },
+  "Q110602708": {
+   "label": "Chandmari Bridge",
+   "description": "bridge in West Bengal",
+   "enwiki": null,
+   "image": "Chandmari Road Over Bridge in Howrah Station Area 04.jpg",
+   "inceptionYear": 1933,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-26T20:17:20Z"
+  },
   "Q111402421": {
    "label": "ITC Sonar, a Luxury Collection Hotel, Kolkata",
+   "description": "hotel in Kolkata, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2023-05-01T22:57:11Z"
   },
   "Q11325387": {
    "label": "Netaji Bhawan",
+   "description": "historic building in India",
+   "enwiki": "Netaji Bhawan",
+   "image": "Building and statue infront of Netaji Bhawan 14.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-05-26T18:18:02Z"
   },
+  "Q12057280": {
+   "label": "Esplanade",
+   "description": "neighborhood in Kolkata",
+   "enwiki": "Esplanade, Kolkata",
+   "image": "Esplanade Row East.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-18T07:08:14Z"
+  },
   "Q12062296": {
    "label": "Nakhoda Masjid",
+   "description": "mosque in India",
+   "enwiki": "Nakhoda Mosque",
+   "image": "Nakhoda Masjid Wide Angle.jpg",
+   "inceptionYear": 1926,
    "heightM": null,
    "floors": null,
    "modified": "2025-08-10T08:07:06Z"
   },
+  "Q13059056": {
+   "label": "Bethune College",
+   "description": "First Female College in Bengal",
+   "enwiki": "Bethune College",
+   "image": null,
+   "inceptionYear": 1849,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-30T14:25:35Z"
+  },
+  "Q131606793": {
+   "label": "Raajkutir - IHCL SeleQtions",
+   "description": "hotel in Kolkata, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-01-20T07:01:13Z"
+  },
   "Q133141263": {
    "label": "Panchdeep Tower",
+   "description": "tower in Howrah, West Bengal, India",
+   "enwiki": null,
+   "image": "Panchdeep Tower, Howrah পঞ্চদীপ টাওয়ার, হাওড়া (cropped).jpg",
+   "inceptionYear": 2015,
    "heightM": 121.92,
    "floors": null,
    "modified": "2026-01-24T12:52:52Z"
   },
+  "Q1348": {
+   "label": "Kolkata",
+   "description": "capital city of West Bengal, India",
+   "enwiki": "Kolkata",
+   "image": "Ketan donate4.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-20T19:46:11Z"
+  },
+  "Q1356": {
+   "label": "West Bengal",
+   "description": "Indian state",
+   "enwiki": "West Bengal",
+   "image": "West Bengal outline map.svg",
+   "inceptionYear": 1947,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-06T13:51:57Z"
+  },
   "Q1356352": {
    "label": "Victoria Memorial",
+   "description": "memorial dedicated to the memory of Queen Victoria in Kolkata",
+   "enwiki": "Victoria Memorial, Kolkata",
+   "image": "Victoria Memorial situated in Kolkata.jpg",
+   "inceptionYear": 1921,
    "heightM": null,
    "floors": null,
    "modified": "2026-02-13T09:25:35Z"
   },
   "Q1364900": {
    "label": "Indian Museum",
+   "description": "museum in India",
+   "enwiki": "Indian Museum",
+   "image": "Indian Museum Building with Quadrangle - Inside North View - Indian Museum - Kolkata 2014-02-14 9248.JPG",
+   "inceptionYear": 1814,
    "heightM": null,
    "floors": null,
    "modified": "2026-09-29T07:12:14Z"
   },
+  "Q1478937": {
+   "label": "Howrah district",
+   "description": "district in West Bengal, India",
+   "enwiki": "Howrah district",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-31T09:15:30Z"
+  },
+  "Q14956830": {
+   "label": "Bangur Institute of Neurosciences",
+   "description": "hospital in West Bengal, India",
+   "enwiki": "Bangur Institute of Neurosciences",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-25T16:44:08Z"
+  },
+  "Q14957107": {
+   "label": "Nil Ratan Sircar Medical College and Hospital",
+   "description": "Medical School and Tertiary care Hospital in Kolkata.",
+   "enwiki": "Nil Ratan Sircar Medical College and Hospital",
+   "image": "N. R. S Medical College & Hospital 05.jpg",
+   "inceptionYear": 1873,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-27T09:49:40Z"
+  },
+  "Q15217311": {
+   "label": "Great Eastern Hotel",
+   "description": "hotel in Kolkata",
+   "enwiki": "Great Eastern Hotel, Kolkata",
+   "image": "Lalit Great Eastern at Night.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-01-14T03:26:50Z"
+  },
+  "Q15241748": {
+   "label": "Lascar War Memorial",
+   "description": "war memorial in Kolkata",
+   "enwiki": "Lascar War Memorial",
+   "image": "Lascar War Memorial.jpg",
+   "inceptionYear": 1924,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-08-10T08:24:23Z"
+  },
   "Q15254588": {
    "label": "Mohun Bagan Ground",
+   "description": "Indian association football venue based in Kolkata, West Bengal",
+   "enwiki": "Mohun Bagan Ground",
+   "image": "Mohun Bagan Ground and gallery 09.jpg",
+   "inceptionYear": 1872,
    "heightM": null,
    "floors": null,
    "modified": "2023-09-05T17:52:26Z"
   },
+  "Q16255382": {
+   "label": "Brahmo Balika Shikshalaya",
+   "description": "school in Kolkata, India",
+   "enwiki": null,
+   "image": "Brahmo Balika Shikshalaya.jpg",
+   "inceptionYear": 1890,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-02T00:34:30Z"
+  },
+  "Q16892566": {
+   "label": "Hyatt Regency Kolkata",
+   "description": "building in India",
+   "enwiki": null,
+   "image": "Hyatt Regency Hotel - JA 1 Sector III Salt Lake City - Kolkata 2017-05-08 7126.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": 7,
+   "modified": "2023-03-26T04:58:58Z"
+  },
+  "Q16963436": {
+   "label": "St. Thomas' College of Engineering and Technology",
+   "description": "engineering college in Kolkata, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": 2000,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-12T21:36:51Z"
+  },
+  "Q17011986": {
+   "label": "Shri Shikshayatan School",
+   "description": "school in Kolkata, India",
+   "enwiki": "Shri Shikshayatan School",
+   "image": "Shri Shikshayatan School.jpg",
+   "inceptionYear": 1920,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T10:56:31Z"
+  },
   "Q17069862": {
    "label": "Quest Mall",
+   "description": "Shopping mall in Kolkata, India",
+   "enwiki": "Quest Mall",
+   "image": "Quest - Mall - 33 Syad Amir Ali Avenue - Kolkata 2014-01-23 7159.JPG",
+   "inceptionYear": 2013,
    "heightM": null,
    "floors": null,
    "modified": "2026-02-11T01:00:34Z"
   },
   "Q18164352": {
    "label": "Scottish Church Collegiate School",
+   "description": "school in Kolkata, India",
+   "enwiki": "Scottish Church Collegiate School",
+   "image": "Scottish Church Collegiate School 01.jpg",
+   "inceptionYear": 1830,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T16:57:56Z"
   },
   "Q19893393": {
    "label": "Lower Circular Road cemetery",
+   "description": "Christian cemetery in Kolkata",
+   "enwiki": "Lower Circular Road cemetery",
+   "image": "Lower Circular Road cemetery.jpg",
+   "inceptionYear": 1840,
    "heightM": null,
    "floors": null,
    "modified": "2026-06-26T21:26:15Z"
   },
+  "Q19950963": {
+   "label": "Old Mission Church",
+   "description": "church in Kolkata",
+   "enwiki": "Old Mission Church, Kolkata",
+   "image": "Old Mission Church, the second oldest church in Kolkata 02.jpg",
+   "inceptionYear": 1770,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-07-13T08:55:54Z"
+  },
   "Q2035004": {
    "label": "Eden Gardens",
+   "description": "cricket ground in Kolkata, West Bengal, India",
+   "enwiki": "Eden Gardens",
+   "image": "Eden Garden Stadium Kolkata MB01.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-03-26T19:05:08Z"
   },
+  "Q205697": {
+   "label": "Howrah",
+   "description": "City in West Bengal, India",
+   "enwiki": "Howrah",
+   "image": "Howrah bridge betwixt Lights.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T18:18:43Z"
+  },
+  "Q2088496": {
+   "label": "Kolkata district",
+   "description": "district in West Bengal, India",
+   "enwiki": "Kolkata district",
+   "image": "Kolkata Imgs.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-31T09:14:57Z"
+  },
   "Q22343101": {
    "label": "St. Andrew's Church",
+   "description": "church in Kolkata",
+   "enwiki": null,
+   "image": "St Andrew's Church - Dalhousie Square - Kolkata 2012-09-22 0281.JPG",
+   "inceptionYear": 1818,
    "heightM": null,
    "floors": null,
    "modified": "2022-02-28T13:42:17Z"
   },
+  "Q23013854": {
+   "label": "Sakhawat Memorial Govt. Girls' High School",
+   "description": "school in Kolkata, India",
+   "enwiki": "Sakhawat Memorial Govt. Girls' High School",
+   "image": "Sakhawat Memorial Govt. Girls' High School.jpg",
+   "inceptionYear": 1911,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T20:26:24Z"
+  },
+  "Q2341786": {
+   "label": "Alipore",
+   "description": "locality of Kolkata",
+   "enwiki": "Alipore",
+   "image": "Alipore Park Place 'BelAir' (1).jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-26T23:54:30Z"
+  },
+  "Q234277": {
+   "label": "Communist Party of India (Marxist)",
+   "description": "Indian political party",
+   "enwiki": "Communist Party of India (Marxist)",
+   "image": null,
+   "inceptionYear": 1964,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-16T07:52:44Z"
+  },
   "Q2408126": {
    "label": "East Bengal Ground",
+   "description": "Indian association football venue based in Kolkata, West Bengal",
+   "enwiki": "East Bengal Ground",
+   "image": "East Bengal ground.jpg",
+   "inceptionYear": 1915,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T13:59:21Z"
   },
+  "Q24940094": {
+   "label": "St. Teresa’s Secondary School",
+   "description": "school in Kolkata, West Bengal, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": 1885,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T13:45:51Z"
+  },
+  "Q24945327": {
+   "label": "Cathedral Mission High School",
+   "description": "school in Kolkata, India",
+   "enwiki": "Cathedral Mission High School",
+   "image": "Cathedral Mission High School.jpg",
+   "inceptionYear": 1925,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T20:27:10Z"
+  },
+  "Q2579702": {
+   "label": "Jadavpur University",
+   "description": "state public university in Kolkata, West Bengal, India",
+   "enwiki": "Jadavpur University",
+   "image": "Jadavpur University Gate No. 4.jpg",
+   "inceptionYear": 1955,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-24T19:58:43Z"
+  },
+  "Q26791144": {
+   "label": "Circular Canal",
+   "description": "canal in India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-26T21:53:26Z"
+  },
+  "Q2750027": {
+   "label": "Fort William",
+   "description": "fort in Kolkata, India",
+   "enwiki": "Fort William, West Bengal",
+   "image": "Fortwilliam1828.jpg",
+   "inceptionYear": 1696,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-22T21:47:59Z"
+  },
+  "Q28050323": {
+   "label": "Orange Line",
+   "description": "Transit line in Kolkata, India",
+   "enwiki": "Orange Line (Kolkata Metro)",
+   "image": "Satyajit Ray metro station.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-08-23T07:33:37Z"
+  },
+  "Q28154828": {
+   "label": "Institute of Child Health, Kolkata",
+   "description": "hospital in India",
+   "enwiki": "Institute of Child Health, Kolkata",
+   "image": null,
+   "inceptionYear": 1957,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-25T14:08:47Z"
+  },
+  "Q28179339": {
+   "label": "State Highway 1",
+   "description": "Highway in West Bengal, India",
+   "enwiki": "State Highway 1 (West Bengal)",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-02-06T07:29:26Z"
+  },
   "Q2972549": {
    "label": "South Park Street Cemetery",
+   "description": "cemetery of Kolkata, West Bengal, India (1767–)",
+   "enwiki": "South Park Street Cemetery",
+   "image": "South Park Street Cemetery Kolkata (24455038378).jpg",
+   "inceptionYear": 1767,
    "heightM": null,
    "floors": null,
    "modified": "2026-02-18T14:19:47Z"
   },
   "Q2983685": {
    "label": "St. Xavier's Collegiate School",
+   "description": "school in Kolkata, India",
+   "enwiki": "St. Xavier's Collegiate School",
+   "image": "Kolkata, Saint Xavier's Collegiate school.jpg",
+   "inceptionYear": 1860,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-03T10:04:21Z"
   },
+  "Q300701": {
+   "label": "Grand Trunk Road",
+   "description": "ancient major road in Asia from Teknaf, Bangladesh, to Kabul, Afghanistan",
+   "enwiki": "Grand Trunk Road",
+   "image": "Grand Trunk Road - Chandan Nagar - Hooghly - 2013-05-19 7311.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-09T06:26:02Z"
+  },
+  "Q30270145": {
+   "label": "Nightingale Hospital",
+   "description": "healthcare organization in Calcutta, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": 1997,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-25T13:51:56Z"
+  },
+  "Q3051967": {
+   "label": "St. John's Church",
+   "description": "church in Kolkata, India",
+   "enwiki": "St. John's Church, Kolkata",
+   "image": "Panorama view of St. John's Church (4), Kolkata (cropped).jpg",
+   "inceptionYear": 1784,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-03-14T23:14:02Z"
+  },
   "Q30632550": {
    "label": "Mahakaran metro station",
+   "description": "metro station in Kolkata, India",
+   "enwiki": "Mahakaran metro station",
+   "image": "Mahakaran metro station line - 6.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-05-23T15:06:26Z"
   },
   "Q30632591": {
    "label": "Barun Sengupta metro station",
+   "description": "metro station in Kolkata, India",
+   "enwiki": "Barun Sengupta metro station",
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-05-19T12:52:19Z"
   },
   "Q30632592": {
    "label": "Gour Kishore Ghosh metro station",
+   "description": "metro station in Kolkata, India",
+   "enwiki": "Gour Kishore Ghosh metro station",
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-05-19T12:52:20Z"
   },
+  "Q31726001": {
+   "label": "Tala Tank",
+   "description": "Water tank in India",
+   "enwiki": "Tala tank",
+   "image": "Tala water tank 02.jpg",
+   "inceptionYear": 1909,
+   "heightM": 33.528,
+   "floors": null,
+   "modified": "2025-05-04T03:07:31Z"
+  },
+  "Q3346347": {
+   "label": "Damodar Valley Corporation",
+   "description": "multipurpose river valley project in India",
+   "enwiki": "Damodar Valley Corporation",
+   "image": null,
+   "inceptionYear": 1948,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-04T18:34:04Z"
+  },
   "Q3346440": {
    "label": "Alipore Zoological Gardens",
+   "description": "zoo situated in Kolkata, India",
+   "enwiki": "Zoological Garden, Alipore",
+   "image": "Alipore Zoological Garden - Kolkata 2011-05-03 2548.JPG",
+   "inceptionYear": 1876,
    "heightM": null,
    "floors": null,
    "modified": "2025-06-29T15:24:28Z"
   },
+  "Q3347163": {
+   "label": "Jorasanko Thakur Bari",
+   "description": "ancestral home of the Tagore family in Kolkata, West Bengal, India",
+   "enwiki": "Jorasanko Thakur Bari",
+   "image": "Jorasanko Thakur Bari Complex - Kolkata 2015-08-11 2085-2091.tif",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-24T03:32:27Z"
+  },
+  "Q3347406": {
+   "label": "Sealdah railway station",
+   "description": "Railway Station in West Bengal, India",
+   "enwiki": "Sealdah railway station",
+   "image": "শিয়ালদহ রেলওয়ে স্টেশন ৩.jpg",
+   "inceptionYear": 1862,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-23T20:51:30Z"
+  },
+  "Q3348916": {
+   "label": "West Bengal National University of Juridical Sciences",
+   "description": "state public university in Kolkata, West Bengal, India",
+   "enwiki": "West Bengal National University of Juridical Sciences",
+   "image": "West Bengal National University of Juridical Sciences, Kolkata (front entrance, 2006).jpg",
+   "inceptionYear": 1999,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-24T19:40:08Z"
+  },
+  "Q3348933": {
+   "label": "Medical College and Hospital, Kolkata",
+   "description": "Medical School and Hospital based in Kolkata,West Bengal,India",
+   "enwiki": "Medical College & Hospital, Kolkata",
+   "image": "Mchbuilding.JPG",
+   "inceptionYear": 1835,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T17:48:55Z"
+  },
+  "Q3349172": {
+   "label": "Tipu Sultan Mosque",
+   "description": "mosque in Kolkata",
+   "enwiki": "Tipu Sultan Mosque",
+   "image": "Tipu Sultan Mosque Dharmatala at Night.jpg",
+   "inceptionYear": 1842,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-08T06:20:10Z"
+  },
+  "Q3349530": {
+   "label": "B. B. D. Bagh",
+   "description": "neighbourhood in Kolkata district, Presidency division, West Bengal, India",
+   "enwiki": "B. B. D. Bagh",
+   "image": "General Post Office and Reserve Bank of India, Kolkata, India.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-22T06:29:12Z"
+  },
   "Q3349690": {
    "label": "Lok Bhavan",
+   "description": "official residence of the Governor of West Bengal",
+   "enwiki": "Lok Bhavan, Kolkata",
+   "image": "Raj Bhaban 1.jpg",
+   "inceptionYear": 1803,
    "heightM": null,
    "floors": null,
    "modified": "2026-07-04T17:27:23Z"
   },
+  "Q3350694": {
+   "label": "Bagbazar",
+   "description": "locality of Kolkata",
+   "enwiki": "Bagbazar",
+   "image": "Kolkata Bagbazar Ghat.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-26T13:13:37Z"
+  },
+  "Q3350712": {
+   "label": "General Post Office, Kolkata",
+   "description": "building in Kolkata, India",
+   "enwiki": "General Post Office, Kolkata",
+   "image": "General Post Office - Dalhousie Square - Kolkata 2012-09-22 0299.JPG",
+   "inceptionYear": 1868,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-17T12:54:32Z"
+  },
+  "Q338425": {
+   "label": "North 24 Parganas district",
+   "description": "district in West Bengal, India",
+   "enwiki": "North 24 Parganas district",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-31T09:14:56Z"
+  },
+  "Q3532605": {
+   "label": "Birla Industrial & Technological Museum",
+   "description": "Industrial & Technological Museum in Kolkata",
+   "enwiki": "Birla Industrial & Technological Museum",
+   "image": "Birla Industrial & Technological Museum - Kolkata 2015-02-28 3367.JPG",
+   "inceptionYear": 1959,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-03-06T11:26:58Z"
+  },
   "Q3584578": {
    "label": "St. Thomas Church",
+   "description": "church in Kolkata",
+   "enwiki": "St. Thomas Church, Kolkata",
+   "image": "Middleton Row 'St Thomas Church'.jpg",
+   "inceptionYear": 1842,
    "heightM": null,
    "floors": null,
    "modified": "2024-08-07T20:03:17Z"
   },
+  "Q4069721": {
+   "label": "Armenian College",
+   "description": "college in Kolkata, India",
+   "enwiki": "Armenian College (Kolkata)",
+   "image": null,
+   "inceptionYear": 1821,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T15:43:04Z"
+  },
+  "Q44143387": {
+   "label": "Job Charnock's Mausoleum",
+   "description": "Mausoleum of Job Charnock",
+   "enwiki": null,
+   "image": "Job Charnak Monument.1.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-06T14:11:15Z"
+  },
   "Q4682601": {
    "label": "Adi Ganga",
+   "description": "river in India",
+   "enwiki": "Adi Ganga",
+   "image": "Adi Ganga.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2023-07-04T03:14:52Z"
   },
+  "Q4711938": {
+   "label": "College Street Coffee House",
+   "description": "cafe in Kolkata, India",
+   "enwiki": "College Street Coffee House",
+   "image": "Coffee House in Kolkata - Interior 01.jpg",
+   "inceptionYear": 1942,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-06-15T08:25:23Z"
+  },
   "Q4728949": {
    "label": "All India Institute of Hygiene and Public Health",
+   "description": "Public health School in Kolkata, India",
+   "enwiki": "All India Institute of Hygiene and Public Health",
+   "image": "All India Institute of Hygiene and Public Health.jpg",
+   "inceptionYear": 1932,
    "heightM": null,
    "floors": null,
    "modified": "2026-04-06T00:27:51Z"
   },
   "Q4855639": {
    "label": "Bangur Avenue",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Bangur Avenue",
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2021-09-14T06:49:22Z"
   },
+  "Q4863170": {
+   "label": "Barrackpore II community development block",
+   "description": "community development block in West Bengal, India",
+   "enwiki": "Barrackpore II",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T12:01:37Z"
+  },
+  "Q4901500": {
+   "label": "Bhavan's Gangabux Kanoria Vidyamandir",
+   "description": "school",
+   "enwiki": "Bhavan's Gangabux Kanoria Vidyamandir",
+   "image": "Bhavan's Gangabux Kanoria Vidyamandir3.jpg",
+   "inceptionYear": 1984,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-06T12:21:07Z"
+  },
+  "Q4902068": {
+   "label": "Bhowanipore",
+   "description": "locality of Kolkata",
+   "enwiki": "Bhowanipore",
+   "image": "Forum Mall, Elgin Road.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-25T16:40:40Z"
+  },
   "Q4904154": {
    "label": "Bidhannagar Government High School",
+   "description": "school in Kolkata, India",
+   "enwiki": null,
+   "image": "Bidhan Nagar Govt. High School.JPG",
+   "inceptionYear": 1977,
    "heightM": null,
    "floors": null,
    "modified": "2026-06-30T19:56:32Z"
   },
+  "Q4904155": {
+   "label": "Bidhannagar College",
+   "description": "college in West Bengal",
+   "enwiki": "Bidhannagar College",
+   "image": "Bidhannagar College - EB 2 Sector I - Salt Lake City - Kolkata 2017-04-29 1714.JPG",
+   "inceptionYear": 1984,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T15:43:16Z"
+  },
+  "Q4916516": {
+   "label": "Birla High School",
+   "description": "private school in Kolkata, West Bengal, India",
+   "enwiki": null,
+   "image": "Birla High School.jpg",
+   "inceptionYear": 1941,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-10T14:08:03Z"
+  },
   "Q4916536": {
    "label": "M. P. Birla Planetarium",
+   "description": "planetarium museum in Kolkata, India",
+   "enwiki": "Birla Planetarium, Kolkata",
+   "image": "Birla Planetarium, Kolkata.jpg",
+   "inceptionYear": 1963,
    "heightM": null,
    "floors": null,
    "modified": "2025-12-23T03:00:52Z"
   },
+  "Q4950708": {
+   "label": "Bowbazar",
+   "description": "locality of Kolkata",
+   "enwiki": "Bowbazar",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-04T06:08:15Z"
+  },
+  "Q5018918": {
+   "label": "Calcutta Boys' School",
+   "description": "school in Kolkata, India",
+   "enwiki": "Calcutta Boys' School",
+   "image": "Calcutta Boys' School Main Campus 01.jpg",
+   "inceptionYear": 1877,
+   "heightM": null,
+   "floors": null,
+   "modified": "2021-09-14T14:33:28Z"
+  },
   "Q5018955": {
    "label": "Calcutta School of Tropical Medicine",
+   "description": "Medical Research Institution located in Kolkata, India",
+   "enwiki": "Calcutta School of Tropical Medicine",
+   "image": "Calcutta School of Tropical Medicine - 108 Chittaranjan Avenue - Kolkata 2014-10-30 0184-0189.tif",
+   "inceptionYear": 1914,
    "heightM": null,
    "floors": null,
    "modified": "2026-06-04T06:57:08Z"
   },
+  "Q5052457": {
+   "label": "Cathedral of the Most Holy Rosary",
+   "description": "cathedral in India",
+   "enwiki": "Holy Rosary Cathedral, Kolkata",
+   "image": "Cathedral of the Most Holy Rosary (Portuguese Church), Calcutta (Kolkata).JPG",
+   "inceptionYear": 1797,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-16T12:13:41Z"
+  },
+  "Q5073228": {
+   "label": "Chaplin Cinema",
+   "description": "building in India",
+   "enwiki": "Chaplin Cinema (Kolkata)",
+   "image": "Chaplin - Cinema - Hogg Street - Kolkata 2013-04-15 6059.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2022-11-07T14:44:50Z"
+  },
+  "Q52162031": {
+   "label": "Sealdah",
+   "description": "locality of Kolkata",
+   "enwiki": "Sealdah",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-26T13:37:12Z"
+  },
+  "Q5269337": {
+   "label": "Dharmatala",
+   "description": "locality of Kolkata",
+   "enwiki": "Dharmatala",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-01-30T07:41:31Z"
+  },
   "Q5292284": {
    "label": "Don Bosco School, Park Circus",
+   "description": "school in Kolkata, India",
+   "enwiki": "Don Bosco School, Park Circus",
+   "image": "Don Bosco School, Park Circus Emblem.jpg",
+   "inceptionYear": 1957,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T13:47:43Z"
   },
+  "Q5304333": {
+   "label": "Dr. R. Ahmed Dental College and Hospital",
+   "description": "Government dental college in Kolkata",
+   "enwiki": "Dr. R. Ahmed Dental College and Hospital",
+   "image": "RADC.jpg",
+   "inceptionYear": 1924,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-25T14:41:29Z"
+  },
+  "Q5327976": {
+   "label": "East Calcutta Girl's College",
+   "description": "college in West Bengal",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": 1992,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T15:42:55Z"
+  },
+  "Q5380085": {
+   "label": "Entally",
+   "description": "locality of Kolkata",
+   "enwiki": "Entally",
+   "image": "Kolkata Entally3.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-28T15:46:37Z"
+  },
   "Q5455830": {
    "label": "Kolkata Race Course",
+   "description": "race course in Kolkata",
+   "enwiki": "Kolkata Race Course",
+   "image": "Kolkata, Race course.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-05-09T08:50:08Z"
   },
+  "Q55605213": {
+   "label": "Beniapukur",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Beniapukur",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-01T19:16:49Z"
+  },
+  "Q55612676": {
+   "label": "Girish Park",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Girish Park",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-01T19:17:28Z"
+  },
+  "Q55613482": {
+   "label": "Hastings",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Hastings, Kolkata",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-01T19:17:30Z"
+  },
+  "Q55624664": {
+   "label": "Narkeldanga",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Narkeldanga",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-01T19:17:32Z"
+  },
+  "Q55629897": {
+   "label": "Phoolbagan",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Phoolbagan",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-01T19:17:34Z"
+  },
   "Q5594620": {
    "label": "The Oberoi Grand",
+   "description": "hotel in Kolkata, India",
+   "enwiki": "Grand Hotel (Kolkata)",
+   "image": "OberoiGrandHotelKolkata gobeirne.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2024-05-31T16:44:36Z"
   },
   "Q5620464": {
    "label": "Gurudas College",
+   "description": "college in West Bengal",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": 1956,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T13:28:29Z"
   },
   "Q56244717": {
    "label": "Asiatic Society building",
+   "description": "building in India",
+   "enwiki": null,
+   "image": "Asiatic Society - Park Street - Kolkata 2013-04-10 7830.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-10-21T21:13:37Z"
   },
   "Q5656757": {
    "label": "Hare School",
+   "description": "school in Kolkata, India",
+   "enwiki": "Hare School",
+   "image": "Hare School - 87 College Street - Kolkata 2015-02-09 2243.JPG",
+   "inceptionYear": 1818,
    "heightM": null,
    "floors": null,
    "modified": "2026-06-30T19:57:32Z"
   },
+  "Q56682483": {
+   "label": "Raja Rammohun Roy Memorial Museum",
+   "description": "museum in Kolkata",
+   "enwiki": null,
+   "image": "Raja Rammohan Roy Memorial Museum 20190115 073552 01.jpg",
+   "inceptionYear": 1999,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-08-04T18:54:45Z"
+  },
+  "Q5922477": {
+   "label": "Howrah–Chennai main line",
+   "description": "railway route in India",
+   "enwiki": "Howrah–Chennai main line",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-17T16:49:54Z"
+  },
+  "Q5922511": {
+   "label": "Sailen Manna Stadium",
+   "description": "stadium in India",
+   "enwiki": "Sailen Manna Stadium",
+   "image": "Howrah Stadium.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-01-04T03:30:02Z"
+  },
+  "Q59290206": {
+   "label": "British Deputy High Commission Kolkata",
+   "description": "British High Commission",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-03T13:14:42Z"
+  },
+  "Q6020723": {
+   "label": "Indian Institute of Social Welfare and Business Management",
+   "description": "Management Institution in West Bengal",
+   "enwiki": "Indian Institute of Social Welfare and Business Management",
+   "image": "Indian Institute of Social Welfare and Business Management.jpg",
+   "inceptionYear": 1953,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T13:48:53Z"
+  },
+  "Q619913": {
+   "label": "National Library of India",
+   "description": "national library located in Kolkata",
+   "enwiki": "National Library of India",
+   "image": "Belvedere Building - Indian National Library - Belvedere Estate - Kolkata 2014-05-02 4742.JPG",
+   "inceptionYear": 1836,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-10T13:18:23Z"
+  },
+  "Q6276260": {
+   "label": "Jorasanko",
+   "description": "locality of Kolkata",
+   "enwiki": "Jorasanko",
+   "image": "Jorasanko Thakur Bari.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-11-27T17:38:18Z"
+  },
+  "Q6404679": {
+   "label": "Kidderpore",
+   "description": "locality of Kolkata",
+   "enwiki": "Kidderpore",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-09-08T18:20:57Z"
+  },
+  "Q64213471": {
+   "label": "Park Street head post office",
+   "description": "post office in West Bengal India",
+   "enwiki": null,
+   "image": "Park Street head post office.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-17T14:11:22Z"
+  },
+  "Q6427297": {
+   "label": "Kolkata Circular Railway",
+   "description": "railway line in Kolkata",
+   "enwiki": "Kolkata Circular Railway",
+   "image": "Circular Train Crossing Mayer Ghat - Baghbazar Railway Station - Kolkata 2017-04-29 1929.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-09-10T15:50:58Z"
+  },
+  "Q6427301": {
+   "label": "Blue Line",
+   "description": "transit line in Kolkata, India",
+   "enwiki": "Blue Line (Kolkata Metro)",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-09-06T14:56:11Z"
+  },
+  "Q6427302": {
+   "label": "Green Line",
+   "description": "transit line in Kolkata, India",
+   "enwiki": "Green Line (Kolkata Metro)",
+   "image": "Metro Trial Run Day2.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T16:57:22Z"
+  },
+  "Q6478070": {
+   "label": "Lake Town",
+   "description": "neighbourhood of South Dum Dum, North 24 Parganas, West Bengal, India",
+   "enwiki": "Lake Town, Kolkata",
+   "image": "KOLKATA TIME ZONE.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-01-27T09:36:10Z"
+  },
   "Q6480048": {
    "label": "Lal Dighi",
+   "description": "body of water",
+   "enwiki": "Lal Dighi, Kolkata",
+   "image": "Lal Dighi Pano.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-02-12T08:59:39Z"
   },
+  "Q65521258": {
+   "label": "Belle Vue Clinic, Kolkata",
+   "description": "one of the oldest NABH accredited premiere hospitals in Kolkata",
+   "enwiki": "Belle Vue Clinic, Kolkata",
+   "image": "Belle Vue Clinic - Kolkata 2011-10-16 160469.JPG",
+   "inceptionYear": 1967,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T14:45:23Z"
+  },
+  "Q65658567": {
+   "label": "JW Marriot Hotel Kolkata",
+   "description": "hotel in Kolkata, India",
+   "enwiki": null,
+   "image": "JW Marriott Hotel Under Construction - Eastern Metropolitan Bypass - Kolkata 2016-06-23 5209.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-05-01T22:41:21Z"
+  },
+  "Q6680900": {
+   "label": "Loreto College",
+   "description": "Catholic women's college in Kolkata, India",
+   "enwiki": "Loreto College, Kolkata",
+   "image": "Loreto College.jpg",
+   "inceptionYear": 1912,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-04-16T16:22:36Z"
+  },
+  "Q6730097": {
+   "label": "Magen David Synagogue",
+   "description": "synagogue in Kolkata",
+   "enwiki": "Magen David Synagogue (Kolkata)",
+   "image": "Maghen David Synagogue - Kolkata 2012-09-22 0275-0276 Combined.jpg",
+   "inceptionYear": 1884,
+   "heightM": 43,
+   "floors": null,
+   "modified": "2026-07-25T12:27:31Z"
+  },
+  "Q6749638": {
+   "label": "Maniktala",
+   "description": "locality of Kolkata",
+   "enwiki": "Maniktala",
+   "image": "Maniktala Crossing - Kolkata 7342.JPG",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-28T15:35:28Z"
+  },
   "Q67862554": {
    "label": "Jain Swetamber Dadaji's Temple",
+   "description": null,
+   "enwiki": null,
+   "image": "Jain Swetamber DADAJI'S Temple and Garden.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2022-02-10T07:11:27Z"
   },
   "Q67911726": {
    "label": "Kali Krishna Tagore street",
+   "description": "street in Kolkata, India",
+   "enwiki": null,
+   "image": "Kalikrishna Tagore Street - Strand Road View - Kolkata 2016-10-11 0657.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2020-11-28T12:32:20Z"
   },
+  "Q68007872": {
+   "label": "Calcutta Police Museum",
+   "description": "Police museum in Kolkata",
+   "enwiki": null,
+   "image": "Office of the Deputy Commissioner Kolkata Police (N) and Police Museum 01.jpg",
+   "inceptionYear": 1996,
+   "heightM": null,
+   "floors": null,
+   "modified": "2022-05-18T13:16:29Z"
+  },
   "Q68074746": {
    "label": "College Square",
+   "description": null,
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2022-02-10T07:20:15Z"
   },
   "Q68189747": {
    "label": "Esplanade Row West",
+   "description": "street in Kolkata",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-04-30T17:37:45Z"
   },
   "Q68190653": {
    "label": "Gostha Pal Sarani",
+   "description": "road in Kolkata, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2024-12-01T18:48:54Z"
   },
   "Q68315578": {
    "label": "Ezra Street",
+   "description": "street in Kolkata, India",
+   "enwiki": null,
+   "image": "Ezra Street - Kolkata 2013-03-03 5416.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T13:23:42Z"
   },
   "Q68466698": {
    "label": "Sido Kanhu Dahar",
+   "description": "street in Kolkata",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-02-04T21:00:57Z"
   },
   "Q68476643": {
    "label": "Surendranath Park",
+   "description": "park in Ward No. 46, Kolkata Municipal Corporation, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-05-10T10:47:19Z"
   },
   "Q6858910": {
    "label": "Millennium Park",
+   "description": "Public park in Kolkata",
+   "enwiki": "Millennium Park (Kolkata)",
+   "image": "Millennium Park - Riverbank Hooghly - Kolkata 2017-09-02 2479.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-11-04T06:43:14Z"
   },
   "Q68879603": {
    "label": "Lord Sinha Road",
+   "description": "road in Kolkata, India",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T11:03:05Z"
   },
   "Q6893503": {
    "label": "Mohammedan Sporting Ground",
+   "description": "Indian association football venue based in Kolkata, West Bengal",
+   "enwiki": "Mohammedan Sporting Ground",
+   "image": null,
+   "inceptionYear": 1929,
    "heightM": null,
    "floors": null,
    "modified": "2026-05-17T09:41:32Z"
   },
   "Q68935124": {
    "label": "National Congress Park",
+   "description": "Park in Kolkata",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-05-10T10:47:20Z"
   },
+  "Q68954277": {
+   "label": "Sambhunath Pandit Hospital",
+   "description": "hospital in Kolkata",
+   "enwiki": null,
+   "image": "Sambhunath Pandit Hospital.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-25T23:37:43Z"
+  },
+  "Q69754832": {
+   "label": "New Market Sub Post Office",
+   "description": "post office in Kolkata, West Bengal",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-05-25T23:44:40Z"
+  },
   "Q6998605": {
    "label": "Netaji Indoor Stadium",
+   "description": "event venue in Kolkata, West Bengal, India",
+   "enwiki": "Netaji Indoor Stadium",
+   "image": "Netaji Indoor Stadium - Kolkata 2014-08-25 7446-7450 Compress.jpg",
+   "inceptionYear": 1975,
    "heightM": null,
    "floors": null,
    "modified": "2026-01-26T00:32:23Z"
   },
   "Q7010004": {
    "label": "New Market",
+   "description": "shopping mall in Kolkata, India",
+   "enwiki": "New Market, Kolkata",
+   "image": "Calcutta New Market (14652777729).jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2025-05-17T11:26:18Z"
   },
+  "Q7134255": {
+   "label": "Paradise Cinema",
+   "description": "cinema in Kolkata, India",
+   "enwiki": "Paradise Cinema (Kolkata)",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-05-24T15:39:05Z"
+  },
+  "Q7152833": {
+   "label": "R. G. Kar Medical College and Hospital",
+   "description": "Asia's first Private medical school in Kolkata, West Bengal (Now Public)",
+   "enwiki": "R. G. Kar Medical College and Hospital",
+   "image": "R. G. Kar Medical College & Hospital during Covid-19 04.jpg",
+   "inceptionYear": 1886,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-27T09:49:29Z"
+  },
+  "Q720363": {
+   "label": "National Highway 12",
+   "description": "national highway in India",
+   "enwiki": "National Highway 12 (India)",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-07-08T10:04:55Z"
+  },
   "Q7278763": {
    "label": "Rabindra Sadan",
+   "description": "cultural centre and theatre in Kolkata, West Bengal, India",
+   "enwiki": "Rabindra Sadan",
+   "image": "Rabindra Sadan - Kolkata 2011-10-16 160515.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2023-06-15T03:40:28Z"
   },
+  "Q7285792": {
+   "label": "Rajarhat community development block",
+   "description": "community development block in West Bengal, India",
+   "enwiki": "Rajarhat (community development block)",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-02T09:35:09Z"
+  },
   "Q739641": {
    "label": "Howrah Bridge",
+   "description": "cantilever bridge in Kolkata, India",
+   "enwiki": "Howrah Bridge",
+   "image": "Howrah Bridge12.jpg",
+   "inceptionYear": 1943,
    "heightM": 85,
    "floors": null,
    "modified": "2026-09-19T12:45:43Z"
   },
+  "Q739687": {
+   "label": "Hooghly River",
+   "description": "river in West Bengal, India",
+   "enwiki": "Hooghly River",
+   "image": "HooglyKolkata1945.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-11-08T05:14:14Z"
+  },
+  "Q7433497": {
+   "label": "Science City",
+   "description": "Science museum in Kolkata",
+   "enwiki": "Science City, Kolkata",
+   "image": "Science City Kolkata 4643.JPG",
+   "inceptionYear": 1997,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-12-16T07:46:27Z"
+  },
   "Q7437647": {
    "label": "Scottish Cemetery",
+   "description": "christian cemetery at Kolkata",
+   "enwiki": "Scottish Cemetery at Calcutta",
+   "image": "SC view from roof.jpg",
+   "inceptionYear": 1820,
    "heightM": null,
    "floors": null,
    "modified": "2026-11-09T09:41:36Z"
   },
+  "Q7461557": {
+   "label": "Shaheed Minar",
+   "description": "monument in Kolkata",
+   "enwiki": "Shaheed Minar, Kolkata",
+   "image": "Shahid Minar Kolkata Arnab Dutta 2011.jpg",
+   "inceptionYear": 1828,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-11-15T14:01:30Z"
+  },
   "Q7462812": {
    "label": "Shakespeare Sarani",
+   "description": "road in Kolkata, India",
+   "enwiki": "Shakespeare Sarani",
+   "image": "Theatre Road - Kolkata 2011-10-16 160499.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2024-02-03T20:49:10Z"
   },
+  "Q7499793": {
+   "label": "Shobhabazar",
+   "description": "human settlement in Kolkata district, Presidency division, West Bengal, India",
+   "enwiki": "Shobhabazar",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-06T18:17:18Z"
+  },
+  "Q7505977": {
+   "label": "Shyambazar",
+   "description": "locality of Kolkata",
+   "enwiki": "Shyambazar",
+   "image": "Kolkata Shyambazar Panchmatha2.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-26T13:30:52Z"
+  },
+  "Q7588404": {
+   "label": "St. James' School",
+   "description": "school in Kolkata, India",
+   "enwiki": "St. James' School (Kolkata)",
+   "image": "St James' School - Kolkata.jpg",
+   "inceptionYear": 1864,
+   "heightM": null,
+   "floors": null,
+   "modified": "2025-07-03T00:47:18Z"
+  },
+  "Q7588662": {
+   "label": "St. John's Diocesan Girls' Higher Secondary School",
+   "description": "school in Kolkata, India",
+   "enwiki": "St. John's Diocesan Girls' Higher Secondary School",
+   "image": "St. John's Diocesan Girls' Higher Secondary School.jpg",
+   "inceptionYear": 1876,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T20:20:09Z"
+  },
+  "Q7592175": {
+   "label": "St. Xavier's College, Kolkata",
+   "description": "College located in Kolkata, India",
+   "enwiki": "St. Xavier's College, Kolkata",
+   "image": "Collegesxc.jpg",
+   "inceptionYear": 1860,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-22T06:48:40Z"
+  },
+  "Q7600935": {
+   "label": "Star Theatre, Kolkata",
+   "description": "building in India",
+   "enwiki": "Star Theatre, Kolkata",
+   "image": "Star Theatre Arnab Dutta.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-01-19T15:55:35Z"
+  },
+  "Q7631200": {
+   "label": "Subhas Chandra Bose statue",
+   "description": "statue by Nagesh Yoglekar in Kolkata, India",
+   "enwiki": "Subhas Chandra Bose statue (Shyambazar, Kolkata)",
+   "image": "Subhas Chandra Bose Statue - Shyambazar Five-point Crossing - Kolkata 2012-05-19 3062.JPG",
+   "inceptionYear": 1969,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-03-30T09:41:39Z"
+  },
+  "Q7680332": {
+   "label": "Taltala",
+   "description": "locality of Kolkata",
+   "enwiki": "Taltala",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-28T14:26:40Z"
+  },
   "Q7687796": {
    "label": "Tata Centre",
+   "description": "building in India",
+   "enwiki": "Tata Centre",
+   "image": "Tata Centre - 43 Chowringhee Road - Kolkata 2013-01-05 2429.JPG",
+   "inceptionYear": 1957,
    "heightM": 79,
    "floors": 18,
    "modified": "2026-05-22T00:19:59Z"
   },
   "Q7711913": {
    "label": "The 42",
+   "description": "building in India",
+   "enwiki": "The 42 (Kolkata)",
+   "image": "The 42.jpg",
+   "inceptionYear": null,
    "heightM": 260,
    "floors": 63,
    "modified": "2026-03-30T01:07:26Z"
   },
   "Q787124": {
    "label": "Salt Lake Stadium",
+   "description": "Multipurpose stadium in Bidhannagar, India",
+   "enwiki": "Salt Lake Stadium",
+   "image": "Salt Lake Stadium, Vivekananda Yuba Bharati Krirangan (VYBK)- Kolkata - IRCTC 2017 (29).jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-08-30T12:47:44Z"
   },
+  "Q7880078": {
+   "label": "Ultadanga",
+   "description": "neighbourhood in Kolkata in West Bengal, India",
+   "enwiki": "Ultadanga",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-03-28T14:24:51Z"
+  },
+  "Q796739": {
+   "label": "Bidhannagar",
+   "description": "City in West Bengal, India",
+   "enwiki": "Bidhannagar",
+   "image": "New Town Skyline captured from Bengal Intelligent Park, Saltlake, Kolkata (2 of 2 photos).jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-31T11:53:54Z"
+  },
+  "Q7984438": {
+   "label": "West Bengal Fire Service",
+   "description": "organization",
+   "enwiki": "West Bengal Fire Service",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-10-10T02:47:56Z"
+  },
   "Q7984451": {
    "label": "West Bengal University of Health Sciences",
+   "description": "state public university in North 24 Parganas, West Bengal, India",
+   "enwiki": "West Bengal University of Health Sciences",
+   "image": null,
+   "inceptionYear": 2003,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-24T22:30:06Z"
   },
+  "Q849950": {
+   "label": "Scottish Church College",
+   "description": "Liberal Arts and Sciences college in Kolkata",
+   "enwiki": "Scottish Church College",
+   "image": "Entrance - Scottish Church College - 1 and 3 Urquhart Square - Kolkata 2015-11-09 4699.JPG",
+   "inceptionYear": 1830,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-08-05T02:07:38Z"
+  },
+  "Q85777907": {
+   "label": "list of Kolkata metro depots and yards",
+   "description": "Depots of Kolkata Metro",
+   "enwiki": "List of Kolkata Metro depots and yards",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-06-05T08:45:03Z"
+  },
   "Q85852420": {
    "label": "Wellesley Gol Talab",
+   "description": null,
+   "enwiki": "Wellesley Gol Talab",
+   "image": "GolTalabKolkata.jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-11-01T03:22:49Z"
   },
   "Q89480959": {
    "label": "Crooked lane",
+   "description": "lane in Kolkata",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-04-30T17:41:01Z"
   },
   "Q9384706": {
    "label": "Jawaharlal Nehru Road",
+   "description": "road in Kolkata, India",
+   "enwiki": "Chowringhee Road",
+   "image": "Chowringhee Road - Kolkata 2013-01-05 2450.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-10-06T16:58:36Z"
   },
   "Q9610": {
    "label": "Bangla",
+   "description": "Indo-Aryan language mostly spoken in Bangladesh and India",
+   "enwiki": "Bengali language",
+   "image": "Bengali letters.svg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-08-19T12:10:22Z"
   },
   "Q985758": {
    "label": "Writers' Building",
+   "description": "secretariat building of the State Government of West Bengal",
+   "enwiki": "Writers' Building",
+   "image": "Writer's Building (14837248184).jpg",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-09-27T17:55:54Z"
   },
   "Q987578": {
    "label": "Maidan",
+   "description": "urban park in Kolkata",
+   "enwiki": "Maidan (Kolkata)",
+   "image": "Brigade Parade Ground - Kolkata 2013-01-05 2403.JPG",
+   "inceptionYear": null,
    "heightM": null,
    "floors": null,
    "modified": "2026-09-27T18:12:51Z"
+  },
+  "Q99732708": {
+   "label": "Tazaung",
+   "description": "Burmee pagoda, brought from Prome in Burma by Lord Dalhousie and erected in Eden Gardens, Kolkata, in 1854",
+   "enwiki": null,
+   "image": "DSC 3114 Pagoda Kolkata.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2024-09-30T17:33:16Z"
   }
  }
 }

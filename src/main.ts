@@ -16,6 +16,8 @@ import { WeatherLayer } from './layers/weather/WeatherLayer';
 import { loadScenarios } from './core/time/scenarios';
 import { WeatherPanel } from './ui/WeatherPanel';
 import { ViewSwitch } from './ui/ViewSwitch';
+import { LandmarkPopup } from './ui/LandmarkPopup';
+import { SearchBox, type SearchEntry } from './ui/SearchBox';
 import { LayerPanel } from './ui/LayerPanel';
 import { StatsHud } from './ui/StatsHud';
 import { TimeBar } from './ui/TimeBar';
@@ -29,7 +31,8 @@ const byId = (id: string): HTMLElement => {
 const app = new App(byId('viewport'), await loadScenarios());
 // Registration order is the update order and the order of the toggles in the UI.
 // Weather runs first so the sky layer sees this frame's conditions.
-for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new LandmarkModelsLayer(), new LandmarksLayer(), new TrafficLayer(), new BoatsLayer(), new FestivalLightsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
+const landmarkLabels = new LandmarksLayer();
+for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new LandmarkModelsLayer(), landmarkLabels, new TrafficLayer(), new BoatsLayer(), new FestivalLightsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
   app.layers.register(layer);
 }
 
@@ -39,10 +42,27 @@ new StatsHud(byId('hud'), app);
 new WeatherPanel(panel.weatherSection, app.environment);
 new ViewSwitch(panel.viewSection, app);
 
+const popup = new LandmarkPopup(byId('popup'));
+const search = new SearchBox(panel.searchSection, (entry: SearchEntry) => {
+  app.flyTo(entry.x, entry.y, entry.kind === 'street' ? 450 : 650);
+  if (entry.landmark) void popup.open(entry.landmark);
+  else popup.close();
+});
+landmarkLabels.onSelect = (landmark) => {
+  app.flyTo(landmark.x, landmark.y);
+  void popup.open(landmark);
+};
+
 app.start();
 void app.layers.loadAll();
 app.cityData.load().then(
-  (city) => panel.showCityInfo(city.header),
+  (city) => {
+    panel.showCityInfo(city.header);
+    search.setEntries([
+      ...city.header.landmarks.map((l): SearchEntry => ({ name: l.name, kind: 'landmark', x: l.x, y: l.y, landmark: l })),
+      ...city.streets.map((s): SearchEntry => ({ ...s, kind: 'street' })),
+    ]);
+  },
   (err: unknown) => {
     byId('hud').textContent = `Failed to load city data: ${err instanceof Error ? err.message : String(err)}`;
   },

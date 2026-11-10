@@ -224,6 +224,19 @@ for (const f of geojson.features) {
     }
   }
 }
+// Points of interest mapped as nodes or non-building outlines (monuments, ghats, museums) become labels too.
+for (const el of poi.elements as Array<{ type: string; id: number; center?: { lat: number; lon: number }; lat?: number; lon?: number; tags?: Record<string, string> }>) {
+  const t = el.tags ?? {};
+  const lon = el.center?.lon ?? el.lon, lat = el.center?.lat ?? el.lat;
+  if (lon === undefined || lat === undefined || t['highway'] || t['railway'] || t['public_transport']) continue;
+  addLandmark(t, 'other', [lon, lat], 0, 0);
+}
+// A label on a modelled landmark sits above the model, not at its base.
+for (const def of modelDefs) {
+  const top = Math.max(...Object.entries(def.dimensions).filter(([k]) => /Height/.test(k)).map(([, v]) => v), 0);
+  for (const l of landmarks.values()) if (l.name === def.name || l.name.startsWith(def.name)) l.height = Math.max(l.height, top);
+}
+
 // Models whose element is neither a building nor a road (e.g. a monument outline) are anchored on its centre.
 for (const def of modelDefs) {
   const el = poi.elements.find((e) => `${e.type}/${e.id}` === def.osm);

@@ -40,13 +40,39 @@ Estimation heuristic for the remainder (`tools/lib/heights.ts`): levels guessed 
 deterministic third of buildings (hash of OSM id), times 3.2 m, plus 1.0 m. The 3.2 m storey height and
 1.0 m allowance are assumptions, not surveyed values.
 
-## Wikidata (landmark names and heights)
-- Source: `Special:EntityData` for each OSM way/relation with a `wikidata` tag, fetched offline by
-  `tools/fetch-wikidata.ts` into `data/wikidata.json` (64 items). Licence: CC0.
-- Used for: English labels of the 53 landmarks in the label layer, and building heights where the item
-  has a height (P2048) or floor count (P1101). Only 4 items carry a height and 2 a floor count, so this
-  barely changes the skyline; Victoria Memorial, for example, has neither.
-- OSM `height` tags take precedence over Wikidata.
+## Wikidata (landmark names, facts, heights)
+- Source: `Special:EntityData` for each OSM element with a `wikidata` tag (176 items), fetched offline by
+  `tools/fetch-wikidata.ts` into `data/wikidata.json`. Licence: CC0.
+- Used for: English labels, one-line descriptions and inception years in pop-ups, and building heights
+  where an item has one (6 items) or a floor count (3). OSM `height` tags take precedence.
+
+## Wikipedia and Wikimedia Commons (landmark pop-ups)
+- Text: the first paragraph of the English Wikipedia article, shortened, for 134 landmarks
+  (`tools/fetch-landmark-content.ts`, `tools/lib/wikitext.ts`). Licence: CC BY-SA 4.0. Each pop-up links
+  to the article and states the licence and that the text is shortened. Paragraphs that cannot be
+  cleaned of markup are dropped, not shown half-cleaned.
+- Photos: the Wikidata main image (P18) for 119 landmarks, hot-linked from Wikimedia Commons, used only
+  when the file page carries a recognised licence template. Author and licence are stored in
+  `public/data/landmark-content.json` and shown under the photo with a link to the file page.
+  Licences present: CC BY-SA 2.0/3.0/4.0, CC BY 2.0, GFDL, CC0 and public domain.
+
+## Landmark models
+`config/landmark-models.json` lists, per model, the sourced dimensions, the Wikipedia article they come
+from, and which parts are schematic. Position and orientation come from OSM geometry.
+| Model | Sourced | Schematic |
+|---|---|---|
+| Howrah Bridge | span 457.2 m, length 705 m, towers 85.3 m, arm and suspended-span lengths, deck width, 8.8 m clearance | truss panel layout, chord depths, member sizes, colour |
+| Victoria Memorial | total height 56.1 m, chamber diameter 19.5 m, 4.9 m figure | drum/dome proportions, corner cupolas, body height |
+| Shaheed Minar | height 48 m | base, shaft taper, balconies |
+| St Paul's Cathedral | spire 61.3 m, nave width 24.7 m | tower footprint and position, pinnacles |
+Vidyasagar Setu is not modelled: its main span could not be identified reliably in the OSM extract.
+
+## Simulated and synthetic layers (not data)
+- Traffic and trams: vehicle counts, mix, colours, speeds, routes and the hour-of-day activity curve are
+  invented (`src/layers/traffic`). Only the road and tram-track centre lines are real (OSM).
+- River boats: vessel types, counts and speeds are invented; lanes follow OSM river centre lines where
+  they lie on mapped water.
+- Festival lights: lamp strings on every main street. No Durga Puja or pandal location data is used.
 
 ## Facades (not data)
 Window grids, storey lines and lit windows are a procedural shader pattern (3.2 m storeys, 3 m bays).

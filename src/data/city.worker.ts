@@ -167,9 +167,26 @@ function build(buffer: ArrayBuffer): CityGeometry {
     }
     cursor += len;
   }
+  // One search entry per street name, placed at the middle of its longest mapped piece.
+  const rName = city.section<Uint16Array>('r_name');
+  const longest = new Map<number, { length: number; x: number; y: number }>();
+  for (let i = 0; i < rSizes.length; i++) {
+    const name = rName[i]!;
+    if (name === 0) continue;
+    const line = rXy.subarray(offsets[i]!, offsets[i]! + rSizes[i]! * 2);
+    let length = 0;
+    for (let k = 2; k < line.length; k += 2) length += Math.hypot(line[k]! - line[k - 2]!, line[k + 1]! - line[k - 1]!);
+    const best = longest.get(name);
+    if (!best || length > best.length) {
+      const mid = Math.floor(line.length / 4) * 2;
+      longest.set(name, { length, x: line[mid]!, y: line[mid + 1]! });
+    }
+  }
+  const streets = [...longest].map(([name, p]) => ({ name: header.roadNames[name]!, x: p.x, y: p.y }));
+
   const paths = { roads: pack(roadLines), trams: pack(tramLines), river: pack(riverLines) };
 
-  return { header, paths, buildings, green: green.build(false), water: water.build(false), roads: roads.build(false), rail: rail.build(false) };
+  return { header, paths, streets, buildings, green: green.build(false), water: water.build(false), roads: roads.build(false), rail: rail.build(false) };
 }
 
 self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {

@@ -42,8 +42,10 @@ export class TimeBar {
     root.classList.add('panel');
 
     const seg = el('div', { class: 'seg', role: 'group', 'aria-label': 'Time mode' });
+    const onlySynthetic = time.availableScenarios.every((s) => s.synthetic);
     for (const [mode, label] of MODES) {
-      const b = el('button', { type: 'button' }, label);
+      // With no stored real event, the mode is a rendering demo and is named as one.
+      const b = el('button', { type: 'button' }, mode === 'event' && onlySynthetic ? 'Storm demo (synthetic)' : label);
       b.addEventListener('click', () => time.setMode(mode));
       this.modeButtons.set(mode, b);
       seg.append(b);
