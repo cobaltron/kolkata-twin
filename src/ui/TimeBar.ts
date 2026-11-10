@@ -12,7 +12,7 @@ const SPEEDS: Array<[number, string]> = [
 ];
 const MODES: Array<[TimeMode, string]> = [
   ['live', 'Live'],
-  ['historical', 'Historical'],
+  ['historical', 'Custom time'],
   ['event', 'Event replay'],
 ];
 
@@ -108,13 +108,14 @@ export class TimeBar {
     this.speedSelect.disabled = live;
 
     this.scenarioSelect.hidden = mode !== 'event';
-    this.year.row.hidden = this.day.row.hidden = mode !== 'historical';
+    this.year.row.hidden = true; // no dated city content exists yet, so there is no year to choose
+    this.day.row.hidden = mode !== 'historical';
     this.hour.row.hidden = live;
     this.progress.row.hidden = mode !== 'event';
     this.hint.textContent = live
-      ? 'Tracking the wall clock. Switch to Historical or Event replay to scrub time.'
+      ? 'Tracking the wall clock. Switch to Custom time or Event replay to scrub time.'
       : mode === 'historical'
-        ? 'The present-day city is shown in every year, with no weather data. Time-aware layers arrive from Phase 3.'
+        ? 'Pick any date and time of day to see the sun and shadows. No weather data in this mode.'
         : (state.scenario?.synthetic ?? false)
           ? 'Artificial storm for testing the rendering. Not a real event.'
           : `Weather: ${state.scenario?.source ?? ''}`;

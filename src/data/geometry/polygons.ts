@@ -28,6 +28,19 @@ export function* iteratePolygons(ringCounts: Uint16Array, ringSizes: Uint32Array
   }
 }
 
+/** Even-odd point-in-polygon test over all rings, so holes are excluded. */
+export function pointInRings(rings: Rings, x: number, y: number): boolean {
+  let inside = false;
+  for (const ring of rings) {
+    const n = ring.length / 2;
+    for (let i = 0, j = n - 1; i < n; j = i++) {
+      const xi = ring[i * 2]!, yi = ring[i * 2 + 1]!, xj = ring[j * 2]!, yj = ring[j * 2 + 1]!;
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+  }
+  return inside;
+}
+
 export interface Triangulated {
   /** Flat [x, y] vertex list of all rings concatenated. */
   flat: number[];

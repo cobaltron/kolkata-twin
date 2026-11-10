@@ -45,7 +45,7 @@ export class WeatherLayer implements Layer {
   private resolve(time: TimeState): WeatherState {
     if (time.mode === 'live') return this.live!.sample(time.instant);
     if (time.mode === 'event' && time.scenario) return this.scenarios.sample(time.scenario, time.instant);
-    return clearState('none', 'No weather data in historical mode; clear sky shown');
+    return clearState('none', 'No weather data in custom-time mode; clear sky shown');
   }
 
   update(time: TimeState, dt: number): void {

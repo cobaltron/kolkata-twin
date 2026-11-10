@@ -6,9 +6,9 @@
 import { BUILDING_FLAG, decodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG } from '../shared/cityFormat';
 import { extrudeFootprint, flatPolygon, type RGB } from './geometry/extrude';
 import { MeshBuilder, transferables } from './geometry/MeshBuffers';
-import { iteratePolygons } from './geometry/polygons';
+import { iteratePolygons, pointInRings } from './geometry/polygons';
 import { ribbon } from './geometry/ribbon';
-import type { BuildingTile, CityGeometry, WorkerRequest, WorkerResponse } from './protocol';
+import type { BuildingTile, CityGeometry, PathSet, WorkerRequest, WorkerResponse } from './protocol';
 
 // Wall palette for buildings whose height comes from OSM tags: weathered lime-wash tones.
 const WALLS_SOURCED: RGB[] = [[224, 205, 164], [214, 176, 128], [209, 152, 130], [196, 204, 170], [226, 219, 203]];
@@ -63,7 +63,7 @@ function build(buffer: ArrayBuffer): CityGeometry {
     const gain = 0.9 + hash(b * 7 + 3) * 0.2;
     const landmark = (flags[b]! & BUILDING_FLAG.landmark) !== 0;
     const wall = landmark ? WALL_LANDMARK : estimated ? mix(base, ESTIMATE_TINT, ESTIMATE_MIX, gain) : mix(base, base, 0, gain);
-    extrudeFootprint(tile, rings, minHeights[b]!, heights[b]!, wall, estimated ? ROOF_ESTIMATED : ROOF_SOURCED, hash(b * 13 + 5));
+    extrudeFootprint(tile, rings, minHeights[b]!, heights[b]!, wall, estimated ? ROOF_ESTIMATED : ROOF_SOURCED, landmark ? -1 : hash(b * 13 + 5));
     b++;
   }
   const buildings: BuildingTile[] = [];
@@ -119,7 +119,57 @@ function build(buffer: ArrayBuffer): CityGeometry {
     cursor += len;
   }
 
-  return { header, buildings, green: green.build(false), water: water.build(false), roads: roads.build(false), rail: rail.build(false) };
+  // Centre lines for the simulated-movement layers (vehicles, trams, boats). Main roads only.
+  const pack = (lines: Float32Array[]): PathSet => {
+    const offsets = new Uint32Array(lines.length + 1);
+    lines.forEach((l, i) => (offsets[i + 1] = offsets[i]! + l.length));
+    const xy = new Float32Array(offsets[lines.length]!);
+    lines.forEach((l, i) => xy.set(l, offsets[i]!));
+    return { xy, offsets };
+  };
+  const roadLines: Float32Array[] = [];
+  for (let i = 0; i < rSizes.length; i++) {
+    if (rClass[i]! <= 4 && !(rFlags[i]! & ROAD_FLAG.tunnel)) roadLines.push(rXy.subarray(offsets[i]!, offsets[i]! + rSizes[i]! * 2));
+  }
+  const tramLines: Float32Array[] = [];
+  for (let i = 0, cursor = 0; i < tSizes.length; i++) {
+    const len = tSizes[i]! * 2;
+    if (tClass[i] === RAIL_CLASS.tram && !(tFlags[i]! & ROAD_FLAG.tunnel)) tramLines.push(tXy.subarray(cursor, cursor + len));
+    cursor += len;
+  }
+  // Boat lanes: river centre lines (waterway=river) offset sideways and resampled every 25 m, keeping
+  // only the stretches that really lie on a mapped water polygon, so nothing sails over land.
+  const waterPolygons = [...iteratePolygons(city.section('w_ringCounts'), city.section('w_ringSizes'), city.section('w_xy'))];
+  const onWater = (x: number, y: number): boolean => waterPolygons.some((rings) => pointInRings(rings, x, y));
+  const riverLines: Float32Array[] = [];
+  for (let i = 0, cursor = 0; i < cSizes.length; i++) {
+    const len = cSizes[i]! * 2;
+    if (cWidth[i] === 12) {
+      const line = cXy.subarray(cursor, cursor + len);
+      for (const lateral of [-110, 0, 110]) {
+        let run: number[] = [];
+        const flush = (): void => {
+          if (run.length >= 24) riverLines.push(Float32Array.from(run)); // at least 300 m of clear water
+          run = [];
+        };
+        for (let k = 0; k < line.length / 2 - 1; k++) {
+          const x0 = line[k * 2]!, y0 = line[k * 2 + 1]!, x1 = line[k * 2 + 2]!, y1 = line[k * 2 + 3]!;
+          const segment = Math.hypot(x1 - x0, y1 - y0);
+          for (let s = 0; s < segment; s += 25) {
+            const t = s / segment;
+            const x = x0 + (x1 - x0) * t - ((y1 - y0) / segment) * lateral, y = y0 + (y1 - y0) * t + ((x1 - x0) / segment) * lateral;
+            if (onWater(x, y)) run.push(x, y);
+            else flush();
+          }
+        }
+        flush();
+      }
+    }
+    cursor += len;
+  }
+  const paths = { roads: pack(roadLines), trams: pack(tramLines), river: pack(riverLines) };
+
+  return { header, paths, buildings, green: green.build(false), water: water.build(false), roads: roads.build(false), rail: rail.build(false) };
 }
 
 self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
@@ -128,7 +178,8 @@ self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
     const res = await fetch(ev.data.url);
     if (!res.ok) throw new Error(`HTTP ${res.status} loading ${ev.data.url}`);
     const city = build(await res.arrayBuffer());
-    const buffers = [city.green, city.water, city.roads, city.rail, ...city.buildings.map((t) => t.mesh)].flatMap(transferables);
+    const pathBuffers = Object.values(city.paths).flatMap((p) => [p.xy.buffer, p.offsets.buffer] as ArrayBuffer[]);
+    const buffers = [...pathBuffers, ...[city.green, city.water, city.roads, city.rail, ...city.buildings.map((t) => t.mesh)].flatMap(transferables)];
     post({ ok: true, city }, buffers);
   } catch (err) {
     post({ ok: false, error: err instanceof Error ? err.message : String(err) });

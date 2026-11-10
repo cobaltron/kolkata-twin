@@ -15,7 +15,7 @@
     "maxY": 4197.457092293538
   },
   "tileSizeMetres": 1000,
-  "generatedAt": "2026-11-10T19:19:01.028Z",
+  "generatedAt": "2026-11-10T19:21:35.664Z",
   "osmBaseTimestamp": "2026-11-10T14:50:51Z",
   "attribution": "© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0",
   "stats": {
@@ -32,5 +32,70 @@
     "greenPolygons": 446
   },
   "landmarks": "53 landmarks (see city.bin)",
+  "models": [
+    {
+      "id": "victoria-memorial",
+      "name": "Victoria Memorial",
+      "kind": "domed-hall",
+      "x": -2537.608462668606,
+      "y": -3071.0584812909365,
+      "bearing": 1.7429919752699334,
+      "baseHeight": 25,
+      "dimensions": {
+        "totalHeightM": 56.1,
+        "chamberDiameterM": 19.5,
+        "figureHeightM": 4.9
+      },
+      "source": "https://en.wikipedia.org/wiki/Victoria_Memorial,_Kolkata"
+    },
+    {
+      "id": "st-pauls-cathedral",
+      "name": "St Paul's Cathedral",
+      "kind": "spired-church",
+      "x": -2127.8553521631984,
+      "y": -3147.9982280875556,
+      "bearing": -1.3899038405178952,
+      "baseHeight": 28,
+      "dimensions": {
+        "spireHeightM": 61.3,
+        "naveWidthM": 24.7
+      },
+      "source": "https://en.wikipedia.org/wiki/St._Paul%27s_Cathedral,_Kolkata"
+    },
+    {
+      "id": "howrah-bridge",
+      "name": "Howrah Bridge",
+      "kind": "cantilever-bridge",
+      "x": -2122.8534682028694,
+      "y": 1370.5984480432235,
+      "bearing": -1.3216474627211026,
+      "baseHeight": 0,
+      "dimensions": {
+        "lengthM": 705,
+        "mainSpanM": 457.2,
+        "anchorArmM": 99.1,
+        "cantileverArmM": 142.6,
+        "suspendedSpanM": 171.9,
+        "towerHeightM": 85.3,
+        "trussSpacingM": 23.2,
+        "deckWidthM": 30.8,
+        "clearanceM": 8.8
+      },
+      "source": "https://en.wikipedia.org/wiki/Howrah_Bridge"
+    },
+    {
+      "id": "shaheed-minar",
+      "name": "Shaheed Minar",
+      "kind": "minar",
+      "x": -1865.6976061016321,
+      "y": -1082.4739598901942,
+      "bearing": 0,
+      "baseHeight": 0,
+      "dimensions": {
+        "totalHeightM": 48
+      },
+      "source": "https://en.wikipedia.org/wiki/Shaheed_Minar,_Kolkata"
+    }
+  ],
   "roadNames": "1011 names (see city.bin)"
 }

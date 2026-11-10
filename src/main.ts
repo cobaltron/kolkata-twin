@@ -3,11 +3,15 @@ import { App } from './app/App';
 import { BuildingsLayer } from './layers/buildings/BuildingsLayer';
 import { createGreenLayer } from './layers/green/GreenLayer';
 import { LandmarksLayer } from './layers/landmarks/LandmarksLayer';
+import { LandmarkModelsLayer } from './layers/models/LandmarkModelsLayer';
 import { GroundLayer } from './layers/ground/GroundLayer';
 import { createRailLayer } from './layers/rail/RailLayer';
 import { createRoadsLayer } from './layers/roads/RoadsLayer';
 import { SunSkyLayer } from './layers/sky/SunSkyLayer';
 import { createWaterLayer } from './layers/water/WaterLayer';
+import { TrafficLayer } from './layers/traffic/TrafficLayer';
+import { BoatsLayer } from './layers/boats/BoatsLayer';
+import { FestivalLightsLayer } from './layers/festival/FestivalLightsLayer';
 import { WeatherLayer } from './layers/weather/WeatherLayer';
 import { loadScenarios } from './core/time/scenarios';
 import { WeatherPanel } from './ui/WeatherPanel';
@@ -25,7 +29,7 @@ const byId = (id: string): HTMLElement => {
 const app = new App(byId('viewport'), await loadScenarios());
 // Registration order is the update order and the order of the toggles in the UI.
 // Weather runs first so the sky layer sees this frame's conditions.
-for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new LandmarksLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
+for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new LandmarkModelsLayer(), new LandmarksLayer(), new TrafficLayer(), new BoatsLayer(), new FestivalLightsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
   app.layers.register(layer);
 }
 

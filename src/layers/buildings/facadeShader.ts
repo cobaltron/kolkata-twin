@@ -32,7 +32,7 @@ export function applyFacadeShader(material: MeshStandardMaterial): FacadeUniform
       .replace(
         '#include <color_fragment>',
         /* glsl */ `#include <color_fragment>
-        if (vWall > 0.5) {
+        if (vWall > 0.5 && vFacade.z >= 0.0) { // a negative seed marks landmark buildings: no generic windows
           vec2 cell = vec2(vFacade.x / 3.0, vFacade.y / 3.2);
           vec2 f = fract(cell);
           vec2 id = floor(cell);

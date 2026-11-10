@@ -8,7 +8,7 @@
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import osmtogeojson from 'osmtogeojson';
-import { BUILDING_FLAG, encodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG, type CityStats, type Landmark, type SectionArray } from '../src/shared/cityFormat.ts';
+import { BUILDING_FLAG, encodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG, type CityStats, type Landmark, type LandmarkModel, type SectionArray } from '../src/shared/cityFormat.ts';
 import { LocalFrame, type BBox } from '../src/shared/projection.ts';
 import { clipLine, clipRing, ringArea, type Pt } from './lib/clip.ts';
 import { parseMetres, resolveHeight } from './lib/heights.ts';
@@ -137,11 +137,42 @@ const roadNames: string[] = [''];
 const roadNameIndex = new Map<string, number>([['', 0]]);
 const srcCounts = [0, 0, 0, 0, 0];
 
+// Landmark models: resolve each configured OSM element to an anchor (position, long-axis bearing, base height).
+interface ModelDef { id: string; name: string; kind: LandmarkModel['kind']; osm: string; dimensions: Record<string, number>; source: string }
+const modelDefs = JSON.parse(await readFile(new URL('config/landmark-models.json', ROOT), 'utf8')) as ModelDef[];
+const modelByOsm = new Map(modelDefs.map((m) => [m.osm, m]));
+const models: LandmarkModel[] = [];
+let poi: { elements: Array<{ type: string; id: number; center?: { lat: number; lon: number }; lat?: number; lon?: number }> } = { elements: [] };
+try {
+  poi = JSON.parse(await readFile(new URL('data/raw/poi.json', ROOT), 'utf8'));
+} catch { /* optional: only needed for landmarks that are not buildings or roads */ }
+function addModel(def: ModelDef, lonLat: Pt, axis: [Pt, Pt] | null, baseHeight: number): void {
+  if (models.some((m) => m.id === def.id)) return;
+  const p = frame.toLocal(lonLat[0], lonLat[1]);
+  let bearing = 0;
+  if (axis) {
+    const a = frame.toLocal(axis[0][0], axis[0][1]), b = frame.toLocal(axis[1][0], axis[1][1]);
+    bearing = Math.atan2(b.x - a.x, b.y - a.y);
+  }
+  models.push({ id: def.id, name: def.name, kind: def.kind, x: p.x, y: p.y, bearing, baseHeight, dimensions: def.dimensions, source: def.source });
+}
+/** Longest edge of a ring: a cheap, stable estimate of a rectilinear building's long axis. */
+function longestEdge(ring: Pt[]): [Pt, Pt] {
+  let best: [Pt, Pt] = [ring[0]!, ring[1]!], bestLen = 0;
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i]!, b = ring[(i + 1) % ring.length]!;
+    const len = Math.hypot((b[0] - a[0]) * Math.cos((a[1] * Math.PI) / 180), b[1] - a[1]);
+    if (len > bestLen) { bestLen = len; best = [a, b]; }
+  }
+  return best;
+}
+
 const geojson = osmtogeojson(raw) as GeoJSON.FeatureCollection;
 for (const f of geojson.features) {
   const tags = (f.properties ?? {}) as Record<string, string>;
   const osmId = Number(String(f.id ?? '').split('/')[1] ?? 0);
   const g = f.geometry;
+  const modelDef = modelByOsm.get(String(f.id));
   const flags = (tags['bridge'] && tags['bridge'] !== 'no' ? ROAD_FLAG.bridge : 0) | (tags['tunnel'] && tags['tunnel'] !== 'no' ? ROAD_FLAG.tunnel : 0);
 
   if (g.type === 'Polygon' || g.type === 'MultiPolygon') {
@@ -159,6 +190,7 @@ for (const f of geojson.features) {
         bHeight.push(h.height); bMinHeight.push(h.minHeight); bSrc.push(h.source);
         bFlags.push(record ? BUILDING_FLAG.landmark : 0);
         addLandmark(tags, 'building', centroid(outer), h.height, areaM2);
+        if (modelDef) addModel(modelDef, centroid(outer), longestEdge(outer), h.height);
         srcCounts[h.source]!++;
       } else {
         const isWater = tags['natural'] === 'water' || tags['waterway'] === 'riverbank';
@@ -172,6 +204,7 @@ for (const f of geojson.features) {
     }
   } else if (g.type === 'LineString') {
     const line = g.coordinates.map((p) => [p[0]!, p[1]!] as Pt);
+    if (modelDef) addModel(modelDef, [(line[0]![0] + line[line.length - 1]![0]) / 2, (line[0]![1] + line[line.length - 1]![1]) / 2], [line[0]!, line[line.length - 1]!], 0);
     // Named bridges with a Wikidata item (e.g. Howrah Bridge) get a label at mid-span, anchored at deck level.
     if (flags & ROAD_FLAG.bridge) addLandmark(tags, 'bridge', line[Math.floor(line.length / 2)]!, 0, line.length);
     if (tags['highway'] && ROAD_CLASS_INDEX.has(tags['highway']) && tags['area'] !== 'yes') {
@@ -191,6 +224,14 @@ for (const f of geojson.features) {
     }
   }
 }
+// Models whose element is neither a building nor a road (e.g. a monument outline) are anchored on its centre.
+for (const def of modelDefs) {
+  const el = poi.elements.find((e) => `${e.type}/${e.id}` === def.osm);
+  const lon = el?.center?.lon ?? el?.lon, lat = el?.center?.lat ?? el?.lat;
+  if (lon !== undefined && lat !== undefined) addModel(def, [lon, lat], null, 0);
+}
+for (const def of modelDefs) if (!models.some((m) => m.id === def.id)) console.warn(`landmark model ${def.id}: OSM element ${def.osm} not found, model omitted`);
+
 if (roadNames.length > 65535) throw new Error('too many road names for u16 index');
 
 const sw = frame.toLocal(bbox.west, bbox.south), ne = frame.toLocal(bbox.east, bbox.north);
@@ -214,6 +255,7 @@ const header = {
   attribution: '© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0',
   stats,
   landmarks: [...landmarks.values()].map(({ rank: _rank, ...l }) => l).sort((a, b) => b.area - a.area),
+  models,
   roadNames,
 };
 const bin = encodeCity(header, {
@@ -230,5 +272,5 @@ await mkdir(new URL('public/data/', ROOT), { recursive: true });
 await writeFile(new URL('public/data/city.bin', ROOT), bin);
 await writeFile(new URL('public/data/city.meta.json', ROOT), JSON.stringify({ ...header, landmarks: `${landmarks.size} landmarks (see city.bin)`, roadNames: `${roadNames.length} names (see city.bin)` }, null, 2));
 console.log(stats);
-console.log(`landmarks: ${landmarks.size}`);
+console.log(`landmarks: ${landmarks.size}; models: ${models.map((m) => m.id).join(', ')}`);
 console.log(`extent (m):`, header.extent, `\ncity.bin: ${(bin.length / 1e6).toFixed(2)} MB`);

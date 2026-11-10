@@ -1,0 +1,52 @@
+[
+  {
+    "id": "howrah-bridge",
+    "name": "Howrah Bridge",
+    "kind": "cantilever-bridge",
+    "osm": "way/204283631",
+    "dimensions": {
+      "lengthM": 705,
+      "mainSpanM": 457.2,
+      "anchorArmM": 99.1,
+      "cantileverArmM": 142.6,
+      "suspendedSpanM": 171.9,
+      "towerHeightM": 85.3,
+      "trussSpacingM": 23.2,
+      "deckWidthM": 30.8,
+      "clearanceM": 8.8
+    },
+    "source": "https://en.wikipedia.org/wiki/Howrah_Bridge",
+    "sourceNote": "Main span 1,500 ft between tower centres; towers 280 ft above the monoliths and 76 ft apart at the top; anchor arms 325 ft, cantilever arms 468 ft, suspended span 564 ft; length 705 m; carriageway 21.6 m plus two 4.6 m footpaths; 8.8 m clearance below.",
+    "schematic": "Truss panel layout, chord depths away from the towers, member sizes and colour."
+  },
+  {
+    "id": "victoria-memorial",
+    "name": "Victoria Memorial",
+    "kind": "domed-hall",
+    "osm": "way/36165294",
+    "dimensions": { "totalHeightM": 56.1, "chamberDiameterM": 19.5, "figureHeightM": 4.9 },
+    "source": "https://en.wikipedia.org/wiki/Victoria_Memorial,_Kolkata",
+    "sourceNote": "Building 338 by 228 ft, rising to 184 ft; central chamber 64 ft in diameter; 16 ft Angel of Victory figure on the dome.",
+    "schematic": "Drum and dome proportions, the four corner cupolas, and the body height (taken from the building's own height source)."
+  },
+  {
+    "id": "shaheed-minar",
+    "name": "Shaheed Minar",
+    "kind": "minar",
+    "osm": "way/584818793",
+    "dimensions": { "totalHeightM": 48 },
+    "source": "https://en.wikipedia.org/wiki/Shaheed_Minar,_Kolkata",
+    "sourceNote": "The tower is 48 m high, with an Egyptian-style foundation, a Syrian-style column and a Turkish-style cupola.",
+    "schematic": "Base size, shaft diameter and taper, balcony positions."
+  },
+  {
+    "id": "st-pauls-cathedral",
+    "name": "St Paul's Cathedral",
+    "kind": "spired-church",
+    "osm": "way/112025097",
+    "dimensions": { "spireHeightM": 61.3, "naveWidthM": 24.7 },
+    "source": "https://en.wikipedia.org/wiki/St._Paul%27s_Cathedral,_Kolkata",
+    "sourceNote": "Central spire rises to 201 ft on a square tower; nave 247 ft long and 81 ft wide.",
+    "schematic": "Tower footprint and position (placed at the footprint centroid), pinnacles."
+  }
+]

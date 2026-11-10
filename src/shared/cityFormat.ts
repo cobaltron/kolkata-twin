@@ -41,9 +41,27 @@ export interface CityHeader {
   stats: CityStats;
   /** Named places that have a Wikidata item, for the label layer. Coordinates are local metres. */
   landmarks: Landmark[];
+  /** Hand-specified landmark models, anchored on OSM geometry. */
+  models: LandmarkModel[];
   /** Street names; index 0 is "" (unnamed). Referenced by the r_name section. */
   roadNames: string[];
   sections: Record<string, SectionInfo>;
+}
+
+/** A procedural landmark model: sourced overall dimensions, schematic detail (see config/landmark-models.json). */
+export interface LandmarkModel {
+  id: string;
+  name: string;
+  kind: 'cantilever-bridge' | 'domed-hall' | 'minar' | 'spired-church';
+  /** Anchor in local metres. */
+  x: number;
+  y: number;
+  /** Compass bearing of the feature's long axis, radians clockwise from grid north. */
+  bearing: number;
+  /** Height of the extruded OSM footprint the model stands on (0 when it stands on the ground). */
+  baseHeight: number;
+  dimensions: Record<string, number>;
+  source: string;
 }
 
 export interface Landmark {
