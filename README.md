@@ -85,7 +85,7 @@ it is registered first so later layers see the current frame's conditions.
   shader. Instance count = budget x sqrt(mm/h / 50), capped at 1 (budget 14,000 desktop, 5,000 phone).
 - Cloud cover: `SunSkyLayer` dims direct sun by `1 - 0.9 c^2`, greys and dims the ambient fill, lowers
   exposure, and drives the sky dome's cloud deck.
-- Haze: `FogExp2` density from humidity and rain (`hazeDensity`). The visual range is floored at 6 km
+- Haze: `FogExp2` density from humidity and rain (`hazeDensity`). The visual range is floored at 9 km
   on purpose so the city stays readable from the overview in a downpour.
 - Hourly precipitation is sampled as a step function (total of the preceding hour), so integrating the
   rate reproduces the source totals. Phase 2 reads the same value as its rainfall input.

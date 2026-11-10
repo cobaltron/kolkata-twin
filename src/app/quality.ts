@@ -4,7 +4,7 @@ export interface QualityTier {
   maxPixelRatio: number;
   antialias: boolean;
   shadowMapSize: number;
-  /** Half-width in metres of the square region around the camera focus that receives sun shadows. */
+  /** Reference half-width in metres of the shadowed square; the sky layer scales it with camera distance. */
   shadowRadius: number;
   /** Rain streak budget at the heaviest rain rate. */
   maxRainDrops: number;

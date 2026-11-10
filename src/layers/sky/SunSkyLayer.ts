@@ -40,20 +40,17 @@ export class SunSkyLayer implements Layer {
   private skyClock = 0;
   private lastEpoch = -1;
   private readonly shadowCentre = new Vector3(Number.NaN, 0, 0);
+  /** Current half-width of the shadowed square, metres. Grows with camera distance. */
+  private shadowRadius = 0;
 
   async load(ctx: LayerContext): Promise<void> {
     this.ctx = ctx;
     const q = ctx.quality;
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(q.shadowMapSize, q.shadowMapSize);
-    const cam = this.sun.shadow.camera;
-    cam.left = cam.bottom = -q.shadowRadius;
-    cam.right = cam.top = q.shadowRadius;
-    cam.near = 200;
-    cam.far = 6000;
-    cam.updateProjectionMatrix();
+    this.sun.shadow.camera.near = 200;
+    this.sun.shadow.camera.far = 16000;
     this.sun.shadow.bias = -0.0004;
-    this.sun.shadow.normalBias = (q.shadowRadius * 2) / q.shadowMapSize;
 
     this.sky.scale.setScalar(9000);
     const u = this.sky.material.uniforms;
@@ -78,10 +75,10 @@ export class SunSkyLayer implements Layer {
     }
     this.applyWeather(ctx, time.paused ? 0 : dt, snap ? 1 : 1 - Math.exp(-dt * 1.5));
     // Keep the shadow frustum centred on what the camera is looking at.
-    const { focus, quality } = ctx;
-    if (!(Math.hypot(focus.x - this.shadowCentre.x, focus.z - this.shadowCentre.z) < quality.shadowRadius * 0.08)) {
-      this.placeShadowCamera(ctx);
-    }
+    const { focus } = ctx;
+    const wanted = this.wantedShadowRadius(ctx);
+    const moved = !(Math.hypot(focus.x - this.shadowCentre.x, focus.z - this.shadowCentre.z) < this.shadowRadius * 0.08);
+    if (moved || Math.abs(wanted - this.shadowRadius) > this.shadowRadius * 0.15) this.placeShadowCamera(ctx);
   }
 
   private applySun(instant: number, ctx: LayerContext): void {
@@ -133,12 +130,30 @@ export class SunSkyLayer implements Layer {
     u['turbidity']!.value = MathUtils.lerp(6, 12, MathUtils.smoothstep(w.humidity, 0.5, 1));
   }
 
+  /**
+   * The shadowed square scales with how far out the camera is, so the whole visible area is covered
+   * (sharp shadows up close, coarse but uniform ones from the overview) instead of a visible patch.
+   */
+  private wantedShadowRadius(ctx: LayerContext): number {
+    const d = Math.hypot(ctx.camera.position.x - ctx.focus.x, ctx.camera.position.y, ctx.camera.position.z - ctx.focus.z);
+    return MathUtils.clamp(d * 0.9, ctx.quality.shadowRadius * 0.4, 7000);
+  }
+
   private placeShadowCamera(ctx: LayerContext): void {
     // Snap to shadow-map texels so shadows do not shimmer while panning.
-    const texel = (ctx.quality.shadowRadius * 2) / ctx.quality.shadowMapSize;
+    const radius = this.wantedShadowRadius(ctx);
+    if (radius !== this.shadowRadius) {
+      this.shadowRadius = radius;
+      const cam = this.sun.shadow.camera;
+      cam.left = cam.bottom = -radius;
+      cam.right = cam.top = radius;
+      cam.updateProjectionMatrix();
+      this.sun.shadow.normalBias = (radius * 2) / ctx.quality.shadowMapSize;
+    }
+    const texel = (radius * 2) / ctx.quality.shadowMapSize;
     this.shadowCentre.set(Math.round(ctx.focus.x / texel) * texel, 0, Math.round(ctx.focus.z / texel) * texel);
     this.sun.target.position.copy(this.shadowCentre);
-    this.sun.position.copy(this.shadowCentre).addScaledVector(this.direction, 3000);
+    this.sun.position.copy(this.shadowCentre).addScaledVector(this.direction, 8000);
     this.sun.target.updateMatrixWorld();
     ctx.requestShadowUpdate();
   }

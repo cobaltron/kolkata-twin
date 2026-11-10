@@ -51,16 +51,16 @@ export class App {
     container.appendChild(this.renderer.domElement);
     this.scene.background = new Color(0x10131a);
 
-    this.camera = new PerspectiveCamera(50, 1, 5, 20000);
+    this.camera = new PerspectiveCamera(50, 1, 5, 30000);
     // Start south-west of the Maidan, looking north-east towards Esplanade and BBD Bagh.
-    this.camera.position.set(-1500, 1300, 2600);
+    this.camera.position.set(-3550, 1300, 3700);
     this.controls = new MapControls(this.camera, this.renderer.domElement);
-    this.controls.target.set(-200, 0, -300);
+    this.controls.target.set(-2250, 0, 800);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.12;
     this.controls.maxPolarAngle = Math.PI * 0.47;
     this.controls.minDistance = 40;
-    this.controls.maxDistance = 9000;
+    this.controls.maxDistance = 14000;
     this.controls.update();
 
     this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR, scenarios });
@@ -93,7 +93,7 @@ export class App {
   }
 
   private frame(now: number): void {
-    const dt = Math.min((now - this.lastFrame) / 1000, 0.25);
+    const dt = Math.min(Math.max((now - this.lastFrame) / 1000, 0), 0.25);
     this.lastFrame = now;
 
     const state = this.time.advance(dt);

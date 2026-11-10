@@ -96,12 +96,12 @@ export function rainParticleFraction(mmPerHour: number): number {
 
 /**
  * Fog density for THREE.FogExp2 from humidity and rain. A visual heuristic, not a calibrated visibility
- * model: about 25 km visual range in dry air, 8 km at saturation, reduced further by rain. The range is
- * deliberately floored at 6 km (real visibility in a downpour is far lower) so the city, and later the
+ * model: about 60 km visual range in dry air, 10 km at saturation, reduced further by rain. The range is
+ * deliberately floored at 9 km (real visibility in a downpour is far lower) so the city, and later the
  * flood overlay, stay readable from the overview camera.
  */
 export function hazeDensity(humidity: number, mmPerHour: number): number {
   const h = Math.min(Math.max((humidity - 0.4) / 0.6, 0), 1);
-  const rangeM = Math.max(6000, (25000 - 17000 * h * h) / (1 + mmPerHour / 10));
+  const rangeM = Math.max(9000, (60000 - 50000 * h * h) / (1 + mmPerHour / 10));
   return 2 / rangeM;
 }

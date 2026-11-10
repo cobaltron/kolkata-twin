@@ -1,33 +1,33 @@
 {
   "version": 1,
-  "studyAreaId": "central-kolkata",
+  "studyAreaId": "kolkata-core",
   "utmZone": 45,
   "origin": {
-    "lon": 88.3475,
-    "lat": 22.5625,
-    "utmE": 638543.9616638138,
-    "utmN": 2495715.1432005255
+    "lon": 88.3675,
+    "lat": 22.572499999999998,
+    "utmE": 640590.40504409,
+    "utmN": 2496841.003745584
   },
   "extent": {
-    "minX": -2854.7208271527197,
-    "minY": -3069.9058416569605,
-    "maxX": 2855.8341478662333,
-    "maxY": 3070.4857683838345
+    "minX": -4920.77209735685,
+    "minY": -4195.76638671523,
+    "maxX": 4923.425715977792,
+    "maxY": 4197.457092293538
   },
   "tileSizeMetres": 1000,
-  "generatedAt": "2026-11-10T14:18:48.683Z",
-  "osmBaseTimestamp": "2026-11-10T14:13:07Z",
+  "generatedAt": "2026-11-10T14:59:42.741Z",
+  "osmBaseTimestamp": "2026-11-10T14:50:51Z",
   "attribution": "© OpenStreetMap contributors, ODbL 1.0",
   "stats": {
-    "buildings": 29694,
-    "heightFromTag": 128,
-    "heightFromLevels": 118,
-    "heightEstimated": 29448,
-    "roads": 5914,
-    "rails": 282,
-    "waterPolygons": 68,
-    "waterways": 13,
-    "greenPolygons": 194
+    "buildings": 74813,
+    "heightFromTag": 137,
+    "heightFromLevels": 1095,
+    "heightEstimated": 73581,
+    "roads": 13811,
+    "rails": 716,
+    "waterPolygons": 420,
+    "waterways": 27,
+    "greenPolygons": 446
   },
-  "roadNames": "710 names (see city.bin)"
+  "roadNames": "1011 names (see city.bin)"
 }
