@@ -23,8 +23,6 @@ export interface WeatherState extends WeatherSample {
   status: WeatherStatus;
   /** Human-readable provenance, shown in the UI. */
   source: string;
-  /** True when the values are a flagged synthetic placeholder rather than sourced data. */
-  synthetic: boolean;
 }
 
 export const CLEAR_SKY: WeatherSample = {
@@ -37,7 +35,7 @@ export const CLEAR_SKY: WeatherSample = {
 };
 
 export function clearState(status: WeatherStatus, source: string): WeatherState {
-  return { ...CLEAR_SKY, status, source, synthetic: false };
+  return { ...CLEAR_SKY, status, source };
 }
 
 /** Hourly series as delivered by Open-Meteo. `times` are epoch ms, ascending. */

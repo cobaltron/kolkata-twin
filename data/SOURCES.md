@@ -89,28 +89,12 @@ Calcutta local mean time offset is not modelled (see `src/core/time/ist.ts`).
 ## Weather: Open-Meteo
 - Live mode: `https://api.open-meteo.com/v1/forecast`, called from the browser (no key). Values are model
   analysis/forecast for the grid cell containing the study-area centre, not gauge readings.
-- Event mode: `tools/fetch-scenarios.ts` downloads hourly series from the Open-Meteo Historical Weather
-  API (`archive-api.open-meteo.com`, reanalysis) into `public/data/scenarios/`. Each file records its
-  request URL, fetch time and grid cell. Reanalysis smooths local extremes, so peaks will be lower than
-  gauge records for the same event.
 - Licence: CC BY 4.0. "Weather data by Open-Meteo.com" with a licence link is shown in the UI.
   Open-Meteo's free tier is for non-commercial use; check their terms before any commercial deployment.
-
-### Scenarios (config/scenarios.json)
-| id | Window (IST) | Why this date | Reference |
-|---|---|---|---|
-| `amphan-2020` | 20 May 2020 00:00 to 21 May 12:00 | Cyclone Amphan made landfall on 20 May 2020; winds over 110 km/h reported at Alipore | Down To Earth (URL in config) |
-| `downpour-2025-09` | 22 Sep 2025 12:00 to 23 Sep 18:00 | IMD press release, 23 Sep 2025: 251.4 mm in the 24 h to 08:30 IST, 98 mm between 03:00 and 04:00 IST | IMD press release, The Week (URLs in config) |
-
-The figures in this table come from the cited reports and are context only; the app does not display
-them as measurements. A scenario appears in the app only once its series has been downloaded.
 
 ## Rendering heuristics (not data)
 Rain particle count, cloud dimming, exposure and haze density are perceptual mappings defined in
 `src/core/environment/weather.ts` and `src/layers/sky/SunSkyLayer.ts`. Haze range is floored at 9 km.
 
-## Synthetic placeholders
-- `src/core/time/scenarios.ts` and `syntheticStorm` in `src/layers/weather/providers.ts`: "SYNTHETIC storm",
-  a 24-hour artificial rain/cloud/wind curve (peak 60 mm/h at 15:00) for exercising the rendering.
-  It represents no real event. Badged SYNTHETIC in the time bar and the weather panel.
+## Placeholders
 - Terrain: none yet. The ground is a flat plane at 0 m until Phase 2.

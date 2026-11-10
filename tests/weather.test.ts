@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { hazeDensity, rainParticleFraction, sampleSeries, type WeatherSeries } from '../src/core/environment/weather';
-import { syntheticStorm } from '../src/layers/weather/providers';
 
 const H = 3600000;
 const SERIES: WeatherSeries = {
@@ -49,14 +48,6 @@ describe('rendering heuristics', () => {
   it('haze thickens with humidity and with rain', () => {
     expect(hazeDensity(0.95, 0)).toBeGreaterThan(hazeDensity(0.5, 0));
     expect(hazeDensity(0.8, 30)).toBeGreaterThan(hazeDensity(0.8, 0));
-  });
-  it('synthetic storm stays inside physical ranges', () => {
-    for (let h = 0; h < 24; h++) {
-      const s = syntheticStorm(Date.UTC(2024, 5, 21, h));
-      expect(s.cloudCover).toBeLessThanOrEqual(1);
-      expect(s.humidity).toBeLessThanOrEqual(1);
-      expect(s.precipitationMmH).toBeGreaterThanOrEqual(0);
-    }
   });
 });
 

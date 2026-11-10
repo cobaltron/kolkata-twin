@@ -13,7 +13,6 @@ import { TrafficLayer } from './layers/traffic/TrafficLayer';
 import { BoatsLayer } from './layers/boats/BoatsLayer';
 import { FestivalLightsLayer } from './layers/festival/FestivalLightsLayer';
 import { WeatherLayer } from './layers/weather/WeatherLayer';
-import { loadScenarios } from './core/time/scenarios';
 import { WeatherPanel } from './ui/WeatherPanel';
 import { ViewSwitch } from './ui/ViewSwitch';
 import { LandmarkPopup } from './ui/LandmarkPopup';
@@ -28,7 +27,7 @@ const byId = (id: string): HTMLElement => {
   return node;
 };
 
-const app = new App(byId('viewport'), await loadScenarios());
+const app = new App(byId('viewport'));
 // Registration order is the update order and the order of the toggles in the UI.
 // Weather runs first so the sky layer sees this frame's conditions.
 const landmarkLabels = new LandmarksLayer();

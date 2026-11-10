@@ -10,14 +10,12 @@ npm run dev          # http://localhost:5173  (add ?quality=mobile to force the 
 npm test             # projection, sun-vector and TimeController tests
 npm run build        # typecheck + production bundle in dist/
 npm run data         # optional: re-fetch OSM and rebuild public/data/city.bin
-npm run data:scenarios   # download hourly weather for the events in config/scenarios.json
 ```
 `public/data/city.bin` is checked in, so the app runs without the data step.
 
 ## Architecture
 ```
 config/study-area.json      bbox, UTM zone, tile size (grow the study area here)
-config/scenarios.json       real events for event mode (id, label, IST window, references)
 config/landmark-models.json sourced dimensions for the procedural landmark models
 tools/                      offline pipeline (Node, tsx); never runs in the browser
   fetch-osm.ts              Overpass (tiled, with retries) -> data/raw/osm.json
@@ -25,13 +23,12 @@ tools/                      offline pipeline (Node, tsx); never runs in the brow
   fetch-poi.ts              Overpass: Wikidata-tagged places, monuments, museums -> data/raw/poi.json
   fetch-wikidata.ts         Wikidata labels, heights, article titles, images -> data/wikidata.json
   fetch-landmark-content.ts Wikipedia intros + Commons photo credits -> public/data/landmark-content.json
-  fetch-scenarios.ts        Open-Meteo archive -> public/data/scenarios/*.json + index.json
   build-city.ts             project, clip, resolve heights -> public/data/city.bin
   lib/heights.ts, clip.ts
 data/SOURCES.md             every dataset, licence and heuristic
 src/
   shared/                   projection (WGS84 -> UTM 45N -> local metres), binary format, sun maths, config
-  core/time/                TimeController, TimeState/TimeEvents types, IST calendar, scenarios
+  core/time/                TimeController, TimeState/TimeEvents types, IST calendar
   core/layers/              Layer interface, LayerRegistry
   core/environment/         shared weather/daylight state, series sampling, rain and haze mappings
   data/                     CityData (main thread), city.worker.ts, geometry builders
@@ -91,14 +88,13 @@ What is not adopted from the article: its source imagery (Google Photorealistic 
 image-model redraw. See "Decisions" in the phase report.
 
 ### Weather (Phase 1)
-`WeatherLayer` owns the data and publishes a `WeatherState` on `ctx.environment.weather` every frame;
+`WeatherLayer` fetches live conditions and publishes a `WeatherState` on `ctx.environment.weather` every frame;
 it is registered first so later layers see the current frame's conditions.
 
 | Mode | Source |
 |---|---|
 | live | Open-Meteo forecast API: 15-minute `current` block near now, hourly series otherwise; refreshed every 10 min |
-| event | stored hourly series for the scenario (`public/data/scenarios/<id>.json`), or the flagged synthetic storm |
-| historical | none: clear sky, stated in the UI |
+| custom time | none: clear sky, stated in the UI |
 
 - Rain: GPU-instanced streaks in a 90 m cube that follows the camera; motion is entirely in the vertex
   shader. Instance count = budget x sqrt(mm/h / 50), capped at 1 (budget 14,000 desktop, 5,000 phone).
@@ -128,10 +124,10 @@ it is registered first so later layers see the current frame's conditions.
 All three are labelled simulated or synthetic in the layer list and run in real time, pausing with the clock.
 
 ### Time modes in the UI
-Live, Custom time (any date and time of day; sun only), and event replay. There is no year slider:
-the project has no dated city content, so a "historical" view would have shown today's city.
-`TimeController` still supports years, for when sourced historical layers exist. With no stored real
-event, the event mode is labelled "Storm demo (synthetic)".
+Live (wall clock, live weather) and Custom time (any date and time of day; sun only). There is no year
+slider, because the project has no dated city content, and no storm replay: stored storm scenarios were
+removed. `TimeController` keeps its historical-year and event-replay support (covered by tests) so a
+future events feature can register scenarios; the event button appears only when one is registered.
 
 ## Planned phases (not built)
 ## Planned phases (not built)

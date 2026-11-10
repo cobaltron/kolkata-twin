@@ -2,7 +2,7 @@ import { Color, FogExp2, Vector3 } from 'three';
 import type { Layer, LayerContext } from '../../core/layers/Layer';
 import type { TimeState } from '../../core/time/types';
 import { clearState, hazeDensity, rainParticleFraction, type WeatherState } from '../../core/environment/weather';
-import { LiveWeather, ScenarioWeather } from './providers';
+import { LiveWeather } from './providers';
 import { RainParticles } from './RainParticles';
 
 const FOG_DAY = new Color(0xc4cfd9);
@@ -10,20 +10,18 @@ const FOG_OVERCAST = new Color(0xa3aab0);
 const FOG_NIGHT = new Color(0x0a0e18);
 
 /**
- * Weather: owns the data (live Open-Meteo, stored scenario series) and publishes it on
+ * Weather: owns the data (live Open-Meteo) and publishes it on
  * ctx.environment.weather; renders rain particles and humidity/rain haze (fog).
  * Cloud cover is rendered by SunSkyLayer, which reads the published state.
  *
  *   live       -> Open-Meteo current + hourly
- *   event      -> stored hourly series of the active scenario (or the flagged synthetic storm)
- *   historical -> no data: clear sky, stated in the UI
+ *   any other mode -> no data: clear sky, stated in the UI
  */
 export class WeatherLayer implements Layer {
   readonly id = 'weather';
   readonly label = 'Weather (rain, haze, cloud)';
   private ctx: LayerContext | null = null;
   private live: LiveWeather | null = null;
-  private readonly scenarios = new ScenarioWeather();
   private rain: RainParticles | null = null;
   private readonly fog = new FogExp2(0xc4cfd9, 0);
   private readonly fogTarget = new Color();
@@ -45,8 +43,7 @@ export class WeatherLayer implements Layer {
 
   private resolve(time: TimeState): WeatherState {
     if (time.mode === 'live') return this.live!.sample(time.instant);
-    if (time.mode === 'event' && time.scenario) return this.scenarios.sample(time.scenario, time.instant);
-    return clearState('none', 'No weather data in custom-time mode; clear sky shown');
+    return clearState('none', 'Weather is shown in Live mode only; clear sky here');
   }
 
   update(time: TimeState, dt: number): void {

@@ -42,10 +42,10 @@ export class TimeBar {
     root.classList.add('panel');
 
     const seg = el('div', { class: 'seg', role: 'group', 'aria-label': 'Time mode' });
-    const onlySynthetic = time.availableScenarios.every((s) => s.synthetic);
     for (const [mode, label] of MODES) {
-      // With no stored real event, the mode is a rendering demo and is named as one.
-      const b = el('button', { type: 'button' }, mode === 'event' && onlySynthetic ? 'Storm demo (synthetic)' : label);
+      // Event replay is offered only when something is registered to replay.
+      if (mode === 'event' && time.availableScenarios.length === 0) continue;
+      const b = el('button', { type: 'button' }, label);
       b.addEventListener('click', () => time.setMode(mode));
       this.modeButtons.set(mode, b);
       seg.append(b);
@@ -115,12 +115,10 @@ export class TimeBar {
     this.hour.row.hidden = live;
     this.progress.row.hidden = mode !== 'event';
     this.hint.textContent = live
-      ? 'Tracking the wall clock. Switch to Custom time or Event replay to scrub time.'
+      ? 'Tracking the wall clock, with live weather. Switch to Custom time to scrub the date and time of day.'
       : mode === 'historical'
-        ? 'Pick any date and time of day to see the sun and shadows. No weather data in this mode.'
-        : (state.scenario?.synthetic ?? false)
-          ? 'Artificial storm for testing the rendering. Not a real event.'
-          : `Weather: ${state.scenario?.source ?? ''}`;
+        ? 'Pick any date and time of day to see the sun and shadows. Weather is shown in Live mode only.'
+        : `Source: ${state.scenario?.source ?? ''}`;
 
     const p = toIst(state.instant);
     this.set(this.year, p.year, String(p.year));

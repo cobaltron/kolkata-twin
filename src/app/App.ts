@@ -7,7 +7,6 @@ import type { LayerContext, ViewState } from '../core/layers/Layer';
 import { LayerRegistry } from '../core/layers/LayerRegistry';
 import { Environment } from '../core/environment/Environment';
 import { TimeController } from '../core/time/TimeController';
-import type { Scenario } from '../core/time/types';
 import { CityData } from '../data/CityData';
 import { HISTORICAL_MIN_YEAR, STUDY_AREA } from '../shared/config';
 import { LocalFrame } from '../shared/projection';
@@ -62,7 +61,7 @@ export class App {
   private readonly marker = new Mesh(new RingGeometry(0.82, 1, 48), new MeshBasicMaterial({ color: 0xe8b04a, transparent: true, depthTest: false, side: DoubleSide }));
   private markerAge = Infinity;
 
-  constructor(private readonly container: HTMLElement, scenarios: Scenario[]) {
+  constructor(private readonly container: HTMLElement) {
     this.quality = detectQuality();
     this.renderer = new WebGLRenderer({ antialias: this.quality.antialias, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, this.quality.maxPixelRatio));
@@ -110,7 +109,8 @@ export class App {
     this.marker.visible = false;
     this.scene.add(this.marker);
 
-    this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR, scenarios });
+    // No scenarios are registered: event mode exists in TimeController but has nothing to replay yet.
+    this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR });
     this.cityData = new CityData('data/city.bin');
     const app = this;
     const ctx: LayerContext = {

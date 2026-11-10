@@ -1,5 +1,3 @@
-import { toIst } from '../../core/time/ist';
-import type { Scenario } from '../../core/time/types';
 import { clearState, sampleSeries, type WeatherSample, type WeatherSeries, type WeatherState } from '../../core/environment/weather';
 
 const HOURLY = 'precipitation,cloud_cover,relative_humidity_2m,temperature_2m,wind_speed_10m,wind_direction_10m';
@@ -84,64 +82,11 @@ export class LiveWeather {
   sample(instant: number): WeatherState {
     // Prefer the 15-minute "current" block while it is fresh, else the hourly series.
     if (this.current && Math.abs(instant - this.current.instant) < 20 * 60 * 1000) {
-      return { ...this.current.sample, status: 'ok', synthetic: false, source: `Live: ${OPEN_METEO_ATTRIBUTION}, current conditions (model analysis, not a gauge)` };
+      return { ...this.current.sample, status: 'ok', source: `Live: ${OPEN_METEO_ATTRIBUTION}, current conditions (model analysis, not a gauge)` };
     }
     const s = this.series && sampleSeries(this.series, instant);
-    if (s) return { ...s, status: 'ok', synthetic: false, source: `Live: ${OPEN_METEO_ATTRIBUTION}, hourly forecast` };
+    if (s) return { ...s, status: 'ok', source: `Live: ${OPEN_METEO_ATTRIBUTION}, hourly forecast` };
     if (this.failed) return clearState('unavailable', 'Live weather unavailable (Open-Meteo request failed); clear sky shown');
     return clearState('loading', 'Loading live weather…');
   }
-}
-
-/** Stored scenario file written by tools/fetch-scenarios.ts. */
-interface ScenarioFile {
-  source: string;
-  hourly: OpenMeteoHourly;
-}
-
-/** Hourly series for event-mode scenarios: stored files, or the flagged synthetic generator. */
-export class ScenarioWeather {
-  private readonly cache = new Map<string, { series: WeatherSeries; source: string } | 'loading' | 'failed'>();
-
-  sample(scenario: Scenario, instant: number): WeatherState {
-    if (scenario.synthetic) {
-      return { ...syntheticStorm(instant), status: 'ok', synthetic: true, source: 'SYNTHETIC placeholder storm (not real data)' };
-    }
-    if (!scenario.seriesUrl) return clearState('none', 'This scenario has no stored weather series');
-    const entry = this.cache.get(scenario.id);
-    if (!entry) {
-      this.cache.set(scenario.id, 'loading');
-      fetch(new URL(scenario.seriesUrl, document.baseURI))
-        .then((res) => (res.ok ? (res.json() as Promise<ScenarioFile>) : Promise.reject(new Error(`HTTP ${res.status}`))))
-        .then((file) => this.cache.set(scenario.id, { series: toSeries(file.hourly), source: file.source }))
-        .catch((err: unknown) => {
-          console.warn(`Scenario series ${scenario.id} failed to load`, err);
-          this.cache.set(scenario.id, 'failed');
-        });
-      return clearState('loading', 'Loading scenario weather…');
-    }
-    if (entry === 'loading') return clearState('loading', 'Loading scenario weather…');
-    if (entry === 'failed') return clearState('unavailable', 'Scenario weather failed to load; clear sky shown');
-    const s = sampleSeries(entry.series, instant);
-    return s ? { ...s, status: 'ok', synthetic: false, source: entry.source } : clearState('unavailable', 'Outside the stored series');
-  }
-}
-
-/**
- * SYNTHETIC PLACEHOLDER. A smooth, obviously artificial storm keyed on IST time of day: rain peaks at
- * 60 mm/h at 15:00. It exists so rain, cloud and haze rendering can be exercised without real event
- * data. It does not describe any real storm. Badged SYNTHETIC in the UI.
- */
-export function syntheticStorm(instant: number): WeatherSample {
-  const h = toIst(instant).hours;
-  const bump = (centre: number, width: number): number => Math.exp(-(((h - centre) / width) ** 2));
-  const storm = bump(15, 3);
-  return {
-    precipitationMmH: 60 * bump(15, 2),
-    cloudCover: 0.2 + 0.8 * storm,
-    humidity: 0.65 + 0.33 * storm,
-    temperatureC: 30 - 5 * storm,
-    windSpeedMs: 3 + 12 * storm,
-    windFromDeg: 150,
-  };
 }

@@ -11,7 +11,6 @@
     "test": "vitest run",
     "data:fetch": "tsx tools/fetch-osm.ts",
     "data:build": "tsx tools/build-city.ts",
-    "data:scenarios": "tsx tools/fetch-scenarios.ts",
     "data:poi": "tsx tools/fetch-poi.ts",
     "data:wikidata": "tsx tools/fetch-wikidata.ts",
     "data:content": "tsx tools/fetch-landmark-content.ts",
