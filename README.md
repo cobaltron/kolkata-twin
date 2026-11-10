@@ -33,7 +33,7 @@ src/
   data/                     CityData (main thread), city.worker.ts, geometry builders
   layers/<id>/              one folder per layer: weather, sky, buildings, landmarks, roads, rail, water, green, ground
   app/                      App (renderer, camera, loop), quality tiers
-  ui/                       TimeBar, LayerPanel, WeatherPanel, StatsHud
+  ui/                       TimeBar, LayerPanel, ViewSwitch, WeatherPanel, StatsHud
 tests/
 ```
 
@@ -74,6 +74,17 @@ typed arrays transferred to the main thread -> merged meshes.
   after the ground, which removes z-fighting on a flat city.
 - Shadows: one directional shadow map around the camera focus, texel-snapped, re-rendered only when
   the sun or focus moves (`shadowMap.autoUpdate = false`).
+
+### Isometric pixel view
+A second view mode, modelled on the camera and presentation in Yadong Xie's "How Isometric Pixel City Was
+Made": one orthographic camera pointed 15 degrees west of north and tilted 45 degrees down, pan and zoom
+only, rendered through three.js `RenderPixelatedPass` (low-resolution render with normal/depth edge
+lines, nearest-neighbour upscale) with tilt-shift blur bands at the top and bottom of the page.
+It draws the same OSM-derived scene as the 3D view; no generative model is involved. Layers read the
+active camera from `ctx.camera` each frame and the view state from `ctx.view`.
+
+What is not adopted from the article: its source imagery (Google Photorealistic 3D Tiles) and the
+image-model redraw. See "Decisions" in the phase report.
 
 ### Weather (Phase 1)
 `WeatherLayer` owns the data and publishes a `WeatherState` on `ctx.environment.weather` every frame;

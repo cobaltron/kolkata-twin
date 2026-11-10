@@ -62,7 +62,8 @@ export class WeatherLayer implements Layer {
     this.density += (hazeDensity(weather.humidity, weather.precipitationMmH) - this.density) * k;
 
     const daylight = ctx.environment.daylight;
-    this.fog.density = this.density;
+    // The isometric camera sits 8 km back, so the same density would wash the whole map out.
+    this.fog.density = this.density * (ctx.view.isometric ? 0.35 : 1);
     this.fogTarget.lerpColors(FOG_DAY, FOG_OVERCAST, weather.cloudCover).lerp(FOG_NIGHT, 1 - daylight);
     this.fog.color.lerp(this.fogTarget, k);
 
@@ -71,7 +72,8 @@ export class WeatherLayer implements Layer {
     const speed = Math.min(weather.windSpeedMs, 15);
     // Rain animates in real time regardless of playback speed (9 m/s at 3600x would be noise); it freezes when paused.
     const rainDt = time.paused ? 0 : dt;
-    this.rain.update(rainDt, rainParticleFraction(this.rainRate), ctx.camera.position, { x: Math.sin(to) * speed, z: -Math.cos(to) * speed }, daylight);
+    // Rain streaks live in a small box around the camera; they are not drawn in the isometric view.
+    this.rain.update(rainDt, ctx.view.isometric ? 0 : rainParticleFraction(this.rainRate), ctx.camera.position, { x: Math.sin(to) * speed, z: -Math.cos(to) * speed }, daylight);
   }
 
   setVisible(visible: boolean): void {

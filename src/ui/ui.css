@@ -39,6 +39,14 @@ a { color: inherit; }
 .landmark-label.kind-green { background: rgba(214, 235, 196, 0.9); }
 .landmark-label.kind-water { background: rgba(200, 224, 240, 0.9); }
 .landmark-label.kind-bridge { background: rgba(240, 214, 186, 0.92); }
+.tiltshift { position: fixed; left: 0; right: 0; height: 24%; z-index: 1; pointer-events: none; display: none; }
+.isometric-view .tiltshift { display: block; }
+.tiltshift.top { top: 0; -webkit-mask-image: linear-gradient(to bottom, #000, transparent); mask-image: linear-gradient(to bottom, #000, transparent); }
+.tiltshift.bottom { bottom: 0; -webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent); }
+/* Prefixed and unprefixed backdrop-filter are deliberately separate rules: some minifiers keep only one of a pair. */
+.tiltshift { -webkit-backdrop-filter: blur(calc(5px + var(--tilt-nudge, 0px))); }
+.tiltshift { backdrop-filter: blur(calc(5px + var(--tilt-nudge, 0px))); }
+#viewport.isometric canvas { image-rendering: pixelated; }
 .note { color: var(--muted); font-size: 11.5px; margin: 6px 0 0; }
 .side-toggle { display: none; }
 

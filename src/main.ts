@@ -11,6 +11,7 @@ import { createWaterLayer } from './layers/water/WaterLayer';
 import { WeatherLayer } from './layers/weather/WeatherLayer';
 import { loadScenarios } from './core/time/scenarios';
 import { WeatherPanel } from './ui/WeatherPanel';
+import { ViewSwitch } from './ui/ViewSwitch';
 import { LayerPanel } from './ui/LayerPanel';
 import { StatsHud } from './ui/StatsHud';
 import { TimeBar } from './ui/TimeBar';
@@ -32,6 +33,7 @@ const panel = new LayerPanel(byId('side'), app.layers);
 new TimeBar(byId('timebar'), app.time);
 new StatsHud(byId('hud'), app);
 new WeatherPanel(panel.weatherSection, app.environment);
+new ViewSwitch(panel.viewSection, app);
 
 app.start();
 void app.layers.loadAll();

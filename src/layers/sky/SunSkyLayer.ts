@@ -38,6 +38,7 @@ export class SunSkyLayer implements Layer {
   private cloud = 0;
   private rain = 0;
   private skyClock = 0;
+  private skyLit = true;
   private lastEpoch = -1;
   private readonly shadowCentre = new Vector3(Number.NaN, 0, 0);
   /** Current half-width of the shadowed square, metres. Grows with camera distance. */
@@ -93,7 +94,7 @@ export class SunSkyLayer implements Layer {
     this.sun.color.lerpColors(SUN_LOW, SUN_HIGH, MathUtils.smoothstep(altDeg, 0, 30));
     this.sky.material.uniforms['sunPosition']!.value.copy(this.direction);
     // The analytic sky goes black well below the horizon; fall back to a plain night background there.
-    this.sky.visible = day > 0.02;
+    this.skyLit = day > 0.02;
     ctx.scene.background = BACKGROUND_NIGHT;
     this.placeShadowCamera(ctx);
   }
@@ -122,6 +123,9 @@ export class SunSkyLayer implements Layer {
     // Overcast and rain also darken the sky dome itself, which only responds to exposure.
     ctx.renderer.toneMappingExposure = BASE_EXPOSURE * (1 - 0.22 * c - 0.2 * r);
 
+    // The dome is hidden in the isometric view: its camera looks down from outside the dome.
+    this.sky.visible = this.skyLit && !ctx.view.isometric;
+
     this.skyClock += dt;
     const u = this.sky.material.uniforms;
     u['cloudCoverage']!.value = c;
@@ -135,8 +139,7 @@ export class SunSkyLayer implements Layer {
    * (sharp shadows up close, coarse but uniform ones from the overview) instead of a visible patch.
    */
   private wantedShadowRadius(ctx: LayerContext): number {
-    const d = Math.hypot(ctx.camera.position.x - ctx.focus.x, ctx.camera.position.y, ctx.camera.position.z - ctx.focus.z);
-    return MathUtils.clamp(d * 0.9, ctx.quality.shadowRadius * 0.4, 7000);
+    return MathUtils.clamp(ctx.view.span * 0.9, ctx.quality.shadowRadius * 0.4, 7000);
   }
 
   private placeShadowCamera(ctx: LayerContext): void {

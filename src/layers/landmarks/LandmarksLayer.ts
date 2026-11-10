@@ -9,7 +9,7 @@ interface Label {
   shown: boolean;
 }
 
-/** Labels beyond this distance from the camera are hidden unless they are among the largest features. */
+/** When more ground than this is on screen, only the highest-ranked labels are shown. */
 const NEAR_METRES = 6000;
 const ALWAYS_SHOWN = 25;
 const KIND_PRIORITY: Record<Landmark['kind'], number> = { building: 0, bridge: 0, green: 1, water: 1, other: 2 };
@@ -55,8 +55,7 @@ export class LandmarksLayer implements Layer {
     const taken: Array<[number, number, number, number]> = [];
     this.labels.forEach((label, index) => {
       this.projected.copy(label.anchor).project(camera);
-      const distance = camera.position.distanceTo(label.anchor);
-      let visible = this.projected.z < 1 && Math.abs(this.projected.x) < 1 && Math.abs(this.projected.y) < 1 && (index < ALWAYS_SHOWN || distance < NEAR_METRES);
+      let visible = this.projected.z < 1 && Math.abs(this.projected.x) < 1 && Math.abs(this.projected.y) < 1 && (index < ALWAYS_SHOWN || ctx.view.span < NEAR_METRES);
       const x = (this.projected.x * 0.5 + 0.5) * width, y = (-this.projected.y * 0.5 + 0.5) * height;
       if (visible) {
         // Approximate box from text length; labels are centred above the anchor.

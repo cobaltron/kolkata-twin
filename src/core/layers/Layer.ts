@@ -1,4 +1,4 @@
-import type { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import type { OrthographicCamera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import type { CityData } from '../../data/CityData';
 import type { Environment } from '../environment/Environment';
 import type { QualityTier } from '../../app/quality';
@@ -6,10 +6,20 @@ import type { LocalFrame } from '../../shared/projection';
 import type { TimeController } from '../time/TimeController';
 import type { TimeState } from '../time/types';
 
+export interface ViewState {
+  /** True in the orthographic "isometric pixel" view. */
+  isometric: boolean;
+  /** Rough size in metres of the ground area on screen (camera distance in 3D, frustum height in isometric). */
+  span: number;
+}
+
 /** Everything a layer may touch. Layers receive this once, in load(). */
 export interface LayerContext {
   scene: Scene;
-  camera: PerspectiveCamera;
+  /** The active camera. It changes when the view mode changes, so read it each frame; do not cache it. */
+  readonly camera: PerspectiveCamera | OrthographicCamera;
+  /** Current view, updated by the app every frame. */
+  view: ViewState;
   renderer: WebGLRenderer;
   /** Subscribe to typed time events here. Never read Date.now() in a layer. */
   time: TimeController;

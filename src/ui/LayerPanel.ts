@@ -8,6 +8,8 @@ const STATUS_TEXT: Record<LayerEntry['status'], string> = { registered: '', load
 export class LayerPanel {
   private readonly rows = new Map<string, { input: HTMLInputElement; status: HTMLElement }>();
   private readonly legend = el('section');
+  /** Filled by ViewSwitch. */
+  readonly viewSection = el('section');
   /** Filled by WeatherPanel. */
   readonly weatherSection = el('section');
 
@@ -28,7 +30,7 @@ export class LayerPanel {
       this.paint(entry);
     }
     registry.on('change', (entry) => this.paint(entry));
-    root.append(toggle, list, this.weatherSection, this.legend);
+    root.append(toggle, this.viewSection, list, this.weatherSection, this.legend);
   }
 
   private paint(entry: LayerEntry): void {
