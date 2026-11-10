@@ -1,7 +1,12 @@
 {
-  "id": "central-kolkata",
-  "name": "Central Kolkata: Esplanade, BBD Bagh, Maidan, Hooghly riverfront",
-  "bbox": { "west": 88.320, "south": 22.535, "east": 88.375, "north": 22.590 },
+  "id": "kolkata-core",
+  "name": "Kolkata core: Hooghly riverfront to the eastern canals, Maidan to Shyambazar",
+  "bbox": {
+    "west": 88.32,
+    "south": 22.535,
+    "east": 88.415,
+    "north": 22.61
+  },
   "utmZone": 45,
   "tileSizeMetres": 1000
 }

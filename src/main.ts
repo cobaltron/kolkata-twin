@@ -7,6 +7,9 @@ import { createRailLayer } from './layers/rail/RailLayer';
 import { createRoadsLayer } from './layers/roads/RoadsLayer';
 import { SunSkyLayer } from './layers/sky/SunSkyLayer';
 import { createWaterLayer } from './layers/water/WaterLayer';
+import { WeatherLayer } from './layers/weather/WeatherLayer';
+import { loadScenarios } from './core/time/scenarios';
+import { WeatherPanel } from './ui/WeatherPanel';
 import { LayerPanel } from './ui/LayerPanel';
 import { StatsHud } from './ui/StatsHud';
 import { TimeBar } from './ui/TimeBar';
@@ -17,15 +20,17 @@ const byId = (id: string): HTMLElement => {
   return node;
 };
 
-const app = new App(byId('viewport'));
-// Registration order is also the order of the toggles in the UI.
-for (const layer of [new SunSkyLayer(), new BuildingsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
+const app = new App(byId('viewport'), await loadScenarios());
+// Registration order is the update order and the order of the toggles in the UI.
+// Weather runs first so the sky layer sees this frame's conditions.
+for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
   app.layers.register(layer);
 }
 
 const panel = new LayerPanel(byId('side'), app.layers);
 new TimeBar(byId('timebar'), app.time);
 new StatsHud(byId('hud'), app);
+new WeatherPanel(panel.weatherSection, app.environment);
 
 app.start();
 void app.layers.loadAll();

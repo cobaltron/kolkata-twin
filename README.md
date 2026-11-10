@@ -10,14 +10,17 @@ npm run dev          # http://localhost:5173  (add ?quality=mobile to force the 
 npm test             # projection, sun-vector and TimeController tests
 npm run build        # typecheck + production bundle in dist/
 npm run data         # optional: re-fetch OSM and rebuild public/data/city.bin
+npm run data:scenarios   # download hourly weather for the events in config/scenarios.json
 ```
 `public/data/city.bin` is checked in, so the app runs without the data step.
 
 ## Architecture
 ```
 config/study-area.json      bbox, UTM zone, tile size (grow the study area here)
+config/scenarios.json       real events for event mode (id, label, IST window, references)
 tools/                      offline pipeline (Node, tsx); never runs in the browser
-  fetch-osm.ts              Overpass -> data/raw/osm.json
+  fetch-osm.ts              Overpass (tiled, with retries) -> data/raw/osm.json
+  fetch-scenarios.ts        Open-Meteo archive -> public/data/scenarios/*.json + index.json
   build-city.ts             project, clip, resolve heights -> public/data/city.bin
   lib/heights.ts, clip.ts
 data/SOURCES.md             every dataset, licence and heuristic
@@ -25,10 +28,11 @@ src/
   shared/                   projection (WGS84 -> UTM 45N -> local metres), binary format, sun maths, config
   core/time/                TimeController, TimeState/TimeEvents types, IST calendar, scenarios
   core/layers/              Layer interface, LayerRegistry
+  core/environment/         shared weather/daylight state, series sampling, rain and haze mappings
   data/                     CityData (main thread), city.worker.ts, geometry builders
-  layers/<id>/              one folder per layer: sky, buildings, roads, rail, water, green, ground
+  layers/<id>/              one folder per layer: weather, sky, buildings, roads, rail, water, green, ground
   app/                      App (renderer, camera, loop), quality tiers
-  ui/                       TimeBar, LayerPanel, StatsHud
+  ui/                       TimeBar, LayerPanel, WeatherPanel, StatsHud
 tests/
 ```
 
@@ -67,10 +71,27 @@ typed arrays transferred to the main thread -> merged meshes.
 - Shadows: one directional shadow map around the camera focus, texel-snapped, re-rendered only when
   the sun or focus moves (`shadowMap.autoUpdate = false`).
 
+### Weather (Phase 1)
+`WeatherLayer` owns the data and publishes a `WeatherState` on `ctx.environment.weather` every frame;
+it is registered first so later layers see the current frame's conditions.
+
+| Mode | Source |
+|---|---|
+| live | Open-Meteo forecast API: 15-minute `current` block near now, hourly series otherwise; refreshed every 10 min |
+| event | stored hourly series for the scenario (`public/data/scenarios/<id>.json`), or the flagged synthetic storm |
+| historical | none: clear sky, stated in the UI |
+
+- Rain: GPU-instanced streaks in a 90 m cube that follows the camera; motion is entirely in the vertex
+  shader. Instance count = budget x sqrt(mm/h / 50), capped at 1 (budget 14,000 desktop, 5,000 phone).
+- Cloud cover: `SunSkyLayer` dims direct sun by `1 - 0.9 c^2`, greys and dims the ambient fill, lowers
+  exposure, and drives the sky dome's cloud deck.
+- Haze: `FogExp2` density from humidity and rain (`hazeDensity`). The visual range is floored at 6 km
+  on purpose so the city stays readable from the overview in a downpour.
+- Hourly precipitation is sampled as a step function (total of the preceding hour), so integrating the
+  rate reproduces the source totals. Phase 2 reads the same value as its rainfall input.
+- These mappings are rendering heuristics, not radiometry (`src/core/environment/weather.ts`).
+
 ## Planned phases (not built)
-- **P1 Weather** `layers/weather`: Open-Meteo client behind a `WeatherProvider` (live fetch / stored hourly
-  series for scenarios). Publishes a `WeatherState` (rain mm/h, cloud cover, humidity) that rain particles
-  (InstancedMesh or points in a camera-following volume), sky and fog consume.
 - **P2 Waterlogging** `layers/flood`: terrain grid (DEM prior + calibration file of hotspots/depressions),
   ping-pong render-target height-field solver stepped by `simDeltaSeconds`, reset on `epoch` change;
   rain source from P1, drainage sink scaled by a `TideProvider`; depth overlay plus per-street status

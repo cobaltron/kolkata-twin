@@ -114,10 +114,10 @@ export class TimeBar {
     this.hint.textContent = live
       ? 'Tracking the wall clock. Switch to Historical or Event replay to scrub time.'
       : mode === 'historical'
-        ? 'Phase 0 shows the present-day city in every year; time-aware layers arrive from Phase 3.'
+        ? 'The present-day city is shown in every year, with no weather data. Time-aware layers arrive from Phase 3.'
         : (state.scenario?.synthetic ?? false)
-          ? 'Placeholder window with no real event data behind it.'
-          : `Source: ${state.scenario?.source ?? ''}`;
+          ? 'Artificial storm for testing the rendering. Not a real event.'
+          : `Weather: ${state.scenario?.source ?? ''}`;
 
     const p = toIst(state.instant);
     this.set(this.year, p.year, String(p.year));

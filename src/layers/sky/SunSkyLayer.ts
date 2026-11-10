@@ -2,21 +2,26 @@ import { Color, DirectionalLight, HemisphereLight, MathUtils, Vector3 } from 'th
 import { Sky } from 'three/addons/objects/Sky.js';
 import type { Layer, LayerContext } from '../../core/layers/Layer';
 import type { TimeState } from '../../core/time/types';
+import { rainParticleFraction } from '../../core/environment/weather';
 import { sunVector } from '../../shared/sun';
 
 const SUN_LOW = new Color(0xff9d5c);
 const SUN_HIGH = new Color(0xfff3de);
 const SKY_DAY = new Color(0xbfd4ea);
+const SKY_OVERCAST = new Color(0xb9bec4);
 const SKY_NIGHT = new Color(0x5b70a8);
 const GROUND_DAY = new Color(0x8a7f6c);
 const GROUND_NIGHT = new Color(0x2a2f40);
 const BACKGROUND_NIGHT = new Color(0x070b16);
 /** Recompute the sun at most once per this many simulated seconds. */
 const SUN_STEP_SECONDS = 20;
+const BASE_EXPOSURE = 0.42;
 
 /**
  * Sun position (SunCalc) from simulated time: directional light with shadows, sky dome and ambient fill.
  * Shadows cover a square around the camera focus and re-render only when the sun or the focus moves.
+ * Cloud cover and rain (from ctx.environment.weather) dim the direct sun, grey the ambient fill and
+ * drive the sky dome's cloud deck. Publishes ctx.environment.daylight.
  */
 export class SunSkyLayer implements Layer {
   readonly id = 'sun-sky';
@@ -27,6 +32,12 @@ export class SunSkyLayer implements Layer {
   private readonly sky = new Sky();
   private readonly direction = new Vector3(0, 1, 0);
   private lastInstant = Number.NaN;
+  // Sun-only terms, recomputed when simulated time moves; weather is applied on top every frame.
+  private day = 1;
+  private direct = 1;
+  private cloud = 0;
+  private rain = 0;
+  private skyClock = 0;
   private lastEpoch = -1;
   private readonly shadowCentre = new Vector3(Number.NaN, 0, 0);
 
@@ -50,20 +61,22 @@ export class SunSkyLayer implements Layer {
     u['rayleigh']!.value = 1.6;
     u['mieCoefficient']!.value = 0.006;
     u['mieDirectionalG']!.value = 0.8;
-    // The addon's procedural clouds are switched off; cloud cover is driven by the Phase 1 weather layer.
-    if (u['cloudCoverage']) u['cloudCoverage'].value = 0;
+    // The addon's procedural cloud deck is driven by the weather layer's cloud cover (see applyWeather).
+    u['cloudCoverage']!.value = 0;
 
     ctx.scene.add(this.sun, this.sun.target, this.ambient, this.sky);
   }
 
-  update(time: TimeState): void {
+  update(time: TimeState, dt: number): void {
     const ctx = this.ctx;
     if (!ctx) return;
-    if (time.epoch !== this.lastEpoch || !(Math.abs(time.instant - this.lastInstant) < SUN_STEP_SECONDS * 1000)) {
+    const snap = time.epoch !== this.lastEpoch;
+    if (snap || !(Math.abs(time.instant - this.lastInstant) < SUN_STEP_SECONDS * 1000)) {
       this.lastEpoch = time.epoch;
       this.lastInstant = time.instant;
       this.applySun(time.instant, ctx);
     }
+    this.applyWeather(ctx, time.paused ? 0 : dt, snap ? 1 : 1 - Math.exp(-dt * 1.5));
     // Keep the shadow frustum centred on what the camera is looking at.
     const { focus, quality } = ctx;
     if (!(Math.hypot(focus.x - this.shadowCentre.x, focus.z - this.shadowCentre.z) < quality.shadowRadius * 0.08)) {
@@ -76,20 +89,48 @@ export class SunSkyLayer implements Layer {
     const s = sunVector(instant, lat, lon, ctx.frame.convergence);
     this.direction.set(s.x, s.y, s.z);
     const altDeg = MathUtils.radToDeg(s.altitude);
-    const day = MathUtils.smoothstep(altDeg, -6, 8); // twilight ramp
-    const direct = MathUtils.smoothstep(altDeg, -1, 10);
-
-    this.sun.intensity = 3.2 * direct;
+    this.day = MathUtils.smoothstep(altDeg, -6, 8); // twilight ramp
+    this.direct = MathUtils.smoothstep(altDeg, -1, 10);
+    const day = this.day;
+    ctx.environment.daylight = day;
     this.sun.color.lerpColors(SUN_LOW, SUN_HIGH, MathUtils.smoothstep(altDeg, 0, 30));
-    this.sun.castShadow = direct > 0.02;
-    this.ambient.intensity = MathUtils.lerp(1.3, 1.1, day); // night fill stands in for moon and city glow
-    this.ambient.color.lerpColors(SKY_NIGHT, SKY_DAY, day);
-    this.ambient.groundColor.lerpColors(GROUND_NIGHT, GROUND_DAY, day);
     this.sky.material.uniforms['sunPosition']!.value.copy(this.direction);
     // The analytic sky goes black well below the horizon; fall back to a plain night background there.
     this.sky.visible = day > 0.02;
     ctx.scene.background = BACKGROUND_NIGHT;
     this.placeShadowCamera(ctx);
+  }
+
+  /**
+   * Cloud cover through lighting and sky. Heuristic, not radiometry: direct sun falls with the square
+   * of cloud cover (broken cloud still lets most sun through), ambient fill dims and greys, rain darkens both.
+   */
+  private applyWeather(ctx: LayerContext, dt: number, k: number): void {
+    const w = ctx.environment.weather;
+    this.cloud += (w.cloudCover - this.cloud) * k;
+    this.rain += (rainParticleFraction(w.precipitationMmH) - this.rain) * k;
+    const c = this.cloud, r = this.rain, day = this.day;
+
+    const sunIntensity = 5.4 * this.direct * (1 - 0.9 * c * c) * (1 - 0.5 * r);
+    this.sun.intensity = sunIntensity;
+    const castShadow = sunIntensity > 0.15;
+    if (castShadow !== this.sun.castShadow) {
+      this.sun.castShadow = castShadow;
+      ctx.requestShadowUpdate();
+    }
+    this.ambient.intensity = MathUtils.lerp(2.2, 1.9, day) * (1 - 0.3 * c * day) * (1 - 0.25 * r); // night fill stands in for moon and city glow
+    this.ambient.color.lerpColors(SKY_DAY, SKY_OVERCAST, c).lerp(SKY_NIGHT, 1 - day);
+    this.ambient.groundColor.lerpColors(GROUND_NIGHT, GROUND_DAY, day);
+
+    // Overcast and rain also darken the sky dome itself, which only responds to exposure.
+    ctx.renderer.toneMappingExposure = BASE_EXPOSURE * (1 - 0.22 * c - 0.2 * r);
+
+    this.skyClock += dt;
+    const u = this.sky.material.uniforms;
+    u['cloudCoverage']!.value = c;
+    u['cloudDensity']!.value = MathUtils.lerp(0.4, 0.95, c);
+    u['time']!.value = this.skyClock;
+    u['turbidity']!.value = MathUtils.lerp(6, 12, MathUtils.smoothstep(w.humidity, 0.5, 1));
   }
 
   private placeShadowCamera(ctx: LayerContext): void {
@@ -107,7 +148,8 @@ export class SunSkyLayer implements Layer {
     if (!visible) this.sky.visible = false;
     // With the sun layer off, keep a flat neutral fill so the city stays readable.
     if (!visible) {
-      this.ambient.intensity = 2.2;
+      this.ambient.intensity = 3.8;
+      if (this.ctx) this.ctx.renderer.toneMappingExposure = BASE_EXPOSURE;
       this.ambient.color.set(0xffffff);
       this.ambient.groundColor.set(0x999999);
     } else {

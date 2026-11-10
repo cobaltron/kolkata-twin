@@ -6,6 +6,8 @@ export interface QualityTier {
   shadowMapSize: number;
   /** Half-width in metres of the square region around the camera focus that receives sun shadows. */
   shadowRadius: number;
+  /** Rain streak budget at the heaviest rain rate. */
+  maxRainDrops: number;
 }
 
 export function detectQuality(): QualityTier {
@@ -13,6 +15,6 @@ export function detectQuality(): QualityTier {
   const forced = new URLSearchParams(location.search).get('quality');
   const mobile = forced ? forced === 'mobile' : coarse;
   return mobile
-    ? { name: 'mobile', maxPixelRatio: 1.5, antialias: false, shadowMapSize: 1024, shadowRadius: 500 }
-    : { name: 'desktop', maxPixelRatio: 2, antialias: true, shadowMapSize: 2048, shadowRadius: 900 };
+    ? { name: 'mobile', maxPixelRatio: 1.5, antialias: false, shadowMapSize: 1024, shadowRadius: 500, maxRainDrops: 5000 }
+    : { name: 'desktop', maxPixelRatio: 2, antialias: true, shadowMapSize: 2048, shadowRadius: 900, maxRainDrops: 14000 };
 }

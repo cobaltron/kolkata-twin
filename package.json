@@ -11,6 +11,7 @@
     "test": "vitest run",
     "data:fetch": "tsx tools/fetch-osm.ts",
     "data:build": "tsx tools/build-city.ts",
+    "data:scenarios": "tsx tools/fetch-scenarios.ts",
     "data": "npm run data:fetch && npm run data:build"
   },
   "dependencies": {

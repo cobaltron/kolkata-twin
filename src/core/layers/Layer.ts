@@ -1,5 +1,6 @@
 import type { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import type { CityData } from '../../data/CityData';
+import type { Environment } from '../environment/Environment';
 import type { QualityTier } from '../../app/quality';
 import type { LocalFrame } from '../../shared/projection';
 import type { TimeController } from '../time/TimeController';
@@ -14,6 +15,8 @@ export interface LayerContext {
   time: TimeController;
   frame: LocalFrame;
   cityData: CityData;
+  /** Shared per-frame environmental state (weather, daylight). */
+  environment: Environment;
   quality: QualityTier;
   /** Point the camera is orbiting, in scene coordinates (read-only). */
   focus: { x: number; z: number };

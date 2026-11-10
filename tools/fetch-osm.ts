@@ -13,8 +13,8 @@ const ENDPOINT = process.env.OVERPASS_URL ?? 'https://overpass-api.de/api/interp
 
 const GREEN_LEISURE = 'park|garden|pitch|golf_course|recreation_ground|playground|stadium|sports_centre';
 const GREEN_LANDUSE = 'grass|recreation_ground|forest|meadow|cemetery|village_green';
-const query = `
-[out:json][timeout:240][bbox:${south},${west},${north},${east}];
+const queryFor = (s: number, w: number, n: number, e: number): string => `
+[out:json][timeout:120][bbox:${s},${w},${n},${e}];
 (
   way[building];
   relation[building][type=multipolygon];
@@ -36,19 +36,61 @@ out body;
 out skel qt;
 `;
 
-console.log(`Fetching OSM for ${area.id} from ${ENDPOINT} ...`);
-const res = await fetch(ENDPOINT, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'User-Agent': 'city-3d-preprocess/0.1 (offline one-shot extract)',
-  },
-  body: 'data=' + encodeURIComponent(query),
-});
-if (!res.ok) throw new Error(`Overpass HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
-const text = await res.text();
-const json = JSON.parse(text);
-if (json.remark) throw new Error(`Overpass remark (likely timeout/partial): ${json.remark}`);
+interface OverpassResponse {
+  osm3s?: { timestamp_osm_base?: string };
+  remark?: string;
+  elements: Array<{ type: string; id: number; tags?: Record<string, string> }>;
+}
+
+async function fetchTile(query: string, label: string): Promise<OverpassResponse> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'city-3d-preprocess/0.1 (offline one-shot extract)',
+        },
+        body: 'data=' + encodeURIComponent(query),
+      });
+      if (!res.ok) throw new Error(`Overpass HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+      const json = (await res.json()) as OverpassResponse;
+      if (json.remark) throw new Error(`Overpass remark (likely timeout/partial): ${json.remark}`);
+      return json;
+    } catch (err) {
+      if (attempt >= 4) throw err;
+      const wait = 5000 * 2 ** (attempt - 1);
+      console.warn(`  ${label}: ${err instanceof Error ? err.message : String(err)}; retrying in ${wait / 1000}s`);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+}
+
+// The area is fetched as a grid of sub-boxes (large single responses are fragile through proxies)
+// and merged by element type + id. Ways and relations that cross a tile edge arrive complete from
+// each tile because of the ">" recursion, so de-duplication is lossless.
+const GRID = Number(process.env.OVERPASS_GRID ?? 3);
+console.log(`Fetching OSM for ${area.id} from ${ENDPOINT} as a ${GRID}x${GRID} grid ...`);
+const merged = new Map<string, OverpassResponse['elements'][number]>();
+let osmBase: string | null = null;
+for (let iy = 0; iy < GRID; iy++) {
+  for (let ix = 0; ix < GRID; ix++) {
+    const w = west + ((east - west) * ix) / GRID, e = west + ((east - west) * (ix + 1)) / GRID;
+    const s = south + ((north - south) * iy) / GRID, n = south + ((north - south) * (iy + 1)) / GRID;
+    const tile = await fetchTile(queryFor(s, w, n, e), `tile ${ix},${iy}`);
+    for (const el of tile.elements) {
+      const key = `${el.type}/${el.id}`;
+      // Prefer the copy that carries tags (the "out skel" copy of the same element has none).
+      if (!merged.has(key) || el.tags) merged.set(key, el);
+    }
+    // Keep the oldest base timestamp: the merged extract is only guaranteed current up to that point.
+    const ts = tile.osm3s?.timestamp_osm_base ?? null;
+    if (ts && (!osmBase || ts < osmBase)) osmBase = ts;
+    console.log(`  tile ${ix},${iy}: ${tile.elements.length} elements (total ${merged.size})`);
+  }
+}
+const json = { osm3s: { timestamp_osm_base: osmBase }, elements: [...merged.values()] };
+const text = JSON.stringify(json);
 
 await mkdir(new URL('data/raw/', ROOT), { recursive: true });
 await writeFile(new URL('data/raw/osm.json', ROOT), text);

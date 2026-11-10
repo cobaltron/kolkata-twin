@@ -11,6 +11,8 @@ export interface Scenario {
   synthetic: boolean;
   /** Where the scenario's data comes from; must match an entry in data/SOURCES.md. */
   source: string;
+  /** URL (relative to the page) of the stored hourly weather series, if any. */
+  seriesUrl?: string;
 }
 
 /** Immutable snapshot handed to every Layer. Layers must not read any other clock. */

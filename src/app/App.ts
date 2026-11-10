@@ -2,8 +2,9 @@ import { ACESFilmicToneMapping, Color, PCFShadowMap, PerspectiveCamera, Scene, S
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import type { LayerContext } from '../core/layers/Layer';
 import { LayerRegistry } from '../core/layers/LayerRegistry';
-import { SCENARIOS } from '../core/time/scenarios';
+import { Environment } from '../core/environment/Environment';
 import { TimeController } from '../core/time/TimeController';
+import type { Scenario } from '../core/time/types';
 import { CityData } from '../data/CityData';
 import { HISTORICAL_MIN_YEAR, STUDY_AREA } from '../shared/config';
 import { LocalFrame } from '../shared/projection';
@@ -29,6 +30,7 @@ export class App {
   readonly layers: LayerRegistry;
   readonly cityData: CityData;
   readonly quality: QualityTier;
+  readonly environment = new Environment();
   readonly stats: FrameStats = { fps: 0, frameMs: 0, drawCalls: 0, triangles: 0, drawCallsWithShadow: 0, trianglesWithShadow: 0 };
 
   private readonly focus = { x: 0, z: 0 };
@@ -36,13 +38,13 @@ export class App {
   private lastFrame = 0;
   private running = false;
 
-  constructor(private readonly container: HTMLElement) {
+  constructor(private readonly container: HTMLElement, scenarios: Scenario[]) {
     this.quality = detectQuality();
     this.renderer = new WebGLRenderer({ antialias: this.quality.antialias, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, this.quality.maxPixelRatio));
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.toneMapping = ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 0.72;
+    this.renderer.toneMappingExposure = 0.42;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = PCFShadowMap;
     this.renderer.shadowMap.autoUpdate = false; // static city: re-render shadows only on request
@@ -61,7 +63,7 @@ export class App {
     this.controls.maxDistance = 9000;
     this.controls.update();
 
-    this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR, scenarios: SCENARIOS });
+    this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR, scenarios });
     this.cityData = new CityData('data/city.bin');
     const ctx: LayerContext = {
       scene: this.scene,
@@ -70,6 +72,7 @@ export class App {
       time: this.time,
       frame: LocalFrame.fromBBox(STUDY_AREA.utmZone, STUDY_AREA.bbox),
       cityData: this.cityData,
+      environment: this.environment,
       quality: this.quality,
       focus: this.focus,
       requestShadowUpdate: () => {
