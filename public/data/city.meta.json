@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "studyAreaId": "central-kolkata",
+  "utmZone": 45,
+  "origin": {
+    "lon": 88.3475,
+    "lat": 22.5625,
+    "utmE": 638543.9616638138,
+    "utmN": 2495715.1432005255
+  },
+  "extent": {
+    "minX": -2854.7208271527197,
+    "minY": -3069.9058416569605,
+    "maxX": 2855.8341478662333,
+    "maxY": 3070.4857683838345
+  },
+  "tileSizeMetres": 1000,
+  "generatedAt": "2026-11-10T14:18:48.683Z",
+  "osmBaseTimestamp": "2026-11-10T14:13:07Z",
+  "attribution": "© OpenStreetMap contributors, ODbL 1.0",
+  "stats": {
+    "buildings": 29694,
+    "heightFromTag": 128,
+    "heightFromLevels": 118,
+    "heightEstimated": 29448,
+    "roads": 5914,
+    "rails": 282,
+    "waterPolygons": 68,
+    "waterways": 13,
+    "greenPolygons": 194
+  },
+  "roadNames": "710 names (see city.bin)"
+}

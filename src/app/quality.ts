@@ -1,0 +1,18 @@
+/** Device-dependent render settings. Chosen once at start-up. */
+export interface QualityTier {
+  name: 'desktop' | 'mobile';
+  maxPixelRatio: number;
+  antialias: boolean;
+  shadowMapSize: number;
+  /** Half-width in metres of the square region around the camera focus that receives sun shadows. */
+  shadowRadius: number;
+}
+
+export function detectQuality(): QualityTier {
+  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const forced = new URLSearchParams(location.search).get('quality');
+  const mobile = forced ? forced === 'mobile' : coarse;
+  return mobile
+    ? { name: 'mobile', maxPixelRatio: 1.5, antialias: false, shadowMapSize: 1024, shadowRadius: 500 }
+    : { name: 'desktop', maxPixelRatio: 2, antialias: true, shadowMapSize: 2048, shadowRadius: 900 };
+}
