@@ -1,0 +1,14 @@
+{
+  "name": "pilot",
+  "description": "Pilot: BBD Bagh, Writers' Building, GPO, Millennium Park and the Hooghly riverfront up to the Howrah Bridge approach",
+  "lat": 22.5745,
+  "lon": 88.3470,
+  "camera_azimuth_degrees": -15,
+  "camera_elevation_degrees": -45,
+  "meters_per_pixel": 0.293,
+  "quadrant_px": 512,
+  "cols": 11,
+  "rows": 11,
+  "ortho": { "meters_per_pixel": 0.3, "quadrants": 19, "error_target": 2 },
+  "sun": { "azimuth_degrees": 220, "elevation_degrees": 50 }
+}
