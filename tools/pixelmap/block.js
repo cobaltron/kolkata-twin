@@ -38,8 +38,12 @@ function imageryMaterial(tx, ty, map) {
     vertexShader: 'varying vec2 vEN; void main() { vec4 w = modelMatrix * vec4(position, 1.0); vEN = vec2(w.x, -w.z); gl_Position = projectionMatrix * viewMatrix * w; }',
     fragmentShader: `uniform sampler2D map; uniform float west, north, size; varying vec2 vEN;
       void main() { vec2 uv = vec2((vEN.x - west) / size, 1.0 - (north - vEN.y) / size);
-        if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) discard;
-        gl_FragColor = texture2D(map, uv); #include <colorspace_fragment> }`,
+        // A hair of tolerance, with the lookup clamped, so neighbouring tiles overlap instead of leaving a seam.
+        if (uv.x < -0.002 || uv.x > 1.002 || uv.y < -0.002 || uv.y > 1.002) discard;
+        uv = clamp(uv, 0.0005, 0.9995);
+        gl_FragColor = texture2D(map, uv);
+        #include <colorspace_fragment>
+      }`,
   });
 }
 const materials = [];
@@ -49,7 +53,7 @@ await Promise.all(Array.from({ length: O_N * O_N }, async (_, i) => {
   map.colorSpace = SRGBColorSpace;
   map.anisotropy = renderer.capabilities.getMaxAnisotropy();
   materials[i] = imageryMaterial(tx, ty, map);
-  const quad = new Mesh(new PlaneGeometry(O_TILE_M, O_TILE_M), materials[i]);
+  const quad = new Mesh(new PlaneGeometry(O_TILE_M + 1, O_TILE_M + 1), materials[i]);
   quad.rotation.x = -Math.PI / 2;
   quad.position.set(-O_HALF + (tx + 0.5) * O_TILE_M, 0, -(O_HALF - (ty + 0.5) * O_TILE_M));
   scene.add(quad);
