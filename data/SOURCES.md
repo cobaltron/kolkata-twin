@@ -99,18 +99,22 @@ Rain particle count, cloud dimming, exposure and haze density are perceptual map
 ## Placeholders
 - Terrain: none yet. The ground is a flat plane at 0 m until Phase 2.
 
-## Generated pixel-art map (in progress, not yet in the app)
-Planned after Yadong Xie's "How Isometric Pixel City Was Made": render the city from Google
-Photorealistic 3D Tiles with one orthographic camera, redraw the render with an image model, and tile
-the result. Status and terms:
-- **Google Photorealistic 3D Tiles** (Map Tiles API, owner's own API key). Google's Map Tiles API
-  policies restrict caching, offline use and machine interpretation of the imagery. Using the tiles as
-  the source for a stored, model-redrawn map was the project owner's explicit decision on 11 Nov 2026,
-  taken after that conflict was pointed out; it is an exception to this project's licence rule and the
-  risk sits with the owner's Google account. Attribution to Google and its data providers is required
-  wherever the result is shown.
-- **Qwen-Image-2.1-Turbo** (image model): weights under the Qwen Research License (research and
-  evaluation only; commercial use needs a separate licence).
-- **Compute**: Kaggle Notebooks free GPU quota (2 x Tesla T4), on the owner's account.
-- The result is drawn by a generative model. It is not data: buildings, streets and details in it may
-  be invented, and it must be labelled as such in the UI.
+## Painted map (generated; pilot area in the app)
+Made by `tools/pixelmap/` after flash1405/isometric-mumbai and cannoneyed/isometric-nyc (both MIT).
+- **Google Photorealistic 3D Tiles** (Map Tiles API, owner's own key), rendered top-down as ground and
+  roof imagery. Google's Map Tiles API policies restrict caching, offline use and machine interpretation
+  of the imagery. Using it as the source for a stored, model-redrawn map, and committing the painted
+  tiles to this repository, was the project owner's explicit decision (11 Nov 2026) after that conflict
+  was pointed out; it is an exception to this project's licence rule and the risk sits with the owner's
+  Google account. The raw imagery is not in the repository. Google and its data providers are credited
+  in the viewer from `public/data/pixelmap/pilot/meta.json`.
+- **Buildings**: our OSM footprints with heights as described above.
+- **Painter**: FLUX.2 [klein] 4B (Apache 2.0) with the Isometric Mumbai LoRA by Flash1405 (Apache 2.0;
+  its training targets were made with an OpenAI image model, see its model card). The prompt adds a
+  request for empty roads and water.
+- **Compute**: Kaggle Notebooks free GPUs on the owner's account (49 tiles, about 22 minutes).
+- **Water**: repainted in one colour from OSM water polygons; nothing else is retouched.
+- **It is not data.** A generative model drew every building and street; facades, domes, roof colours,
+  trees and any remaining painted cars may be invented, and the style was learned from Mumbai.
+  The viewer says so in its credit line and in the view note.
+- **Vehicles and boats on it** are the same simulated fleet as in the 3D view, drawn as sprites.

@@ -7,6 +7,7 @@ import type { LayerContext, ViewState } from '../core/layers/Layer';
 import { LayerRegistry } from '../core/layers/LayerRegistry';
 import { Environment } from '../core/environment/Environment';
 import { TimeController } from '../core/time/TimeController';
+import type { TimeState } from '../core/time/types';
 import { CityData } from '../data/CityData';
 import { HISTORICAL_MIN_YEAR, STUDY_AREA } from '../shared/config';
 import { LocalFrame } from '../shared/projection';
@@ -51,9 +52,13 @@ export class App {
   readonly stats: FrameStats = { fps: 0, frameMs: 0, drawCalls: 0, triangles: 0, drawCallsWithShadow: 0, trianglesWithShadow: 0 };
 
   private readonly focus = { x: 0, z: 0 };
+  private readonly frameOfReference = LocalFrame.fromBBox(STUDY_AREA.utmZone, STUDY_AREA.bbox);
   private shadowDirty = true;
   private lastFrame = 0;
   private running = false;
+  /** While true the 3D scene is not drawn (another view covers it); time and per-frame hooks still run. */
+  suspended = false;
+  private readonly frameListeners = new Set<(state: TimeState, dt: number) => void>();
   private readonly composer: EffectComposer;
   private readonly pixelPass: RenderPixelatedPass;
   private readonly viewListeners = new Set<(mode: ViewMode) => void>();
@@ -121,7 +126,7 @@ export class App {
       view: this.view,
       renderer: this.renderer,
       time: this.time,
-      frame: LocalFrame.fromBBox(STUDY_AREA.utmZone, STUDY_AREA.bbox),
+      frame: this.frameOfReference,
       cityData: this.cityData,
       environment: this.environment,
       quality: this.quality,
@@ -211,6 +216,17 @@ export class App {
     }
   }
 
+  /** Run `listener` once per frame, after time advances, whether or not the 3D scene is drawn. */
+  onFrame(listener: (state: TimeState, dt: number) => void): () => void {
+    this.frameListeners.add(listener);
+    return () => this.frameListeners.delete(listener);
+  }
+
+  /** The projection between lon/lat and the app's local metric frame. */
+  get localFrame(): LocalFrame {
+    return this.frameOfReference;
+  }
+
   onViewModeChange(listener: (mode: ViewMode) => void): () => void {
     this.viewListeners.add(listener);
     return () => this.viewListeners.delete(listener);
@@ -240,6 +256,8 @@ export class App {
     this.lastFrame = now;
 
     const state = this.time.advance(dt);
+    for (const listener of this.frameListeners) listener(state, dt);
+    if (this.suspended) return;
     this.stepFlight(dt);
     const controls = this.view.isometric ? this.isoControls : this.controls;
     controls.update();

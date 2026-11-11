@@ -2,7 +2,7 @@
  * Stage 2 of the generated pixel map: render the block model with the map camera, and stitch it.
  * Run: node tools/pixelmap/render-block.mjs pilot [--only=tx,ty]
  * In:  data/pixelmap/<name>/{ortho_tiles, ortho_small.jpg, buildings.json}
- * Out: data/pixelmap/<name>/renders/tile_<tx>_<ty>.png and data/pixelmap/<name>/render.png
+ * Out: data/pixelmap/<name>/render.png (what the painter sees) and building_mask.png (building silhouettes)
  * No Google requests are made at this stage.
  */
 import fs from 'node:fs';
@@ -33,18 +33,21 @@ const t0 = Date.now();
 for (const [tx, ty] of todo) {
   const r = await page.evaluate(([x, y]) => window.renderTile(x, y), [tx, ty]);
   fs.writeFileSync(path.join(outDir, `tile_${tx}_${ty}.png`), Buffer.from(r.png.split(',')[1], 'base64'));
+  fs.writeFileSync(path.join(outDir, `mask_${tx}_${ty}.png`), Buffer.from(r.mask.split(',')[1], 'base64'));
 }
 console.log(`${todo.length} tiles in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 await close();
 
 if (!only) {
   const q = config.quadrant_px, w = config.cols * q, h = config.rows * q;
-  const composites = [];
-  for (let ty = 0; ty < tilesY; ty++) for (let tx = 0; tx < tilesX; tx++) {
-    const left = tx * 2 * q, top = ty * 2 * q;
-    const input = await sharp(path.join(outDir, `tile_${tx}_${ty}.png`)).extract({ left: 0, top: 0, width: Math.min(2 * q, w - left), height: Math.min(2 * q, h - top) }).toBuffer();
-    composites.push({ input, left, top });
+  for (const [prefix, out] of [['tile', 'render.png'], ['mask', 'building_mask.png']]) {
+    const composites = [];
+    for (let ty = 0; ty < tilesY; ty++) for (let tx = 0; tx < tilesX; tx++) {
+      const left = tx * 2 * q, top = ty * 2 * q;
+      const input = await sharp(path.join(outDir, `${prefix}_${tx}_${ty}.png`)).extract({ left: 0, top: 0, width: Math.min(2 * q, w - left), height: Math.min(2 * q, h - top) }).toBuffer();
+      composites.push({ input, left, top });
+    }
+    await sharp({ create: { width: w, height: h, channels: 3, background: '#000' } }).composite(composites).png().toFile(path.join(dir, out));
+    console.log(`${out} ${w} x ${h}`);
   }
-  await sharp({ create: { width: w, height: h, channels: 3, background: '#000' } }).composite(composites).png().toFile(path.join(dir, 'render.png'));
-  console.log(`render.png ${w} x ${h}`);
 }

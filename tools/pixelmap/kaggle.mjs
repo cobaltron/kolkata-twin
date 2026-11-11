@@ -1,7 +1,7 @@
 /**
  * Runs stage 3 on Kaggle's free GPUs: uploads the block render as a private dataset, pushes
  * kaggle_paint.py as a private GPU script, waits for it and downloads the painted map.
- * Run: node tools/pixelmap/kaggle.mjs pilot
+ * Run: node tools/pixelmap/kaggle.mjs pilot [--no-upload]
  * Auth: KAGGLE_API_TOKEN (a "KGAT_..." token) as a bearer header, or none where a network proxy adds it.
  * Out: data/pixelmap/<name>/generated.png
  */
@@ -27,24 +27,27 @@ const user = (await api('GET', '/hello')).userName;
 const dataset = `kolkata-pixelmap-${name}-render`, kernel = `kolkata-pixelmap-${name}-paint`;
 
 // 1. Upload render.png as a private dataset (new dataset, or a new version of it).
-const file = path.join(dir, 'render.png');
-const bytes = fs.readFileSync(file);
-const blob = await api('POST', '/blobs/upload', { type: 'DATASET', name: 'render.png', contentLength: bytes.length, lastModifiedEpochSeconds: Math.floor(fs.statSync(file).mtimeMs / 1000) });
-const put = await fetch(blob.createUrl, { method: 'PUT', body: bytes });
-if (!put.ok) throw new Error(`upload: HTTP ${put.status}`);
-const files = [{ token: blob.token }];
-let exists = true;
-try { await api('GET', `/datasets/view/${user}/${dataset}`); } catch { exists = false; }
-const made = exists
-  ? await api('POST', `/datasets/create/version/${user}/${dataset}`, { versionNotes: 'new render', files })
-  : await api('POST', '/datasets/create/new', { title: dataset, slug: dataset, ownerSlug: user, licenseName: 'unknown', isPrivate: true, files });
-if (made.error) throw new Error(`dataset: ${made.error}`);
-console.log(`dataset ${dataset}: ${exists ? 'new version' : 'created'} (${(bytes.length / 1e6).toFixed(1)} MB)`);
-// Kaggle processes an upload for a short while before a script can mount it.
-for (let i = 0; i < 40; i++) {
-  const status = await api('GET', `/datasets/status/${user}/${dataset}`).catch(() => ({}));
-  if (JSON.stringify(status).includes('ready')) break;
-  await sleep(10000);
+// Pass --no-upload to reuse the render already on Kaggle (e.g. after changing only the paint script).
+if (!process.argv.includes('--no-upload')) {
+  const file = path.join(dir, 'render.png');
+  const bytes = fs.readFileSync(file);
+  const blob = await api('POST', '/blobs/upload', { type: 'DATASET', name: 'render.png', contentLength: bytes.length, lastModifiedEpochSeconds: Math.floor(fs.statSync(file).mtimeMs / 1000) });
+  const put = await fetch(blob.createUrl, { method: 'PUT', body: bytes });
+  if (!put.ok) throw new Error(`upload: HTTP ${put.status}`);
+  const files = [{ token: blob.token }];
+  let exists = true;
+  try { await api('GET', `/datasets/view/${user}/${dataset}`); } catch { exists = false; }
+  const made = exists
+    ? await api('POST', `/datasets/create/version/${user}/${dataset}`, { versionNotes: 'new render', files })
+    : await api('POST', '/datasets/create/new', { title: dataset, slug: dataset, ownerSlug: user, licenseName: 'unknown', isPrivate: true, files });
+  if (made.error) throw new Error(`dataset: ${made.error}`);
+  console.log(`dataset ${dataset}: ${exists ? 'new version' : 'created'} (${(bytes.length / 1e6).toFixed(1)} MB)`);
+  // Kaggle processes an upload for a short while before a script can mount it.
+  for (let i = 0; i < 40; i++) {
+    const status = await api('GET', `/datasets/status/${user}/${dataset}`).catch(() => ({}));
+    if (JSON.stringify(status).includes('ready')) break;
+    await sleep(10000);
+  }
 }
 
 // 2. Push the paint script and wait for it.

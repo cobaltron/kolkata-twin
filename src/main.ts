@@ -17,6 +17,7 @@ import { WeatherPanel } from './ui/WeatherPanel';
 import { ViewSwitch } from './ui/ViewSwitch';
 import { LandmarkPopup } from './ui/LandmarkPopup';
 import { SearchBox, type SearchEntry } from './ui/SearchBox';
+import { loadPaintedMeta, PaintedMapView } from './painted/PaintedMapView';
 import { LayerPanel } from './ui/LayerPanel';
 import { StatsHud } from './ui/StatsHud';
 import { TimeBar } from './ui/TimeBar';
@@ -39,11 +40,19 @@ const panel = new LayerPanel(byId('side'), app.layers);
 new TimeBar(byId('timebar'), app.time);
 new StatsHud(byId('hud'), app);
 new WeatherPanel(panel.weatherSection, app.environment);
-new ViewSwitch(panel.viewSection, app);
+// The painted map exists only if tools/pixelmap has produced one (public/data/pixelmap/pilot/).
+const paintedMeta = await loadPaintedMeta('pilot');
+const painted = paintedMeta ? new PaintedMapView(byId('painted'), paintedMeta, new URL('data/pixelmap/pilot/', document.baseURI).href, app.localFrame) : null;
+const views = new ViewSwitch(panel.viewSection, app, painted !== null);
+views.onChange((mode) => painted?.setVisible(mode === 'painted'));
+app.onFrame((state, dt) => {
+  if (views.current === 'painted') painted?.update(state, dt);
+});
 
 const popup = new LandmarkPopup(byId('popup'));
 const search = new SearchBox(panel.searchSection, (entry: SearchEntry) => {
-  app.flyTo(entry.x, entry.y, entry.kind === 'street' ? 450 : 650);
+  if (views.current === 'painted') painted?.flyTo(entry.x, entry.y);
+  else app.flyTo(entry.x, entry.y, entry.kind === 'street' ? 450 : 650);
   if (entry.landmark) void popup.open(entry.landmark);
   else popup.close();
 });
@@ -57,6 +66,7 @@ void app.layers.loadAll();
 app.cityData.load().then(
   (city) => {
     panel.showCityInfo(city.header);
+    painted?.setCity(city);
     search.setEntries([
       ...city.header.landmarks.map((l): SearchEntry => ({ name: l.name, kind: 'landmark', x: l.x, y: l.y, landmark: l })),
       ...city.streets.map((s): SearchEntry => ({ ...s, kind: 'street' })),

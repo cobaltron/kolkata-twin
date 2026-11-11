@@ -35,6 +35,8 @@ src/
   layers/<id>/              one folder per layer: weather, sky, buildings, models, landmarks, traffic, boats, festival, roads, rail, water, green, ground
   app/                      App (renderer, camera, loop), quality tiers
   ui/                       TimeBar, LayerPanel, SearchBox, LandmarkPopup, ViewSwitch, WeatherPanel, StatsHud
+  painted/                  painted-map view: Leaflet tile viewer, vehicle sprite renderer, traffic overlay
+tools/pixelmap/             offline pipeline for the painted map (see below)
 tests/
 ```
 
@@ -105,6 +107,24 @@ it is registered first so later layers see the current frame's conditions.
 - Hourly precipitation is sampled as a step function (total of the preceding hour), so integrating the
   rate reproduces the source totals. Phase 2 reads the same value as its rainfall input.
 - These mappings are rendering heuristics, not radiometry (`src/core/environment/weather.ts`).
+
+### Painted map (pilot)
+A third view, "Painted map": an isometric pixel-art painting of a pilot area (about 1.65 x 2.3 km around
+BBD Bagh, the riverfront and Eden Gardens), shown in a Leaflet tile viewer with simulated vehicles and
+boats animated on top as sprites. It is made offline by `tools/pixelmap/`, after the method of
+[flash1405/isometric-mumbai](https://github.com/flash1405/isometric-mumbai):
+
+| Stage | Command | What it does |
+|---|---|---|
+| 1 | `node tools/pixelmap/render-ortho.mjs pilot` | Renders Google Photorealistic 3D Tiles straight down (needs a Map Tiles API key in `GOOGLE_MAPS_API_KEY`) |
+| 2 | `npx tsx tools/pixelmap/prepare.ts pilot` then `node tools/pixelmap/render-block.mjs pilot` | Block render: that imagery on the ground and roofs of our footprints and heights, with the map camera (azimuth -15, pitch 45, 0.293 m/px); also building silhouettes |
+| 3 | `node tools/pixelmap/kaggle.mjs pilot` | Paints it on Kaggle's free GPUs (needs `KAGGLE_API_TOKEN`): FLUX.2 klein 4B + the Isometric Mumbai LoRA, four-phase seam-free schedule with feathered blending |
+| 4 | `npx tsx tools/pixelmap/finish.ts pilot` | Repaints all mapped water in one colour (keeping buildings and bridges) |
+| 5 | `npx tsx tools/pixelmap/tiles.ts pilot` | Cuts `public/data/pixelmap/pilot/` (WebP pyramid + `meta.json`) |
+
+The finished tiles are checked in, so the view works without running any of this. Intermediate files
+(Google imagery, renders) stay in the git-ignored `data/pixelmap/`. On a machine with a GPU, set
+`PIXELMAP_GPU=1` for stages 1 and 2. The view is labelled as model-drawn in the app; see `data/SOURCES.md`.
 
 ### Landmarks, search and pop-ups
 - `LandmarksLayer`: clickable labels for 149 places that have a Wikidata item in OSM.

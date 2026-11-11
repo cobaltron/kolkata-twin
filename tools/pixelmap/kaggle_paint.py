@@ -29,6 +29,11 @@ Image.MAX_IMAGE_PIXELS = None
 T, Q = 1024, 512
 PROMPT = ("Fill in the outlined section with the missing pixels corresponding to the <isometric nyc pixel art> style, "
           "removing the border and exactly following the shape/style/structure of the surrounding image (if present).")
+# The LoRA was trained on the sentence above. This addition asks for empty carriageways and water, so
+# that every vehicle on the finished map is an animated one; set PIXELMAP_KEEP_TRAFFIC=1 to drop it.
+if not os.environ.get("PIXELMAP_KEEP_TRAFFIC"):
+    PROMPT += " All roads, streets, bridges, rail tracks and water are empty: no cars, no buses, no trucks, no vehicles, no boats, no ships."
+FEATHER = 32  # px over which a new tile is blended into the finished art around its box
 OUT = "/kaggle/working"
 
 render_path = glob.glob("/kaggle/input/**/render.png", recursive=True)[0]
@@ -66,16 +71,17 @@ def template(gen, wx, wy, box):
         d.rectangle([x0 + i, y0 + i, x1 - 1 - i, y1 - 1 - i], outline=(255, 0, 0))
     return t
 
-def clean_border(img, box, band=3):
-    """The model can leave a faint line where the red box was: rebuild that band from the pixels just inside."""
-    import numpy as np
-    a = np.asarray(img).copy()
+def hem(box):
+    """Blend mask for pasting a painted window: opaque inside the box, fading out over FEATHER px
+    beyond it. Outside its box the model redraws the context it was given, so fading its output into
+    the finished art there hides the seam instead of cutting along the box edge."""
+    from PIL import ImageFilter
     x0, y0, x1, y1 = box
-    a[y0:y0 + band, x0:x1] = a[y0 + band, x0:x1]
-    a[y1 - band:y1, x0:x1] = a[y1 - band - 1, x0:x1]
-    a[y0:y1, x0:x0 + band] = a[y0:y1, x0 + band][:, None]
-    a[y0:y1, x1 - band:x1] = a[y0:y1, x1 - band - 1][:, None]
-    return Image.fromarray(a)
+    wide = Image.new("L", (T, T), 0)
+    ImageDraw.Draw(wide).rectangle([x0 - FEATHER, y0 - FEATHER, x1 - 1 + FEATHER, y1 - 1 + FEATHER], fill=255)
+    wide = wide.filter(ImageFilter.GaussianBlur(FEATHER / 2))
+    ImageDraw.Draw(wide).rectangle([x0, y0, x1 - 1, y1 - 1], fill=255)
+    return wide
 
 gen = Image.new("RGB", render.size)
 t0, n = time.time(), 0
@@ -86,8 +92,10 @@ for phase, jobs in plan().items():
                    generator=torch.Generator("cpu").manual_seed(7 + wx * 7 + wy * 13)).images[0]
         if out.size != (T, T):
             out = out.resize((T, T), Image.Resampling.LANCZOS)
-        x0, y0, x1, y1 = box
-        gen.paste(clean_border(out, box).crop(box), (wx + x0, wy + y0))
+        if phase == 1:
+            gen.paste(out, (wx, wy))  # nothing around it yet
+        else:
+            gen.paste(Image.composite(out, gen.crop((wx, wy, wx + T, wy + T)), hem(box)), (wx, wy))
         n += 1
         if n % 5 == 0 or n == total:
             print(f"phase {phase}: {n}/{total} tiles, {(time.time() - t0) / n:.1f} s/tile", flush=True)

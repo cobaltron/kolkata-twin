@@ -3,7 +3,7 @@
 // Approach after flash1405/isometric-mumbai (MIT); written for this project's data.
 // Driven by tools/pixelmap/render-block.mjs through window.renderTile(tx, ty).
 import {
-  AmbientLight, BufferAttribute, BufferGeometry, CanvasTexture, Color, DirectionalLight, Mesh, MeshLambertMaterial,
+  AmbientLight, BufferAttribute, BufferGeometry, CanvasTexture, Color, DirectionalLight, Mesh, MeshBasicMaterial, MeshLambertMaterial,
   OrthographicCamera, PCFSoftShadowMap, PlaneGeometry, RepeatWrapping, Scene, ShaderMaterial, ShadowMaterial, Shape,
   ShapeGeometry, ShapeUtils, SRGBColorSpace, TextureLoader, Vector2, Vector3, WebGLRenderer,
 } from 'three';
@@ -46,7 +46,7 @@ function imageryMaterial(tx, ty, map) {
       }`,
   });
 }
-const materials = [];
+const materials = [], groundParts = [];
 await Promise.all(Array.from({ length: O_N * O_N }, async (_, i) => {
   const tx = i % O_N, ty = Math.floor(i / O_N);
   const map = await loader.loadAsync(`/data/ortho_tiles/tile_${tx}_${ty}.png`);
@@ -56,6 +56,7 @@ await Promise.all(Array.from({ length: O_N * O_N }, async (_, i) => {
   const quad = new Mesh(new PlaneGeometry(O_TILE_M + 1, O_TILE_M + 1), materials[i]);
   quad.rotation.x = -Math.PI / 2;
   quad.position.set(-O_HALF + (tx + 0.5) * O_TILE_M, 0, -(O_HALF - (ty + 0.5) * O_TILE_M));
+  groundParts.push(quad);
   scene.add(quad);
 }));
 
@@ -160,6 +161,7 @@ const groundCatcher = new Mesh(new PlaneGeometry(O_HALF * 2, O_HALF * 2), shadow
 groundCatcher.rotation.x = -Math.PI / 2;
 groundCatcher.position.y = 0.03;
 groundCatcher.receiveShadow = true;
+groundParts.push(groundCatcher);
 scene.add(groundCatcher);
 
 // --- sun: shades the walls and casts the shadows
@@ -180,6 +182,7 @@ const up = new Vector3().crossVectors(right, forward).normalize();
 const halfM = (TILE_PX * MPP) / 2;
 const camera = new OrthographicCamera(-halfM, halfM, halfM, -halfM, 1, 20000);
 
+const silhouette = new MeshBasicMaterial({ color: 0xffffff });
 window.SCENE_STATS = { buildings: buildings.length, imageryTiles: materials.length };
 window.renderTile = async (tx, ty) => {
   // Tile centre on the image plane, in pixels from the grid centre (y down), then in the scene.
@@ -198,6 +201,16 @@ window.renderTile = async (tx, ty) => {
   sun.shadow.camera.updateProjectionMatrix();
   sun.target.updateMatrixWorld();
   renderer.render(scene, camera);
-  return { ok: true, png: renderer.domElement.toDataURL('image/png') };
+  const png = renderer.domElement.toDataURL('image/png');
+  // Building silhouettes (white on black) for the same tile: used later to keep buildings that lean
+  // over water when the water is repainted, and to hide vehicles behind buildings.
+  for (const g of groundParts) g.visible = false;
+  scene.overrideMaterial = silhouette;
+  renderer.setClearColor(0x000000);
+  renderer.render(scene, camera);
+  const mask = renderer.domElement.toDataURL('image/png');
+  scene.overrideMaterial = null;
+  for (const g of groundParts) g.visible = true;
+  return { ok: true, png, mask };
 };
 window.RENDERER_READY = true;

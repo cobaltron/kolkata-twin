@@ -9,7 +9,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import sharp from 'sharp';
 import { decodeCity } from '../../src/shared/cityFormat.ts';
 import { LocalFrame } from '../../src/shared/projection.ts';
-import { areaFrame } from './frame.ts';
+import { areaFrame } from '../../src/shared/pixelmap.ts';
 
 const ROOT = new URL('../..', import.meta.url);
 const name = process.argv[2] ?? 'pilot';

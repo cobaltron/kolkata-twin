@@ -1,0 +1,26 @@
+{
+  "name": "pilot",
+  "description": "Pilot: BBD Bagh, Writers' Building, GPO, Millennium Park and the Hooghly riverfront up to the Howrah Bridge approach",
+  "width": 5632,
+  "height": 5632,
+  "tileSize": 512,
+  "maxZoom": 4,
+  "camera": {
+    "lat": 22.5745,
+    "lon": 88.347,
+    "azimuthDeg": -15,
+    "elevationDeg": -45,
+    "metresPerPixel": 0.293
+  },
+  "generatedAt": "2026-11-11T17:23:21.306Z",
+  "credits": {
+    "imagery": [
+      "Google",
+      "Google; Airbus"
+    ],
+    "painter": "FLUX.2 [klein] 4B with the Isometric Mumbai LoRA by Flash1405 (both Apache 2.0)",
+    "method": "After flash1405/isometric-mumbai and cannoneyed/isometric-nyc (MIT)",
+    "buildings": "© OpenStreetMap contributors (ODbL); heights partly Google Open Buildings 2.5D (CC BY 4.0)"
+  },
+  "notice": "Painted by a generative model from satellite imagery and a block model. Buildings, colours and details may be invented; this is not a map to rely on."
+}
