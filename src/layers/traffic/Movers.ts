@@ -1,21 +1,27 @@
-import { BoxGeometry, Color, InstancedMesh, Matrix4, MeshStandardMaterial, Quaternion, Vector3 } from 'three';
+import { Color, InstancedMesh, Matrix4, MeshStandardMaterial, Quaternion, Vector3, type BufferGeometry } from 'three';
 import { PathNetwork, type Cursor, type Pose } from './PathNetwork';
 
 export interface MoverKind {
   /** Relative share of the fleet. */
   weight: number;
-  length: number;
-  width: number;
-  height: number;
+  /** Model with its length along +X and its underside at y = 0 (see vehicleModels.ts). */
+  model: () => BufferGeometry;
+  /** Per-instance tints for the model's white "body" parts; use [0xffffff] for a fixed livery. */
   colors: number[];
   /** Cruising speed, m/s. */
   speed: number;
+  /** Extra metres to the left of the fleet's lane, e.g. slow vehicles that keep to the kerb. */
+  kerbOffset?: number;
 }
 
 interface Mover {
   cursor: Cursor;
-  kind: MoverKind;
   speed: number;
+  lateral: number;
+}
+interface Fleet {
+  mesh: InstancedMesh;
+  movers: Mover[];
 }
 
 const UP = new Vector3(0, 1, 0);
@@ -33,62 +39,72 @@ export function randomStream(seed: number): () => number {
 }
 
 /**
- * A fleet of box-shaped movers on a PathNetwork, drawn as one InstancedMesh (one draw call).
+ * Fleets of modelled movers on a PathNetwork: one InstancedMesh (one draw call) per kind of vehicle.
  * SIMULATED: positions, counts and speeds are invented for atmosphere; they are not traffic data.
  */
 export class Movers {
-  readonly mesh: InstancedMesh;
-  private readonly movers: Mover[] = [];
+  readonly meshes: InstancedMesh[] = [];
+  private readonly fleets: Fleet[] = [];
   private readonly random: () => number;
   private readonly pose: Pose = { x: 0, y: 0, dx: 1, dy: 0 };
   private readonly matrix = new Matrix4();
   private readonly position = new Vector3();
-  private readonly scale = new Vector3();
+  private readonly scale = new Vector3(1, 1, 1);
   private readonly quaternion = new Quaternion();
+  private readonly material = new MeshStandardMaterial({ roughness: 0.6, metalness: 0.05, vertexColors: true });
 
   /**
    * @param lateral metres to the left of the centre line (India drives on the left); 0 for rail or water
-   * @param y height of the mover's underside above the ground
+   * @param y height of the movers' undersides above the ground
    */
-  constructor(private readonly network: PathNetwork, kinds: MoverKind[], count: number, private readonly lateral: number, private readonly y: number, seed: number) {
+  constructor(private readonly network: PathNetwork, kinds: MoverKind[], count: number, lateral: number, private readonly y: number, seed: number) {
     this.random = randomStream(seed);
-    const geometry = new BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
-    this.mesh = new InstancedMesh(geometry, new MeshStandardMaterial({ roughness: 0.55, metalness: 0.1 }), count);
-    this.mesh.castShadow = false; // thousands of tiny casters are not worth the shadow-pass cost
-    this.mesh.receiveShadow = true;
-    this.mesh.frustumCulled = false;
-    this.mesh.renderOrder = 11;
     const totalWeight = kinds.reduce((sum, k) => sum + k.weight, 0);
     const color = new Color();
-    for (let i = 0; i < count && network.paths.length > 0; i++) {
-      let pick = this.random() * totalWeight;
-      const kind = kinds.find((k) => (pick -= k.weight) < 0) ?? kinds[0]!;
-      this.movers.push({ cursor: network.place(this.random(), this.random()), kind, speed: kind.speed * (0.8 + 0.4 * this.random()) });
-      this.mesh.setColorAt(i, color.set(kind.colors[Math.floor(this.random() * kind.colors.length)]!));
+    for (const kind of kinds) {
+      const n = network.paths.length > 0 ? Math.max(1, Math.round((count * kind.weight) / totalWeight)) : 0;
+      const mesh = new InstancedMesh(kind.model(), this.material, Math.max(n, 1));
+      mesh.castShadow = false; // thousands of tiny casters are not worth the shadow-pass cost
+      mesh.receiveShadow = true;
+      mesh.frustumCulled = false;
+      mesh.renderOrder = 11;
+      const movers: Mover[] = [];
+      for (let i = 0; i < n; i++) {
+        movers.push({ cursor: network.place(this.random(), this.random()), speed: kind.speed * (0.8 + 0.4 * this.random()), lateral: lateral + (kind.kerbOffset ?? 0) });
+        mesh.setColorAt(i, color.set(kind.colors[Math.floor(this.random() * kind.colors.length)]!));
+      }
+      mesh.count = n;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+      this.fleets.push({ mesh, movers });
+      this.meshes.push(mesh);
     }
-    this.mesh.count = this.movers.length;
-    if (this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
   }
 
-  /** @param activeFraction 0..1 share of the fleet on the move (the rest are not drawn) */
+  /** @param activeFraction 0..1 share of each fleet on the move (the rest are not drawn) */
   update(dt: number, activeFraction: number): void {
-    const active = Math.round(this.movers.length * Math.min(Math.max(activeFraction, 0), 1));
-    this.mesh.count = active;
-    for (let i = 0; i < active; i++) {
-      const m = this.movers[i]!;
-      if (dt > 0) this.network.advance(m.cursor, m.speed * dt, this.random());
-      const p = this.network.pose(m.cursor, this.pose);
-      // Left of the direction of travel is (-dy, dx) in local x-east / y-north axes.
-      this.position.set(p.x - p.dy * this.lateral, this.y, -(p.y + p.dx * this.lateral));
-      this.quaternion.setFromAxisAngle(UP, Math.atan2(p.dy, p.dx));
-      this.scale.set(m.kind.length, m.kind.height, m.kind.width);
-      this.mesh.setMatrixAt(i, this.matrix.compose(this.position, this.quaternion, this.scale));
+    const share = Math.min(Math.max(activeFraction, 0), 1);
+    for (const { mesh, movers } of this.fleets) {
+      const active = Math.round(movers.length * share);
+      mesh.count = active;
+      for (let i = 0; i < active; i++) {
+        const m = movers[i]!;
+        if (dt > 0) this.network.advance(m.cursor, m.speed * dt, this.random());
+        const p = this.network.pose(m.cursor, this.pose);
+        // Left of the direction of travel is (-dy, dx) in local x-east / y-north axes.
+        this.position.set(p.x - p.dy * m.lateral, this.y, -(p.y + p.dx * m.lateral));
+        this.quaternion.setFromAxisAngle(UP, Math.atan2(p.dy, p.dx));
+        mesh.setMatrixAt(i, this.matrix.compose(this.position, this.quaternion, this.scale));
+      }
+      mesh.instanceMatrix.needsUpdate = true;
     }
-    this.mesh.instanceMatrix.needsUpdate = true;
+  }
+
+  setVisible(visible: boolean): void {
+    for (const mesh of this.meshes) mesh.visible = visible;
   }
 
   dispose(): void {
-    this.mesh.geometry.dispose();
-    (this.mesh.material as MeshStandardMaterial).dispose();
+    for (const mesh of this.meshes) mesh.geometry.dispose();
+    this.material.dispose();
   }
 }
