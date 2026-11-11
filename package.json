@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "deploy": "npm run build && node tools/deploy/cloudflare.mjs",
     "data:fetch": "tsx tools/fetch-osm.ts",
     "data:build": "tsx tools/build-city.ts",
     "data:poi": "tsx tools/fetch-poi.ts",
