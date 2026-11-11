@@ -98,3 +98,19 @@ Rain particle count, cloud dimming, exposure and haze density are perceptual map
 
 ## Placeholders
 - Terrain: none yet. The ground is a flat plane at 0 m until Phase 2.
+
+## Generated pixel-art map (in progress, not yet in the app)
+Planned after Yadong Xie's "How Isometric Pixel City Was Made": render the city from Google
+Photorealistic 3D Tiles with one orthographic camera, redraw the render with an image model, and tile
+the result. Status and terms:
+- **Google Photorealistic 3D Tiles** (Map Tiles API, owner's own API key). Google's Map Tiles API
+  policies restrict caching, offline use and machine interpretation of the imagery. Using the tiles as
+  the source for a stored, model-redrawn map was the project owner's explicit decision on 11 Nov 2026,
+  taken after that conflict was pointed out; it is an exception to this project's licence rule and the
+  risk sits with the owner's Google account. Attribution to Google and its data providers is required
+  wherever the result is shown.
+- **Qwen-Image-2.1-Turbo** (image model): weights under the Qwen Research License (research and
+  evaluation only; commercial use needs a separate licence).
+- **Compute**: Kaggle Notebooks free GPU quota (2 x Tesla T4), on the owner's account.
+- The result is drawn by a generative model. It is not data: buildings, streets and details in it may
+  be invented, and it must be labelled as such in the UI.
