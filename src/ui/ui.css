@@ -68,7 +68,9 @@ a { color: inherit; }
 #painted .leaflet-control-attribution { background: var(--panel); color: var(--text); font-size: 10.5px; max-width: 62vw; margin-bottom: 150px; border-radius: 4px 0 0 4px; }
 #painted .leaflet-control-attribution a { color: var(--text); }
 #painted .leaflet-control-zoom { margin-bottom: 150px; }
-.painted-view #attribution, .painted-view #hud { display: none; }
+/* The painted map has no sun, weather or layers: their controls are hidden while it shows. */
+.painted-view #attribution, .painted-view #hud, .painted-view #timebar, .painted-view .only-3d { display: none; }
+.painted-view #painted .leaflet-control-attribution, .painted-view #painted .leaflet-control-zoom { margin-bottom: 10px; }
 .note { color: var(--muted); font-size: 11.5px; margin: 6px 0 0; }
 .side-toggle { display: none; }
 

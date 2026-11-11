@@ -138,13 +138,17 @@ export class PaintedMapView {
     if (visible) this.map.invalidateSize();
   }
 
-  /** Pan to a place given in the app's frame (metres east and north of the study-area centre). */
-  flyTo(x: number, y: number): void {
+  /**
+   * Pan to a place given in the app's frame (metres east and north of the study-area centre).
+   * Returns false, doing nothing, when the place is outside the painted area.
+   */
+  flyTo(x: number, y: number): boolean {
     const ll = this.utm.toLonLat(x, y);
     const [e, n] = this.toArea(ll.lon, ll.lat);
     const [px, py] = this.project(e, n);
-    if (px < 0 || py < 0 || px > this.meta.width || py > this.meta.height) return; // outside the painted area
+    if (px < 0 || py < 0 || px > this.meta.width || py > this.meta.height) return false;
     this.map.flyTo(this.map.unproject([px, py], this.meta.maxZoom), this.meta.maxZoom, { duration: 1.2 });
+    return true;
   }
 
   /** Called once per frame while the painted map is showing. */
@@ -152,7 +156,8 @@ export class PaintedMapView {
     const traffic = this.traffic;
     if (!traffic) return;
     const activity = activityByHour(toIst(time.instant).hours);
-    traffic.step(time.paused ? 0 : dt, activity);
+    // The time bar is hidden in this view, so traffic always moves; only its density follows the clock.
+    traffic.step(dt, activity);
 
     const size = this.map.getSize(), ratio = Math.min(devicePixelRatio, 2);
     if (this.canvas.width !== Math.round(size.x * ratio) || this.canvas.height !== Math.round(size.y * ratio)) {

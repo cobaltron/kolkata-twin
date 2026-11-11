@@ -78,17 +78,6 @@ typed arrays transferred to the main thread -> merged meshes.
 - Shadows: one directional shadow map around the camera focus, texel-snapped, re-rendered only when
   the sun or focus moves (`shadowMap.autoUpdate = false`).
 
-### Isometric pixel view
-A second view mode, modelled on the camera and presentation in Yadong Xie's "How Isometric Pixel City Was
-Made": one orthographic camera pointed 15 degrees west of north and tilted 45 degrees down, pan and zoom
-only, rendered through three.js `RenderPixelatedPass` (low-resolution render with normal/depth edge
-lines, nearest-neighbour upscale) with tilt-shift blur bands at the top and bottom of the page.
-It draws the same OSM-derived scene as the 3D view; no generative model is involved. Layers read the
-active camera from `ctx.camera` each frame and the view state from `ctx.view`.
-
-What is not adopted from the article: its source imagery (Google Photorealistic 3D Tiles) and the
-image-model redraw. See "Decisions" in the phase report.
-
 ### Weather (Phase 1)
 `WeatherLayer` fetches live conditions and publishes a `WeatherState` on `ctx.environment.weather` every frame;
 it is registered first so later layers see the current frame's conditions.
@@ -109,7 +98,7 @@ it is registered first so later layers see the current frame's conditions.
 - These mappings are rendering heuristics, not radiometry (`src/core/environment/weather.ts`).
 
 ### Painted map (pilot)
-A third view, "Painted map": an isometric pixel-art painting of a pilot area (about 1.65 x 2.3 km around
+The second view, "Painted map": an isometric pixel-art painting of a pilot area (about 1.65 x 2.3 km around
 BBD Bagh, the riverfront and Eden Gardens), shown in a Leaflet tile viewer with simulated vehicles and
 boats animated on top as sprites. It is made offline by `tools/pixelmap/`, after the method of
 [flash1405/isometric-mumbai](https://github.com/flash1405/isometric-mumbai):
@@ -142,6 +131,12 @@ The finished tiles are checked in, so the view works without running any of this
 - `BoatsLayer`: boats on lanes derived from OSM river centre lines, kept to mapped water.
 - `FestivalLightsLayer` (off by default): lamp strings along main streets. Not pandal locations.
 All three are labelled simulated or synthetic in the layer list and run in real time, pausing with the clock.
+
+### Views and what is not offered
+The app offers two views: the 3D city and the painted map. The earlier live "isometric pixel" filter is
+no longer in the UI (the painted map replaces it; `App.setViewMode('isometric')` remains for development).
+In the painted view the time bar, layer toggles, weather panel and height legend are hidden, because
+they do not apply to a painting. The frame-rate readout shows only with `?debug` in the address.
 
 ### Time modes in the UI
 Live (wall clock, live weather) and Custom time (any date and time of day; sun only). There is no year

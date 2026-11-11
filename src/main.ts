@@ -38,7 +38,9 @@ for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer()
 
 const panel = new LayerPanel(byId('side'), app.layers);
 new TimeBar(byId('timebar'), app.time);
-new StatsHud(byId('hud'), app);
+// The frame-rate readout is a development aid: add ?debug to the address to show it.
+if (new URLSearchParams(location.search).has('debug')) new StatsHud(byId('hud'), app);
+else byId('hud').hidden = true;
 new WeatherPanel(panel.weatherSection, app.environment);
 // The painted map exists only if tools/pixelmap has produced one (public/data/pixelmap/pilot/).
 const paintedMeta = await loadPaintedMeta('pilot');
@@ -51,8 +53,9 @@ app.onFrame((state, dt) => {
 
 const popup = new LandmarkPopup(byId('popup'));
 const search = new SearchBox(panel.searchSection, (entry: SearchEntry) => {
-  if (views.current === 'painted') painted?.flyTo(entry.x, entry.y);
-  else app.flyTo(entry.x, entry.y, entry.kind === 'street' ? 450 : 650);
+  // A place outside the painted pilot area is shown in the 3D city instead.
+  if (views.current === 'painted' && !painted?.flyTo(entry.x, entry.y)) views.set('perspective');
+  if (views.current !== 'painted') app.flyTo(entry.x, entry.y, entry.kind === 'street' ? 450 : 650);
   if (entry.landmark) void popup.open(entry.landmark);
   else popup.close();
 });

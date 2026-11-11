@@ -6,16 +6,18 @@ export type DisplayMode = ViewMode | 'painted';
 const NOTES: Record<DisplayMode, string> = {
   perspective: '',
   isometric: 'A stylised render of the same OSM model from one fixed camera. Drag to pan, scroll or pinch to zoom.',
-  painted: 'A pilot area painted offline by a generative model from satellite imagery; buildings and details may be invented. Vehicles are simulated. Layer toggles, weather and the sun do not apply here.',
+  painted: 'A pilot area around BBD Bagh, painted offline by a generative model from satellite imagery. Buildings and details may be invented; vehicles are simulated.',
 };
 
-/** Switch between the free 3D camera, the isometric pixel filter and (when one has been built) the painted map. */
+/** Switch between the 3D city and (when one has been built) the painted map. */
 export class ViewSwitch {
   private mode: DisplayMode = 'perspective';
   private readonly listeners = new Set<(mode: DisplayMode) => void>();
 
   constructor(root: HTMLElement, private readonly app: App, paintedAvailable: boolean) {
-    const modes: Array<[DisplayMode, string]> = [['perspective', '3D'], ['isometric', 'Isometric pixel']];
+    // The live "isometric pixel" filter is no longer offered: the painted map replaces it.
+    // App.setViewMode('isometric') still exists for development.
+    const modes: Array<[DisplayMode, string]> = [['perspective', '3D city']];
     if (paintedAvailable) modes.push(['painted', 'Painted map']);
     const buttons = new Map<DisplayMode, HTMLButtonElement>();
     const seg = el('div', { class: 'seg', role: 'group', 'aria-label': 'View' });

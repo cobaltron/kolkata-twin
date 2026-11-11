@@ -7,13 +7,13 @@ const STATUS_TEXT: Record<LayerEntry['status'], string> = { registered: '', load
 /** Layer toggles plus the data-honesty legend for building heights. */
 export class LayerPanel {
   private readonly rows = new Map<string, { input: HTMLInputElement; status: HTMLElement }>();
-  private readonly legend = el('section');
+  private readonly legend = el('section', { class: 'only-3d' });
   /** Filled by SearchBox. */
   readonly searchSection = el('section', { id: 'search' });
   /** Filled by ViewSwitch. */
   readonly viewSection = el('section');
   /** Filled by WeatherPanel. */
-  readonly weatherSection = el('section');
+  readonly weatherSection = el('section', { class: 'only-3d' });
 
   constructor(root: HTMLElement, registry: LayerRegistry) {
     root.classList.add('panel');
@@ -21,7 +21,7 @@ export class LayerPanel {
     const toggle = el('button', { type: 'button', class: 'side-toggle' }, 'Layers & legend');
     toggle.addEventListener('click', () => root.classList.toggle('collapsed'));
 
-    const list = el('section', {}, el('h2', {}, 'Layers'));
+    const list = el('section', { class: 'only-3d' }, el('h2', {}, 'Layers'));
     for (const entry of registry.list()) {
       const input = el('input', { type: 'checkbox' });
       input.checked = entry.visible;
