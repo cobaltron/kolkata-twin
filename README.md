@@ -14,10 +14,11 @@ npm run data         # optional: re-fetch OSM and rebuild public/data/city.bin
 `public/data/city.bin` is checked in, so the app runs without the data step.
 
 ## Hosting
-The app is deployed at https://kolkata-twin.ambiguity-prism.workers.dev/ : the built files sit in the
-Cloudflare R2 bucket `kolkata-twin-site` and a small Worker (`tools/deploy/worker.js`) serves them.
-`npm run deploy` rebuilds and redeploys; it needs `CLOUDFLARE_API_TOKEN` with Workers Scripts: Edit and
-Workers R2 Storage: Edit. The bucket `kolkata-twin-tiles` is reserved for the city-wide painted tiles.
+The app is deployed at https://kolkata-twin.pages.dev/ : the built files sit in the Cloudflare R2 bucket
+`kolkata-twin-site`, and the Pages project `kolkata-twin` serves them with one small script
+(`tools/deploy/worker.js`). `npm run deploy` rebuilds and redeploys; it needs `CLOUDFLARE_API_TOKEN` with
+Cloudflare Pages: Edit and Workers R2 Storage: Edit. The bucket `kolkata-twin-tiles` is reserved for the
+city-wide painted tiles.
 
 ## Architecture
 ```

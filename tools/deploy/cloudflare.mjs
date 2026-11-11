@@ -1,11 +1,11 @@
 /**
- * Deploy the built app (dist/) to Cloudflare: files into an R2 bucket, served by a Worker.
+ * Deploy the built app (dist/) to Cloudflare: files into an R2 bucket, served by a Pages project's script.
  * Run: npm run build && node tools/deploy/cloudflare.mjs
- * Auth: CLOUDFLARE_API_TOKEN (Workers Scripts: Edit, Workers R2 Storage: Edit), or none where a network
+ * Auth: CLOUDFLARE_API_TOKEN (Cloudflare Pages: Edit, Workers R2 Storage: Edit), or none where a network
  *       proxy adds the header. CLOUDFLARE_ACCOUNT_ID is optional when the token sees one account.
  *
- * Cloudflare Pages is the simpler home for a static site, but its upload step authenticates with a
- * short-lived token of its own, which does not pass through a proxy that rewrites the auth header.
+ * Pages' own asset upload authenticates with a short-lived token of its own, which does not pass
+ * through a proxy that rewrites the auth header; keeping the files in R2 avoids that step.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const DIST = path.join(ROOT, 'dist');
 const BUCKET = process.env.SITE_BUCKET ?? 'kolkata-twin-site';
-const WORKER = process.env.SITE_WORKER ?? 'kolkata-twin';
+const PROJECT = process.env.SITE_PROJECT ?? 'kolkata-twin';
 const auth = process.env.CLOUDFLARE_API_TOKEN ? { Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}` } : {};
 const API = 'https://api.cloudflare.com/client/v4';
 
@@ -67,11 +67,16 @@ await Promise.all(Array.from({ length: 6 }, async () => {
 }));
 console.log(`uploaded ${done} files, ${(bytes / 1e6).toFixed(1)} MB, to R2 bucket ${BUCKET}`);
 
-// 3. Worker bound to the bucket, on the account's workers.dev subdomain
+// 3. A Pages project whose only content is the serving script, bound to the bucket. The site's address
+//    is then <project>.pages.dev, which does not carry the account's workers.dev subdomain.
+const projects = (await call('GET', `${base}/pages/projects`)).map((p) => p.name);
+if (!projects.includes(PROJECT)) {
+  const config = { compatibility_date: '2026-01-01', r2_buckets: { SITE: { name: BUCKET } } };
+  await call('POST', `${base}/pages/projects`, JSON.stringify({ name: PROJECT, production_branch: 'main', deployment_configs: { production: config, preview: config } }), { 'Content-Type': 'application/json' });
+}
 const form = new FormData();
-form.set('metadata', JSON.stringify({ main_module: 'worker.js', compatibility_date: '2026-01-01', bindings: [{ type: 'r2_bucket', name: 'SITE', bucket_name: BUCKET }] }));
-form.set('worker.js', new Blob([fs.readFileSync(path.join(ROOT, 'tools', 'deploy', 'worker.js'))], { type: 'application/javascript+module' }), 'worker.js');
-await call('PUT', `${base}/workers/scripts/${WORKER}`, form);
-await call('POST', `${base}/workers/scripts/${WORKER}/subdomain`, JSON.stringify({ enabled: true, previews_enabled: false }), { 'Content-Type': 'application/json' });
-const { subdomain } = await call('GET', `${base}/workers/subdomain`);
-console.log(`deployed: https://${WORKER}.${subdomain}.workers.dev/`);
+form.set('manifest', '{}'); // no static assets: everything is served from R2 by the script
+form.set('branch', 'main');
+form.set('_worker.js', new Blob([fs.readFileSync(path.join(ROOT, 'tools', 'deploy', 'worker.js'))], { type: 'application/javascript+module' }), '_worker.js');
+await call('POST', `${base}/pages/projects/${PROJECT}/deployments`, form);
+console.log(`deployed: https://${PROJECT}.pages.dev/`);

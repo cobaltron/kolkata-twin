@@ -1,4 +1,4 @@
-// Serves the built app from an R2 bucket. Deployed by tools/deploy/cloudflare.mjs.
+// Serves the built app from an R2 bucket. Deployed as a Pages project's _worker.js by tools/deploy/cloudflare.mjs.
 const TYPES = {
   html: 'text/html; charset=utf-8', js: 'text/javascript; charset=utf-8', css: 'text/css; charset=utf-8',
   json: 'application/json', webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', svg: 'image/svg+xml',
