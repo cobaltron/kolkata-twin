@@ -43,6 +43,7 @@ export class PaintedTraffic {
   private readonly random = randomStream(4711);
   private readonly pose: Pose = { x: 0, y: 0, dx: 1, dy: 0 };
   private readonly visible: Array<{ x: number; y: number; m: Mover; heading: number }> = [];
+  private occlusion: { data: Uint8Array; width: number; height: number; scale: number } | null = null;
 
   /**
    * @param paths centre lines in the map's area frame (metres east and north of its centre)
@@ -86,6 +87,21 @@ export class PaintedTraffic {
     this.fleets.push({ network, movers, daily });
   }
 
+  /**
+   * Building silhouettes in map pixels times `scale` (non-zero = building). A vehicle is on a road, so
+   * if its ground point is covered by a silhouette, that building stands between it and the camera.
+   */
+  setOcclusion(data: Uint8Array, width: number, height: number, scale: number): void {
+    this.occlusion = { data, width, height, scale };
+  }
+
+  private hidden(px: number, py: number): boolean {
+    const o = this.occlusion;
+    if (!o) return false;
+    const x = Math.floor(px * o.scale), y = Math.floor(py * o.scale);
+    return x >= 0 && y >= 0 && x < o.width && y < o.height && o.data[y * o.width + x] !== 0;
+  }
+
   get count(): number {
     return this.fleets.reduce((sum, f) => sum + f.movers.length, 0);
   }
@@ -108,6 +124,7 @@ export class PaintedTraffic {
         const p = fleet.network.pose(m.cursor, this.pose);
         // Left of the direction of travel is (-dy, dx): India drives on the left.
         const [px, py] = this.project(p.x - p.dy * m.kind.lateral, p.y + p.dx * m.kind.lateral);
+        if (this.hidden(px, py)) continue; // behind a building
         const x = t.originX + px * t.scale, y = t.originY + py * t.scale;
         if (x < -80 || y < -80 || x > t.width + 80 || y > t.height + 80) continue;
         this.visible.push({ x, y, m, heading: Math.atan2(p.dy, p.dx) });

@@ -3,6 +3,7 @@
  * Run: npx tsx tools/pixelmap/tiles.ts pilot
  * In:  data/pixelmap/<name>/finished.png, ortho_meta.json
  * Out: public/data/pixelmap/<name>/tiles/<z>/<x>_<y>.webp   512 px tiles; the highest z is full resolution
+ *      public/data/pixelmap/<name>/occlusion.png           building silhouettes, for hiding vehicles behind buildings
  *      public/data/pixelmap/<name>/meta.json               camera, size, zoom range, credits
  */
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -35,10 +36,18 @@ for (let z = maxZoom; z >= 0; z--) {
     }
   }
 }
+// Building silhouettes at half resolution: the viewer hides a vehicle whose ground point is covered
+// by one, i.e. a vehicle standing behind a building as seen from the map camera.
+const OCCLUSION_SCALE = 0.5;
+await sharp(new URL('building_mask.png', src).pathname, { limitInputPixels: false })
+  .resize(Math.round(W * OCCLUSION_SCALE), Math.round(H * OCCLUSION_SCALE), { kernel: 'nearest' }).toColourspace('b-w').threshold(128).png({ compressionLevel: 9, palette: true, colours: 2 })
+  .toFile(new URL('occlusion.png', out).pathname);
+
 const ortho = JSON.parse(readFileSync(new URL('ortho_meta.json', src), 'utf8')) as { attributions: string[] };
 writeFileSync(new URL('meta.json', out), JSON.stringify({
   name, description: cfg.description,
   width: W, height: H, tileSize: TILE, maxZoom,
+  occlusion: { file: 'occlusion.png', scale: OCCLUSION_SCALE },
   camera: { lat: cfg.lat, lon: cfg.lon, azimuthDeg: cfg.camera_azimuth_degrees, elevationDeg: cfg.camera_elevation_degrees, metresPerPixel: cfg.meters_per_pixel },
   generatedAt: new Date().toISOString(),
   credits: {

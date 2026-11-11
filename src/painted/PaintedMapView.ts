@@ -16,6 +16,7 @@ export interface PaintedMeta {
   tileSize: number;
   maxZoom: number;
   camera: { lat: number; lon: number; azimuthDeg: number; elevationDeg: number; metresPerPixel: number };
+  occlusion?: { file: string; scale: number };
   credits: { imagery: string[]; painter: string; method: string; buildings: string };
   notice: string;
 }
@@ -44,7 +45,7 @@ export class PaintedMapView {
   private readonly project: (east: number, north: number) => [number, number];
   private zooming = false;
 
-  constructor(private readonly root: HTMLElement, private readonly meta: PaintedMeta, baseUrl: string, private readonly utm: LocalFrame) {
+  constructor(private readonly root: HTMLElement, private readonly meta: PaintedMeta, private readonly baseUrl: string, private readonly utm: LocalFrame) {
     const { camera } = meta;
     this.toArea = areaFrame(camera.lat, camera.lon);
     this.project = mapProjector({ ...camera, width: meta.width, height: meta.height });
@@ -102,7 +103,30 @@ export class PaintedMapView {
       return { xy: packed, offsets };
     };
     const { camera } = this.meta;
-    this.traffic = new PaintedTraffic({ roads: convert(city.paths.roads), trams: convert(city.paths.trams), river: convert(city.paths.river) }, this.project, camera.azimuthDeg, camera.elevationDeg, camera.metresPerPixel);
+    const traffic = new PaintedTraffic({ roads: convert(city.paths.roads), trams: convert(city.paths.trams), river: convert(city.paths.river) }, this.project, camera.azimuthDeg, camera.elevationDeg, camera.metresPerPixel);
+    this.traffic = traffic;
+    void this.loadOcclusion(traffic);
+  }
+
+  private async loadOcclusion(traffic: PaintedTraffic): Promise<void> {
+    const o = this.meta.occlusion;
+    if (!o) return;
+    try {
+      const image = new Image();
+      image.src = this.baseUrl + o.file;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+      ctx.drawImage(image, 0, 0);
+      const rgba = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const mask = new Uint8Array(canvas.width * canvas.height);
+      for (let i = 0; i < mask.length; i++) mask[i] = rgba[i * 4]! > 127 ? 1 : 0;
+      traffic.setOcclusion(mask, canvas.width, canvas.height, o.scale);
+    } catch (err) {
+      console.warn('Painted map: building silhouettes unavailable, vehicles will not be hidden behind buildings', err);
+    }
   }
 
   get vehicleCount(): number {

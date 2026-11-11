@@ -5,6 +5,10 @@
   "height": 5632,
   "tileSize": 512,
   "maxZoom": 4,
+  "occlusion": {
+    "file": "occlusion.png",
+    "scale": 0.5
+  },
   "camera": {
     "lat": 22.5745,
     "lon": 88.347,
@@ -12,7 +16,7 @@
     "elevationDeg": -45,
     "metresPerPixel": 0.293
   },
-  "generatedAt": "2026-11-11T17:23:21.306Z",
+  "generatedAt": "2026-11-11T17:31:40.620Z",
   "credits": {
     "imagery": [
       "Google",
