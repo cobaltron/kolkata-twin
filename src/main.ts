@@ -11,6 +11,9 @@ import { SunSkyLayer } from './layers/sky/SunSkyLayer';
 import { createWaterLayer } from './layers/water/WaterLayer';
 import { TrafficLayer } from './layers/traffic/TrafficLayer';
 import { BoatsLayer } from './layers/boats/BoatsLayer';
+import { TreesLayer } from './layers/trees/TreesLayer';
+import { AreaSwitch } from './ui/AreaSwitch';
+import { AREA_ID, AREAS } from './shared/config';
 import { FestivalLightsLayer } from './layers/festival/FestivalLightsLayer';
 import { WeatherLayer } from './layers/weather/WeatherLayer';
 import { WeatherPanel } from './ui/WeatherPanel';
@@ -32,7 +35,7 @@ const app = new App(byId('viewport'));
 // Registration order is the update order and the order of the toggles in the UI.
 // Weather runs first so the sky layer sees this frame's conditions.
 const landmarkLabels = new LandmarksLayer();
-for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new LandmarkModelsLayer(), landmarkLabels, new TrafficLayer(), new BoatsLayer(), new FestivalLightsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
+for (const layer of [new WeatherLayer(), new SunSkyLayer(), new BuildingsLayer(), new TreesLayer(), new LandmarkModelsLayer(), landmarkLabels, new TrafficLayer(), new BoatsLayer(), new FestivalLightsLayer(), createRoadsLayer(), createRailLayer(), createWaterLayer(), createGreenLayer(), new GroundLayer()]) {
   app.layers.register(layer);
 }
 
@@ -42,9 +45,13 @@ new TimeBar(byId('timebar'), app.time);
 if (new URLSearchParams(location.search).has('debug')) new StatsHud(byId('hud'), app);
 else byId('hud').hidden = true;
 new WeatherPanel(panel.weatherSection, app.environment);
-// The painted map exists only if tools/pixelmap has produced one (public/data/pixelmap/pilot/).
-const paintedMeta = await loadPaintedMeta('pilot');
-const painted = paintedMeta ? new PaintedMapView(byId('painted'), paintedMeta, new URL('data/pixelmap/pilot/', document.baseURI).href, app.localFrame) : null;
+new AreaSwitch(panel.areaSection);
+byId('subtitle').textContent = `${AREAS[AREA_ID]!.region} · ${AREAS[AREA_ID]!.name}`;
+
+// A painted map exists only for areas that name one and have had it built (tools/pixelmap).
+const paintedName = AREAS[AREA_ID]!.paintedMap;
+const paintedMeta = paintedName ? await loadPaintedMeta(paintedName) : null;
+const painted = paintedMeta ? new PaintedMapView(byId('painted'), paintedMeta, new URL(`data/pixelmap/${paintedName}/`, document.baseURI).href, app.localFrame) : null;
 const views = new ViewSwitch(panel.viewSection, app, painted !== null);
 views.onChange((mode) => painted?.setVisible(mode === 'painted'));
 app.onFrame((state, dt) => {

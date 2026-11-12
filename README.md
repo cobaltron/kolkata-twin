@@ -9,9 +9,9 @@ npm install
 npm run dev          # http://localhost:5173  (add ?quality=mobile to force the phone tier)
 npm test             # projection, sun-vector and TimeController tests
 npm run build        # typecheck + production bundle in dist/
-npm run data         # optional: re-fetch OSM and rebuild public/data/city.bin
+npm run data:area -- college-street   # optional: rebuild one area's data
 ```
-`public/data/city.bin` is checked in, so the app runs without the data step.
+Each area's `public/data/<id>/city.bin` is checked in, so the app runs without the data step.
 
 ## Hosting
 The app is deployed at https://kolkata-twin.pages.dev/ : the built files sit in the Cloudflare R2 bucket
@@ -20,12 +20,32 @@ The app is deployed at https://kolkata-twin.pages.dev/ : the built files sit in 
 Cloudflare Pages: Edit and Workers R2 Storage: Edit. The bucket `kolkata-twin-tiles` is reserved for the
 city-wide painted tiles.
 
+## Areas
+The app shows one area at a time, chosen in the side panel or with `?area=<id>` in the address.
+Areas are defined in `config/areas.json`; each has its own data under `public/data/<id>/`.
+
+| id | Area | Size |
+|---|---|---|
+| `college-street` (default) | North Kolkata: College Street to Jorasanko | 2.4 km2, 3,376 buildings, 914 trees |
+| `gariahat` | South Kolkata: Gariahat and Rabindra Sarobar | 3.5 km2, 5,129 buildings, 4,555 trees |
+| `central` | Wide overview, with the painted pilot map | 82 km2, 74,813 buildings, no trees |
+
+To build or rebuild an area's data: `npm run data:area -- <id>` (see `tools/build-area.sh` for the steps).
+To add an area, add an entry to `config/areas.json` and run that command.
+
+### Trees
+`TreesLayer` draws low-poly trees as two instanced meshes. Their positions and heights come from the
+Meta / WRI canopy-height map via `tools/canopy.py`; the split into individual trees, crown size, shape
+and colour are illustrative, and species is unknown. Trees that would stand inside a building footprint
+are dropped. See `data/SOURCES.md`.
+
 ## Architecture
 ```
-config/study-area.json      bbox, UTM zone, tile size (grow the study area here)
+config/areas.json           the areas the app offers: name, bbox, UTM zone, tile size
 config/landmark-models.json sourced dimensions for the procedural landmark models
 tools/                      offline pipeline (Node, tsx); never runs in the browser
   fetch-osm.ts              Overpass (tiled, with retries) -> data/raw/osm.json
+  canopy.py                 Meta / WRI canopy-height tile -> data/canopy/<area>/trees.json (Python, rasterio)
   open_buildings.py         Google Open Buildings 2.5D height tiles -> data/open-buildings/ (Python, rasterio)
   fetch-poi.ts              Overpass: Wikidata-tagged places, monuments, museums -> data/raw/poi.json
   fetch-wikidata.ts         Wikidata labels, heights, article titles, images -> data/wikidata.json

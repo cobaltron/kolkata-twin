@@ -48,6 +48,7 @@ a { color: inherit; }
 .tiltshift { backdrop-filter: blur(calc(5px + var(--tilt-nudge, 0px))); }
 #viewport.isometric canvas { image-rendering: pixelated; }
 #search { position: relative; }
+#side select { width: 100%; }
 #search input { width: 100%; font: inherit; color: var(--text); background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; }
 #search input::placeholder { color: var(--muted); }
 .results { list-style: none; margin: 6px 0 0; padding: 0; max-height: 240px; overflow: auto; }

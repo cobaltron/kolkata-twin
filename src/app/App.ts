@@ -9,7 +9,7 @@ import { Environment } from '../core/environment/Environment';
 import { TimeController } from '../core/time/TimeController';
 import type { TimeState } from '../core/time/types';
 import { CityData } from '../data/CityData';
-import { HISTORICAL_MIN_YEAR, STUDY_AREA } from '../shared/config';
+import { AREA_ID, HISTORICAL_MIN_YEAR, STUDY_AREA } from '../shared/config';
 import { LocalFrame } from '../shared/projection';
 import { detectQuality, type QualityTier } from './quality';
 
@@ -83,13 +83,19 @@ export class App {
 
     this.perspectiveCamera = new PerspectiveCamera(50, 1, 5, 30000);
     // Start south-west of the Maidan, looking north-east towards Esplanade and BBD Bagh.
-    this.perspectiveCamera.position.set(-3550, 1300, 3700);
+    // Start south-west of the area's centre looking north-east, close enough to read single buildings.
+    // The wide central area opens over the Maidan instead of its geometric centre.
+    const wide = STUDY_AREA.tileSizeMetres >= 1000;
+    const span = (STUDY_AREA.bbox.north - STUDY_AREA.bbox.south) * 111000;
+    const target = wide ? [-2250, 0, 800] : [0, 0, 0];
+    const back = wide ? [-1300, 1300, 2900] : [-0.28 * span, 0.3 * span, 0.42 * span];
+    this.perspectiveCamera.position.set(target[0]! + back[0]!, back[1]!, target[2]! + back[2]!);
     this.controls = new MapControls(this.perspectiveCamera, this.renderer.domElement);
-    this.controls.target.set(-2250, 0, 800);
+    this.controls.target.set(target[0]!, 0, target[2]!);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.12;
     this.controls.maxPolarAngle = Math.PI * 0.47;
-    this.controls.minDistance = 40;
+    this.controls.minDistance = 25;
     this.controls.maxDistance = 14000;
     this.controls.update();
 
@@ -102,7 +108,7 @@ export class App {
     this.isoControls.maxZoom = 14;
     this.isoControls.enabled = false;
     this.isoCamera.zoom = 3; // about 1 m of ground per CSS pixel: individual buildings read clearly
-    this.placeIsoCamera(-2250, 800);
+    this.placeIsoCamera(target[0]!, target[2]!);
 
     this.composer = new EffectComposer(this.renderer);
     this.pixelPass = new RenderPixelatedPass(this.isoPixelSize(), this.scene, this.isoCamera, { normalEdgeStrength: 0.35, depthEdgeStrength: 0.45 });
@@ -116,7 +122,7 @@ export class App {
 
     // No scenarios are registered: event mode exists in TimeController but has nothing to replay yet.
     this.time = new TimeController({ minYear: HISTORICAL_MIN_YEAR });
-    this.cityData = new CityData('data/city.bin');
+    this.cityData = new CityData(`data/${AREA_ID}/city.bin`);
     const app = this;
     const ctx: LayerContext = {
       scene: this.scene,

@@ -10,12 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "deploy": "npm run build && node tools/deploy/cloudflare.mjs",
-    "data:fetch": "tsx tools/fetch-osm.ts",
-    "data:build": "tsx tools/build-city.ts",
-    "data:poi": "tsx tools/fetch-poi.ts",
     "data:wikidata": "tsx tools/fetch-wikidata.ts",
     "data:content": "tsx tools/fetch-landmark-content.ts",
-    "data": "npm run data:fetch && npm run data:build"
+    "data:area": "bash tools/build-area.sh"
   },
   "dependencies": {
     "earcut": "^3.2.4",

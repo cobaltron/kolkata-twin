@@ -5,19 +5,25 @@
  * Output: data/wikidata.json (checked in; Wikidata is CC0).
  */
 import { readFile, writeFile } from 'node:fs/promises';
+import { AREAS, areaFiles } from './lib/area.ts';
 
 const ROOT = new URL('..', import.meta.url);
-const raw = JSON.parse(await readFile(new URL('data/raw/osm.json', ROOT), 'utf8')) as {
-  elements: Array<{ type: string; tags?: Record<string, string> }>;
-};
+// Elements from every area whose extract has been downloaded.
+const raw: { elements: Array<{ type: string; tags?: Record<string, string> }> } = { elements: [] };
+for (const id of Object.keys(AREAS)) {
+  const files = areaFiles(id);
+  try {
+    raw.elements.push(...(JSON.parse(await readFile(new URL('osm.json', files.raw), 'utf8')) as typeof raw).elements);
+  } catch { continue; } // this area has not been fetched on this machine
+  try {
+    // Points of interest fetched separately (monuments, ghats, museums mapped as nodes); optional.
+    const poi = JSON.parse(await readFile(new URL('poi.json', files.raw), 'utf8')) as typeof raw;
+    raw.elements.push(...poi.elements.filter((el) => !el.tags?.['highway'] && !el.tags?.['railway'] && !el.tags?.['public_transport']).map((el) => ({ ...el, type: 'poi' })));
+  } catch { /* run tools/fetch-poi.ts <area> to include them */ }
+}
+
 const METRE = 'http://www.wikidata.org/entity/Q11573';
 const FOOT = 'http://www.wikidata.org/entity/Q3710';
-
-// Points of interest fetched separately (monuments, ghats, museums mapped as nodes); optional.
-try {
-  const poi = JSON.parse(await readFile(new URL('data/raw/poi.json', ROOT), 'utf8')) as typeof raw;
-  raw.elements.push(...poi.elements.filter((el) => !el.tags?.['highway'] && !el.tags?.['railway'] && !el.tags?.['public_transport']).map((el) => ({ ...el, type: 'poi' })));
-} catch { /* run npm run data:poi to include them */ }
 
 const qids = new Set<string>();
 for (const el of raw.elements) {
@@ -50,9 +56,16 @@ export interface WikidataRecord {
 const best = (claims: Claim[] | undefined): Claim | undefined =>
   claims?.find((c) => c.rank === 'preferred') ?? claims?.find((c) => c.rank !== 'deprecated');
 
-const out: Record<string, WikidataRecord> = {};
+// Items already stored are kept and not fetched again (pass --refresh to re-fetch everything).
+let out: Record<string, WikidataRecord> = {};
+if (!process.argv.includes('--refresh')) {
+  try {
+    out = (JSON.parse(await readFile(new URL('data/wikidata.json', ROOT), 'utf8')) as { entities: Record<string, WikidataRecord> }).entities;
+  } catch { /* first run */ }
+}
 let n = 0;
 for (const qid of [...qids].sort()) {
+  if (out[qid]) continue;
   let entity: Entity | undefined;
   for (let attempt = 1; attempt <= 4 && !entity; attempt++) {
     try {

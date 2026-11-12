@@ -1,5 +1,5 @@
 {
- "fetchedAt": "2026-11-10T19:35:14.246Z",
+ "fetchedAt": "2026-11-12T06:05:55.370Z",
  "licence": "CC0 (Wikidata)",
  "entities": {
   "Q105044529": {
@@ -1761,6 +1761,86 @@
    "heightM": null,
    "floors": null,
    "modified": "2024-09-30T17:33:16Z"
+  },
+  "Q17059773": {
+   "label": "Jodhpur Park Girls’ High School",
+   "description": "school in Kolkata, India",
+   "enwiki": null,
+   "image": "Jodhpur Park Girls’ High School.jpg",
+   "inceptionYear": 1961,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T20:25:24Z"
+  },
+  "Q39054405": {
+   "label": "Women's Polytechnic, Kolkata",
+   "description": "Institute in Kolkata, India for higher studies",
+   "enwiki": null,
+   "image": null,
+   "inceptionYear": 1963,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-10-24T18:51:01Z"
+  },
+  "Q5264153": {
+   "label": "Deshapriya Park",
+   "description": "park in Kolkata",
+   "enwiki": "Deshapriya Park",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-02-15T10:10:43Z"
+  },
+  "Q6122065": {
+   "label": "Jagadbandhu Institution",
+   "description": "school in Kolkata",
+   "enwiki": null,
+   "image": "Jagadbandhu Institution.jpg",
+   "inceptionYear": 1914,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-06-30T19:57:43Z"
+  },
+  "Q7237578": {
+   "label": "Prafulla Chandra College",
+   "description": "undergraduate college affiliated with university of Calcutta in Kolkata, India",
+   "enwiki": null,
+   "image": "Prafulla Chandra College.jpg",
+   "inceptionYear": 1954,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-05-13T23:50:36Z"
+  },
+  "Q7246463": {
+   "label": "Priya Cinema",
+   "description": "cinema in Kolkata, India",
+   "enwiki": "Priya Cinema (Kolkata)",
+   "image": "Priya Cinema.jpg",
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2022-09-13T16:11:52Z"
+  },
+  "Q7278758": {
+   "label": "Rabindra Sarobar Stadium",
+   "description": "stadium of West Bengal",
+   "enwiki": "Rabindra Sarobar Stadium",
+   "image": "Rabindra Sarobar Stadium.jpg",
+   "inceptionYear": 1961,
+   "heightM": null,
+   "floors": null,
+   "modified": "2023-05-30T18:16:49Z"
+  },
+  "Q85775632": {
+   "label": "Lake Gardens",
+   "description": "locality of Kolkata",
+   "enwiki": "Lake Gardens",
+   "image": null,
+   "inceptionYear": null,
+   "heightM": null,
+   "floors": null,
+   "modified": "2026-07-23T08:41:17Z"
   }
  }
 }

@@ -3,3 +3,4 @@ dist
 data/raw
 *.log
 data/pixelmap
+data/canopy/raw

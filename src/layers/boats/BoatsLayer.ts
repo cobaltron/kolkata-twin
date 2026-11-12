@@ -24,7 +24,7 @@ export class BoatsLayer implements Layer {
   async load(ctx: LayerContext): Promise<void> {
     this.ctx = ctx;
     const network = new PathNetwork((await ctx.cityData.load()).paths.river, 200);
-    if (network.paths.length === 0) throw new Error('No river centre line in the map data');
+    if (network.paths.length === 0) return; // this area has no river
     // About one vessel per 700 m of lane.
     this.fleets.push(new Movers(network, BOAT_KINDS, Math.max(4, Math.round(network.totalLength / 700)), 0, -0.25, 77)); // hulls sit a little into the water
     for (const fleet of this.fleets) ctx.scene.add(...fleet.meshes);

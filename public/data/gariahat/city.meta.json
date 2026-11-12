@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "studyAreaId": "gariahat",
+  "utmZone": 45,
+  "origin": {
+    "lon": 88.3615,
+    "lat": 22.514000000000003,
+    "utmE": 640032.4887860438,
+    "utmN": 2490358.5003501065
+  },
+  "extent": {
+    "minX": -934.2967356411973,
+    "minY": -949.4738578097895,
+    "maxX": 934.4094380973838,
+    "maxY": 949.5355320908129
+  },
+  "tileSizeMetres": 500,
+  "generatedAt": "2026-11-12T06:05:57.298Z",
+  "osmBaseTimestamp": "2026-11-12T06:01:01Z",
+  "attribution": "© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0",
+  "stats": {
+    "buildings": 5129,
+    "heightFromWikidata": 0,
+    "heightFromOpenBuildings": 4628,
+    "heightFromTag": 0,
+    "heightFromLevels": 1,
+    "heightEstimated": 500,
+    "roads": 980,
+    "rails": 10,
+    "waterPolygons": 7,
+    "waterways": 0,
+    "greenPolygons": 31,
+    "trees": 4555
+  },
+  "landmarks": "8 landmarks (see city.bin)",
+  "treeSource": "Meta / WRI High Resolution Canopy Height Maps v1 (alsgedi_global_v6_float), CC BY 4.0",
+  "models": [],
+  "roadNames": "81 names (see city.bin)"
+}

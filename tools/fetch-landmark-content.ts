@@ -39,9 +39,16 @@ interface Content {
   text: { extract: string; title: string; url: string; licence: string } | null;
   image: { url: string; pageUrl: string; author: string; licence: string } | null;
 }
-const out: Record<string, Content> = {};
+// Items already stored are kept and not fetched again (pass --refresh to re-fetch everything).
+let out: Record<string, Content> = {};
+if (!process.argv.includes('--refresh')) {
+  try {
+    out = (JSON.parse(await readFile(new URL('public/data/landmark-content.json', ROOT), 'utf8')) as { items: Record<string, Content> }).items;
+  } catch { /* first run */ }
+}
 let texts = 0, images = 0, n = 0;
 for (const [qid, e] of Object.entries(entities)) {
+  if (out[qid]) continue;
   const content: Content = { description: e.description, inceptionYear: e.inceptionYear, text: null, image: null };
   if (e.enwiki) {
     const wikitext = await rawPage('en.wikipedia.org', e.enwiki);

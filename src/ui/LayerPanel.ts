@@ -10,6 +10,8 @@ export class LayerPanel {
   private readonly legend = el('section', { class: 'only-3d' });
   /** Filled by SearchBox. */
   readonly searchSection = el('section', { id: 'search' });
+  /** Filled by AreaSwitch. */
+  readonly areaSection = el('section');
   /** Filled by ViewSwitch. */
   readonly viewSection = el('section');
   /** Filled by WeatherPanel. */
@@ -32,7 +34,7 @@ export class LayerPanel {
       this.paint(entry);
     }
     registry.on('change', (entry) => this.paint(entry));
-    root.append(toggle, this.searchSection, this.viewSection, list, this.weatherSection, this.legend);
+    root.append(toggle, this.searchSection, this.areaSection, this.viewSection, list, this.weatherSection, this.legend);
   }
 
   private paint(entry: LayerEntry): void {
@@ -49,6 +51,9 @@ export class LayerPanel {
     const pct = (n: number): string => `${n.toLocaleString()} (${((100 * n) / s.buildings).toFixed(1)}%)`;
     const row = (colour: string, text: string, n: string): HTMLElement =>
       el('div', { class: 'legend-row' }, el('span', { class: 'swatch', style: `background:${colour}` }), text, el('span', { class: 'n' }, n));
+    const treeNote = s.trees > 0
+      ? `${s.trees.toLocaleString()} trees are placed where the Meta / WRI canopy-height map (CC BY 4.0) shows canopy, at its height. Individual trees, crown shapes and colours are illustrative; species is unknown.`
+      : 'This area has no tree data.';
     this.legend.replaceChildren(
       el('h2', {}, 'Building height source'),
       row('#d6b080', 'Tagged (OSM, Wikidata)', pct(s.heightFromTag + s.heightFromLevels + s.heightFromWikidata)),
@@ -69,6 +74,7 @@ export class LayerPanel {
         { class: 'note' },
         'Landmark models use overall dimensions from Wikipedia; their finer detail is schematic. Layers marked simulated or synthetic are decoration, not data.',
       ),
+      el('p', { class: 'note' }, treeNote),
       el('p', { class: 'note' }, `OSM snapshot: ${header.osmBaseTimestamp?.slice(0, 10) ?? 'unknown'}. Ground is flat until terrain arrives in Phase 2.`),
     );
   }

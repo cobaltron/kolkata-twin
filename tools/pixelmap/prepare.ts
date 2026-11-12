@@ -1,7 +1,7 @@
 /**
  * Stage 2 inputs for the block render: building footprints with heights, in the area's frame.
  * Run: npx tsx tools/pixelmap/prepare.ts pilot
- * In:  public/data/city.bin (OSM footprints; heights from OSM tags, Wikidata, Open Buildings 2.5D, estimate)
+ * In:  public/data/central/city.bin (OSM footprints; heights from OSM tags, Wikidata, Open Buildings 2.5D, estimate)
  * Out: data/pixelmap/<name>/buildings.json   [{ rings: [[[x, y], ...], ...], h }]
  *      data/pixelmap/<name>/ortho_small.jpg  low-resolution copy of the imagery, for sampling wall colours
  */
@@ -17,7 +17,7 @@ const cfg = JSON.parse(readFileSync(new URL(`config/pixelmap/${name}.json`, ROOT
 const outDir = new URL(`data/pixelmap/${name}/`, ROOT);
 mkdirSync(outDir, { recursive: true });
 
-const buf = readFileSync(new URL('public/data/city.bin', ROOT));
+const buf = readFileSync(new URL('public/data/central/city.bin', ROOT));
 const city = decodeCity(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer);
 const { origin, utmZone } = city.header;
 const utm = new LocalFrame(utmZone, { lon: origin.lon, lat: origin.lat });

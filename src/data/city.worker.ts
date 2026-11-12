@@ -33,7 +33,7 @@ const RAIL_STYLE: Record<number, { width: number; color: RGB }> = {
   [RAIL_CLASS.subway]: { width: 3.0, color: [60, 60, 90] },
   [RAIL_CLASS.light]: { width: 2.6, color: [70, 60, 56] },
 };
-const WATER: RGB = [104, 118, 104];
+const WATER: RGB = [72, 108, 112];
 const GREEN: RGB = [98, 128, 78];
 
 const hash = (n: number): number => (Math.imul(n + 1, 2654435761) >>> 0) / 4294967296;
@@ -186,7 +186,10 @@ function build(buffer: ArrayBuffer): CityGeometry {
 
   const paths = { roads: pack(roadLines), trams: pack(tramLines), river: pack(riverLines) };
 
-  return { header, paths, streets, buildings, green: green.build(false), water: water.build(false), roads: roads.build(false), rail: rail.build(false) };
+  // Older city files have no tree section.
+  const trees = header.sections['tr_xyhr'] ? city.section<Float32Array>('tr_xyhr').slice() : new Float32Array(0);
+
+  return { header, paths, streets, trees, buildings, green: green.build(false), water: water.build(false), roads: roads.build(false), rail: rail.build(false) };
 }
 
 self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
@@ -196,7 +199,7 @@ self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
     if (!res.ok) throw new Error(`HTTP ${res.status} loading ${ev.data.url}`);
     const city = build(await res.arrayBuffer());
     const pathBuffers = Object.values(city.paths).flatMap((p) => [p.xy.buffer, p.offsets.buffer] as ArrayBuffer[]);
-    const buffers = [...pathBuffers, ...[city.green, city.water, city.roads, city.rail, ...city.buildings.map((t) => t.mesh)].flatMap(transferables)];
+    const buffers = [city.trees.buffer as ArrayBuffer, ...pathBuffers, ...[city.green, city.water, city.roads, city.rail, ...city.buildings.map((t) => t.mesh)].flatMap(transferables)];
     post({ ok: true, city }, buffers);
   } catch (err) {
     post({ ok: false, error: err instanceof Error ? err.message : String(err) });

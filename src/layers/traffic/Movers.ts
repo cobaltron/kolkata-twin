@@ -62,7 +62,7 @@ export class Movers {
     const totalWeight = kinds.reduce((sum, k) => sum + k.weight, 0);
     const color = new Color();
     for (const kind of kinds) {
-      const n = network.paths.length > 0 ? Math.max(1, Math.round((count * kind.weight) / totalWeight)) : 0;
+      const n = network.paths.length > 0 && count > 0 ? Math.max(1, Math.round((count * kind.weight) / totalWeight)) : 0;
       const mesh = new InstancedMesh(kind.model(), this.material, Math.max(n, 1));
       mesh.castShadow = false; // thousands of tiny casters are not worth the shadow-pass cost
       mesh.receiveShadow = true;

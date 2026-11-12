@@ -8,7 +8,7 @@ derived from a listed source or an explicitly flagged synthetic placeholder.
   came from the `maps.mail.ru` Overpass mirror because `overpass-api.de` was refusing connections; the
   endpoint and OSM base timestamp are recorded in `data/raw/osm.meta.json` and `public/data/city.meta.json`.
 - Snapshot: OSM base timestamp 2026-11-10 (exact value in `public/data/city.meta.json`).
-- Area: bbox in `config/study-area.json` (88.320–88.415 E, 22.535–22.610 N, about 9.8 x 8.4 km).
+- Areas: the bounding boxes in `config/areas.json`. The two neighbourhood areas were fetched on 12 Nov 2026.
 - Licence: ODbL 1.0. Attribution "© OpenStreetMap contributors" is shown permanently in the UI.
 - `public/data/city.bin` is a derived database under ODbL; redistribute it under the same terms.
 
@@ -39,6 +39,20 @@ Estimation heuristic for the remainder (`tools/lib/heights.ts`): levels guessed 
 (<40 m2: 1, <150: 2, <600: 3, <2500: 4, else 5; sheds, huts, garages etc.: 1), plus one extra level for a
 deterministic third of buildings (hash of OSM id), times 3.2 m, plus 1.0 m. The 3.2 m storey height and
 1.0 m allowance are assumptions, not surveyed values.
+
+## Trees: Meta / WRI High Resolution Canopy Height Maps
+- Source: public bucket `dataforgood-fb-data` (`forests/v1/alsgedi_global_v6_float/chm/123133323.tif`),
+  read by `tools/canopy.py`. Licence: CC BY 4.0. A model estimate of canopy height at about 1 m
+  resolution from satellite imagery; not a survey and not a tree census.
+- Kolkata has no public tree census (KMC has announced a digital tree map; no dataset was found), and
+  OpenStreetMap has only a few hundred mapped trees here, so canopy height is the only sourced basis.
+- What is data: where canopy stands and how tall it is.
+- What is NOT data: the split into individual trees (one per local height maximum of at least 3 m,
+  spaced by height), the crown radius (assumed 0.28 x height + 1 m), tree shape and leaf colour.
+  Species is unknown. Tree counts are therefore plausible, not real: 914 in College Street to
+  Jorasanko and 4,555 in Gariahat and Rabindra Sarobar, after dropping 243 and 608 that fell inside
+  building footprints. Heights are capped at 30 m.
+- Not validated on the ground for Kolkata.
 
 ## Wikidata (landmark names, facts, heights)
 - Source: `Special:EntityData` for each OSM element with a `wikidata` tag (176 items), fetched offline by

@@ -39,10 +39,12 @@ export class TrafficLayer implements Layer {
   async load(ctx: LayerContext): Promise<void> {
     this.ctx = ctx;
     const { paths } = await ctx.cityData.load();
-    this.road = new Movers(new PathNetwork(paths.roads), ROAD_KINDS, ctx.quality.maxVehicles, 2.6, 0.08, 20261);
+    const roadNetwork = new PathNetwork(paths.roads);
+    // About one vehicle per 45 m of main road at the busiest hour, up to the device's budget.
+    this.road = new Movers(roadNetwork, ROAD_KINDS, Math.min(ctx.quality.maxVehicles, Math.round(roadNetwork.totalLength / 45)), 2.6, 0.08, 20261);
     const tramNetwork = new PathNetwork(paths.trams);
     // One tram per ~1.2 km of track that still exists in OSM.
-    this.tram = new Movers(tramNetwork, TRAM_KINDS, Math.min(40, Math.round(tramNetwork.totalLength / 1200)), 0, 0.1, 1873);
+    this.tram = new Movers(tramNetwork, TRAM_KINDS, tramNetwork.paths.length === 0 ? 0 : Math.min(40, Math.max(2, Math.round(tramNetwork.totalLength / 700))), 0, 0.1, 1873);
     ctx.scene.add(...this.road.meshes, ...this.tram.meshes);
   }
 

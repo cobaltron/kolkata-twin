@@ -1,13 +1,14 @@
 /**
  * Offline step 1: download the raw OSM extract for the configured study area.
- * Run: npm run data:fetch
+ * Run: npx tsx tools/fetch-osm.ts <area>
  * Output: data/raw/osm.json (git-ignored; reproducible) + data/raw/osm.meta.json
  * Never called at runtime.
  */
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { areaFromArgs } from './lib/area.ts';
 
-const ROOT = new URL('..', import.meta.url);
-const area = JSON.parse(await readFile(new URL('config/study-area.json', ROOT), 'utf8'));
+const files = areaFromArgs();
+const area = { id: files.id, bbox: files.config.bbox };
 const { west, south, east, north } = area.bbox;
 const ENDPOINT = process.env.OVERPASS_URL ?? 'https://overpass-api.de/api/interpreter';
 
@@ -69,7 +70,9 @@ async function fetchTile(query: string, label: string): Promise<OverpassResponse
 // The area is fetched as a grid of sub-boxes (large single responses are fragile through proxies)
 // and merged by element type + id. Ways and relations that cross a tile edge arrive complete from
 // each tile because of the ">" recursion, so de-duplication is lossless.
-const GRID = Number(process.env.OVERPASS_GRID ?? 3);
+// Small areas fit in one request; wide ones are split into a grid.
+const spanKm = Math.max((east - west) * 103, (north - south) * 111);
+const GRID = Number(process.env.OVERPASS_GRID ?? (spanKm > 4 ? 3 : 1));
 console.log(`Fetching OSM for ${area.id} from ${ENDPOINT} as a ${GRID}x${GRID} grid ...`);
 const merged = new Map<string, OverpassResponse['elements'][number]>();
 let osmBase: string | null = null;
@@ -92,10 +95,10 @@ for (let iy = 0; iy < GRID; iy++) {
 const json = { osm3s: { timestamp_osm_base: osmBase }, elements: [...merged.values()] };
 const text = JSON.stringify(json);
 
-await mkdir(new URL('data/raw/', ROOT), { recursive: true });
-await writeFile(new URL('data/raw/osm.json', ROOT), text);
+await mkdir(files.raw, { recursive: true });
+await writeFile(new URL('osm.json', files.raw), text);
 await writeFile(
-  new URL('data/raw/osm.meta.json', ROOT),
+  new URL('osm.meta.json', files.raw),
   JSON.stringify(
     {
       source: ENDPOINT,

@@ -1,7 +1,7 @@
 /**
  * Stage 4 of the generated pixel map: finishing.
  * Run: npx tsx tools/pixelmap/finish.ts pilot [input.png]
- * In:  data/pixelmap/<name>/generated.png, building_mask.png; public/data/city.bin (water polygons, bridges)
+ * In:  data/pixelmap/<name>/generated.png, building_mask.png; public/data/central/city.bin (water polygons, bridges)
  * Out: data/pixelmap/<name>/finished.png
  *
  * Water. The painter chooses a water colour tile by tile, so a wide river comes out as a patchwork.
@@ -23,7 +23,7 @@ const dir = new URL(`data/pixelmap/${name}/`, ROOT);
 const W = cfg.cols * cfg.quadrant_px, H = cfg.rows * cfg.quadrant_px;
 const project = mapProjector({ lat: cfg.lat, lon: cfg.lon, azimuthDeg: cfg.camera_azimuth_degrees, elevationDeg: cfg.camera_elevation_degrees, metresPerPixel: cfg.meters_per_pixel, width: W, height: H });
 
-const buf = readFileSync(new URL('public/data/city.bin', ROOT));
+const buf = readFileSync(new URL('public/data/central/city.bin', ROOT));
 const city = decodeCity(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer);
 const utm = new LocalFrame(city.header.utmZone, { lon: city.header.origin.lon, lat: city.header.origin.lat });
 const toArea = areaFrame(cfg.lat, cfg.lon);

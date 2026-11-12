@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "studyAreaId": "college-street",
+  "utmZone": 45,
+  "origin": {
+    "lon": 88.361,
+    "lat": 22.5795,
+    "utmE": 639914.9924053252,
+    "utmN": 2497609.9061343353
+  },
+  "extent": {
+    "minX": -676.3513471534243,
+    "minY": -891.80836325977,
+    "maxX": 676.4271440956509,
+    "maxY": 891.8417239128612
+  },
+  "tileSizeMetres": 500,
+  "generatedAt": "2026-11-12T06:05:56.329Z",
+  "osmBaseTimestamp": "2026-11-12T06:00:01Z",
+  "attribution": "© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0",
+  "stats": {
+    "buildings": 3376,
+    "heightFromWikidata": 0,
+    "heightFromOpenBuildings": 3121,
+    "heightFromTag": 0,
+    "heightFromLevels": 1,
+    "heightEstimated": 254,
+    "roads": 692,
+    "rails": 17,
+    "waterPolygons": 1,
+    "waterways": 0,
+    "greenPolygons": 8,
+    "trees": 914
+  },
+  "landmarks": "12 landmarks (see city.bin)",
+  "treeSource": "Meta / WRI High Resolution Canopy Height Maps v1 (alsgedi_global_v6_float), CC BY 4.0",
+  "models": [],
+  "roadNames": "151 names (see city.bin)"
+}

@@ -1,0 +1,27 @@
+{
+  "college-street": {
+    "name": "College Street to Jorasanko",
+    "region": "North Kolkata",
+    "description": "The book market, Presidency and the University, College Square, Marble Palace and Jorasanko Thakur Bari",
+    "bbox": { "west": 88.3545, "south": 22.5715, "east": 88.3675, "north": 22.5875 },
+    "utmZone": 45,
+    "tileSizeMetres": 500
+  },
+  "gariahat": {
+    "name": "Gariahat and Rabindra Sarobar",
+    "region": "South Kolkata",
+    "description": "Gariahat crossing and market, Golpark, Southern Avenue and the Lake",
+    "bbox": { "west": 88.3525, "south": 22.5055, "east": 88.3705, "north": 22.5225 },
+    "utmZone": 45,
+    "tileSizeMetres": 500
+  },
+  "central": {
+    "name": "Central Kolkata (wide)",
+    "region": "Overview",
+    "description": "Hooghly riverfront to the eastern canals, Maidan to Shyambazar; includes the painted pilot map",
+    "bbox": { "west": 88.32, "south": 22.535, "east": 88.415, "north": 22.61 },
+    "utmZone": 45,
+    "tileSizeMetres": 1000,
+    "paintedMap": "pilot"
+  }
+}

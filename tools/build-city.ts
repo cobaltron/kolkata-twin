@@ -9,17 +9,17 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import osmtogeojson from 'osmtogeojson';
 import { BUILDING_FLAG, encodeCity, HEIGHT_SOURCE, RAIL_CLASS, ROAD_FLAG, type CityStats, type Landmark, type LandmarkModel, type SectionArray } from '../src/shared/cityFormat.ts';
-import { LocalFrame, type BBox } from '../src/shared/projection.ts';
+import { LocalFrame } from '../src/shared/projection.ts';
+import { areaFromArgs } from './lib/area.ts';
 import { clipLine, clipRing, ringArea, type Pt } from './lib/clip.ts';
 import { parseMetres, resolveHeight } from './lib/heights.ts';
 import { OpenBuildingsGrid } from './lib/openBuildings.ts';
 
 const ROOT = new URL('..', import.meta.url);
-const area = JSON.parse(await readFile(new URL('config/study-area.json', ROOT), 'utf8')) as {
-  id: string; bbox: BBox; utmZone: number; tileSizeMetres: number;
-};
-const raw = JSON.parse(await readFile(new URL('data/raw/osm.json', ROOT), 'utf8'));
-const meta = JSON.parse(await readFile(new URL('data/raw/osm.meta.json', ROOT), 'utf8')) as { osmBaseTimestamp: string | null };
+const files = areaFromArgs();
+const area = { id: files.id, ...files.config };
+const raw = JSON.parse(await readFile(new URL('osm.json', files.raw), 'utf8'));
+const meta = JSON.parse(await readFile(new URL('osm.meta.json', files.raw), 'utf8')) as { osmBaseTimestamp: string | null };
 const bbox = area.bbox;
 interface WikidataRecord { label: string | null; heightM: number | null; floors: number | null }
 let wikidata: Record<string, WikidataRecord> = {};
@@ -31,7 +31,7 @@ try {
 const frame = LocalFrame.fromBBox(area.utmZone, bbox);
 let openBuildings: OpenBuildingsGrid | null = null;
 try {
-  openBuildings = new OpenBuildingsGrid(new URL('data/open-buildings/', ROOT), frame.originUtm);
+  openBuildings = new OpenBuildingsGrid(files.openBuildings, frame.originUtm);
 } catch (err) {
   if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
   console.warn('data/open-buildings not found: no modelled heights (run python tools/open_buildings.py)');
@@ -144,7 +144,7 @@ const modelByOsm = new Map(modelDefs.map((m) => [m.osm, m]));
 const models: LandmarkModel[] = [];
 let poi: { elements: Array<{ type: string; id: number; center?: { lat: number; lon: number }; lat?: number; lon?: number }> } = { elements: [] };
 try {
-  poi = JSON.parse(await readFile(new URL('data/raw/poi.json', ROOT), 'utf8'));
+  poi = JSON.parse(await readFile(new URL('poi.json', files.raw), 'utf8'));
 } catch { /* optional: only needed for landmarks that are not buildings or roads */ }
 function addModel(def: ModelDef, lonLat: Pt, axis: [Pt, Pt] | null, baseHeight: number): void {
   if (models.some((m) => m.id === def.id)) return;
@@ -245,6 +245,52 @@ for (const def of modelDefs) {
 }
 for (const def of modelDefs) if (!models.some((m) => m.id === def.id)) console.warn(`landmark model ${def.id}: OSM element ${def.osm} not found, model omitted`);
 
+// Trees from the canopy-height map (tools/canopy.py). A tree whose trunk would stand inside a building
+// footprint is dropped: canopy that overhangs or is mistaken for a roof cannot be planted there.
+let treeSource: string | null = null;
+const trees: number[] = [];
+try {
+  const canopy = JSON.parse(await readFile(new URL('trees.json', files.canopy), 'utf8')) as { source: string; licence: string; trees: number[][] };
+  treeSource = `${canopy.source}, ${canopy.licence}`;
+  // Bucket building outlines into a 50 m grid for the point-in-polygon tests.
+  const CELL = 50;
+  const grid = new Map<string, number[][][]>();
+  for (let b = 0, ring = 0, cursor = 0; b < buildings.ringCounts.length; b++) {
+    const outer: number[][] = [];
+    for (let r = 0; r < buildings.ringCounts[b]!; r++) {
+      const n = buildings.ringSizes[ring++]!;
+      if (r === 0) for (let i = 0; i < n; i++) outer.push([buildings.xy[cursor + i * 2]!, buildings.xy[cursor + i * 2 + 1]!]);
+      cursor += n * 2;
+    }
+    const xs = outer.map((p) => p[0]!), ys = outer.map((p) => p[1]!);
+    for (let gx = Math.floor(Math.min(...xs) / CELL); gx <= Math.floor(Math.max(...xs) / CELL); gx++) {
+      for (let gy = Math.floor(Math.min(...ys) / CELL); gy <= Math.floor(Math.max(...ys) / CELL); gy++) {
+        const key = `${gx},${gy}`;
+        if (!grid.has(key)) grid.set(key, []);
+        grid.get(key)!.push(outer);
+      }
+    }
+  }
+  const inBuilding = (x: number, y: number): boolean => (grid.get(`${Math.floor(x / CELL)},${Math.floor(y / CELL)}`) ?? []).some((poly) => {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
+      if (yi! > y !== yj! > y && x < ((xj! - xi!) * (y - yi!)) / (yj! - yi!) + xi!) inside = !inside;
+    }
+    return inside;
+  });
+  let dropped = 0;
+  for (const [x, y, h, r] of canopy.trees) {
+    if (inBuilding(x!, y!)) { dropped++; continue; }
+    // The canopy model occasionally reads a tall structure as canopy; 30 m is a generous cap for a city tree.
+    trees.push(x!, y!, Math.min(h!, 30), r!);
+  }
+  console.log(`trees: ${trees.length / 4} kept, ${dropped} dropped (inside a building footprint)`);
+} catch (err) {
+  if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+  console.warn(`no canopy data for ${area.id}: no trees (run python tools/canopy.py ${area.id})`);
+}
+
 if (roadNames.length > 65535) throw new Error('too many road names for u16 index');
 
 const sw = frame.toLocal(bbox.west, bbox.south), ne = frame.toLocal(bbox.east, bbox.north);
@@ -254,7 +300,7 @@ const stats: CityStats = {
   heightFromWikidata: srcCounts[HEIGHT_SOURCE.wikidata]!,
   heightFromOpenBuildings: srcCounts[HEIGHT_SOURCE.openBuildings]!,
   heightFromTag: srcCounts[HEIGHT_SOURCE.tag]!, heightFromLevels: srcCounts[HEIGHT_SOURCE.levels]!, heightEstimated: srcCounts[HEIGHT_SOURCE.estimated]!,
-  roads: roads.count, rails: rails.count, waterPolygons: water.count, waterways: waterways.count, greenPolygons: green.count,
+  roads: roads.count, rails: rails.count, waterPolygons: water.count, waterways: waterways.count, greenPolygons: green.count, trees: trees.length / 4,
 };
 const header = {
   version: 1 as const,
@@ -268,6 +314,7 @@ const header = {
   attribution: '© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0',
   stats,
   landmarks: [...landmarks.values()].map(({ rank: _rank, ...l }) => l).sort((a, b) => b.area - a.area),
+  treeSource,
   models,
   roadNames,
 };
@@ -279,11 +326,12 @@ const bin = encodeCity(header, {
   r_sizes: Uint32Array.from(roads.sizes), r_xy: Float32Array.from(roads.xy), r_class: Uint8Array.from(rClass),
   r_width: Float32Array.from(rWidth), r_name: Uint16Array.from(rName), r_flags: Uint8Array.from(rFlags), r_osmId: Float64Array.from(rOsmId),
   t_sizes: Uint32Array.from(rails.sizes), t_xy: Float32Array.from(rails.xy), t_class: Uint8Array.from(tClass), t_flags: Uint8Array.from(tFlags),
+  tr_xyhr: Float32Array.from(trees),
   c_sizes: Uint32Array.from(waterways.sizes), c_xy: Float32Array.from(waterways.xy), c_width: Float32Array.from(cWidth),
 });
-await mkdir(new URL('public/data/', ROOT), { recursive: true });
-await writeFile(new URL('public/data/city.bin', ROOT), bin);
-await writeFile(new URL('public/data/city.meta.json', ROOT), JSON.stringify({ ...header, landmarks: `${landmarks.size} landmarks (see city.bin)`, roadNames: `${roadNames.length} names (see city.bin)` }, null, 2));
+await mkdir(files.out, { recursive: true });
+await writeFile(new URL('city.bin', files.out), bin);
+await writeFile(new URL('city.meta.json', files.out), JSON.stringify({ ...header, landmarks: `${landmarks.size} landmarks (see city.bin)`, roadNames: `${roadNames.length} names (see city.bin)` }, null, 2));
 console.log(stats);
 console.log(`landmarks: ${landmarks.size}; models: ${models.map((m) => m.id).join(', ')}`);
 console.log(`extent (m):`, header.extent, `\ncity.bin: ${(bin.length / 1e6).toFixed(2)} MB`);

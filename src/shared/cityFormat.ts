@@ -25,6 +25,8 @@ export interface CityStats {
   waterPolygons: number;
   waterways: number;
   greenPolygons: number;
+  /** Trees placed from the canopy-height map (0 when the area has none). */
+  trees: number;
 }
 
 export interface CityHeader {
@@ -41,6 +43,8 @@ export interface CityHeader {
   stats: CityStats;
   /** Named places that have a Wikidata item, for the label layer. Coordinates are local metres. */
   landmarks: Landmark[];
+  /** Where the trees come from, for the legend; null when the area has no tree data. */
+  treeSource: string | null;
   /** Hand-specified landmark models, anchored on OSM geometry. */
   models: LandmarkModel[];
   /** Street names; index 0 is "" (unnamed). Referenced by the r_name section. */

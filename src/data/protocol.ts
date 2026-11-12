@@ -21,6 +21,8 @@ export interface CityGeometry {
   paths: { roads: PathSet; trams: PathSet; river: PathSet };
   /** Named streets with a representative point, for search. */
   streets: Array<{ name: string; x: number; y: number }>;
+  /** Trees as x, y, height, crown radius (local metres), four numbers per tree. */
+  trees: Float32Array;
   buildings: BuildingTile[];
   green: MeshData;
   water: MeshData;

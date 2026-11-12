@@ -1,6 +1,7 @@
 import proj4 from 'proj4';
 import { describe, expect, it } from 'vitest';
-import { STUDY_AREA } from '../src/shared/config';
+import { AREAS } from '../src/shared/config';
+const STUDY_AREA = AREAS['central']!;
 import { gridConvergence, LocalFrame, utmToWgs84, wgs84ToUtm } from '../src/shared/projection';
 import { sunVector } from '../src/shared/sun';
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "studyAreaId": "kolkata-core",
+  "studyAreaId": "central",
   "utmZone": 45,
   "origin": {
     "lon": 88.3675,
@@ -15,7 +15,7 @@
     "maxY": 4197.457092293538
   },
   "tileSizeMetres": 1000,
-  "generatedAt": "2026-11-10T19:40:14.683Z",
+  "generatedAt": "2026-11-12T06:06:03.198Z",
   "osmBaseTimestamp": "2026-11-10T14:50:51Z",
   "attribution": "© OpenStreetMap contributors, ODbL 1.0; building heights partly from Google Open Buildings 2.5D Temporal, CC BY 4.0",
   "stats": {
@@ -29,9 +29,11 @@
     "rails": 716,
     "waterPolygons": 420,
     "waterways": 27,
-    "greenPolygons": 446
+    "greenPolygons": 446,
+    "trees": 0
   },
   "landmarks": "149 landmarks (see city.bin)",
+  "treeSource": null,
   "models": [
     {
       "id": "victoria-memorial",

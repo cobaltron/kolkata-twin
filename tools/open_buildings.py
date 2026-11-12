@@ -1,11 +1,11 @@
 """
 Offline: crop Google's Open Buildings 2.5D Temporal height raster to the study area.
 
-Run:  pip install -r tools/requirements.txt && python tools/open_buildings.py   (after npm run data:build once)
+Run:  pip install -r tools/requirements.txt && python tools/open_buildings.py <area>   (after build-city once)
 In:   public bucket gs://open-buildings-temporal-data (read over HTTPS, no account needed)
-Out:  data/open-buildings/height_2m.u8.gz   uint8 grid, row 0 = north, value = height in 0.5 m steps
+Out:  data/open-buildings/<area>/height_2m.u8.gz   uint8 grid, row 0 = north, value = height in 0.5 m steps
                                             (0 = no building detected or no data)
-      data/open-buildings/meta.json         grid georeferencing, source tiles, licence
+      data/open-buildings/<area>/meta.json         grid georeferencing, source tiles, licence
 
 The source rasters are 0.5 m pixels in EPSG:32645 (the project's own UTM zone) with an effective
 resolution of about 4 m, so they are averaged down to 2 m cells. A cell counts as building only where
@@ -41,7 +41,12 @@ def fetch(url: str, dest: pathlib.Path) -> None:
 
 
 def main() -> None:
-    meta = json.loads((ROOT / "public" / "data" / "city.meta.json").read_text())
+    area = next((a for a in sys.argv[1:] if not a.startswith("--")), None)
+    if not area:
+        sys.exit("Name an area, e.g. python tools/open_buildings.py college-street")
+    global OUT
+    OUT = OUT / area
+    meta = json.loads((ROOT / "public" / "data" / area / "city.meta.json").read_text())
     if meta["utmZone"] != 45:
         sys.exit("This tool assumes UTM zone 45N (EPSG:32645), the CRS of the source tiles.")
     origin, extent = meta["origin"], meta["extent"]
